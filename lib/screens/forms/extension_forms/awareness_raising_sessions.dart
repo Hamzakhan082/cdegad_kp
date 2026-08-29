@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../../constants/constants.dart';
+import '../../../features/awareness/repositories/awareness_repository.dart';
 import '../../../widgts/home_items.dart';
 
-class ExtensionMaterialScreen extends StatefulWidget {
+class ExtensionMaterialScreen extends ConsumerStatefulWidget {
   const ExtensionMaterialScreen({super.key});
 
   @override
-  State<ExtensionMaterialScreen> createState() => _ExtensionMaterialScreenState();
+  ConsumerState<ExtensionMaterialScreen> createState() => _ExtensionMaterialScreenState();
 }
 
-class _ExtensionMaterialScreenState extends State<ExtensionMaterialScreen> with ImagePickerMixin {
+class _ExtensionMaterialScreenState extends ConsumerState<ExtensionMaterialScreen> with ImagePickerMixin {
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false;
   String? _selectedFileName;
+  PlatformFile? _selectedFile;
   String? selectedRegion;
 
 final List<String> regions = ['Region I', 'Region II', 'Region III'];
@@ -73,8 +75,10 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
       if (result != null && result.files.single.path != null) {
         setState(() {
           _selectedFileName = result.files.single.name;
+          _selectedFile = result.files.single;
         });
 
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("File selected: $_selectedFileName"),
@@ -84,6 +88,7 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
         );
       }
     } catch (e) {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error picking file: $e"),
@@ -96,31 +101,57 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
   void _clearSelectedFile() {
     setState(() {
       _selectedFileName = null;
+      _selectedFile = null;
     });
   }
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isSubmitting = true);
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-      if (!context.mounted) return;
-      if (mounted) {
+      try {
+        await ref.read(awarenessRepositoryProvider).createMultipart(
+          {
+            'employee_name': _controllers["Employee Name"]!.text.trim(),
+            'forest_region': selectedRegion ?? '',
+            'forest_circle_name': _controllers["Name of Forest Circle"]!.text.trim(),
+            'division_name': _controllers["Name of Division"]!.text.trim(),
+            'sub_division_range': _controllers["Name of Sub-Division / Range"]!.text.trim(),
+            'project_name': _controllers["Name of Project"]!.text.trim(),
+            'type_of_event': _controllers["Type of Event"]!.text.trim(),
+            'institution_name': _controllers["Name of Institution / Organization"]!.text.trim(),
+            'venue': _controllers["Venue"]!.text.trim(),
+            'chief_guest': _controllers["Chief Guest"]!.text.trim(),
+            'description': _controllers["Description"]!.text.trim(),
+          },
+          image: selectedImage?.path,
+          document: _selectedFile?.path,
+        );
+        if (!mounted) return;
         setState(() => _isSubmitting = false);
 
-        String message = "Form Submitted Successfully";
+        String message2 = "Form submitted successfully!";
         if (_selectedFileName != null) {
-          message += "\nFile attached: $_selectedFileName";
+          message2 += "\nFile attached: $_selectedFileName";
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(message),
+            content: Text(message2),
             backgroundColor: AppColors.primaryGreen,
             duration: const Duration(seconds: 3),
           ),
         );
         Navigator.pop(context);
+      } catch (e) {
+        if (!mounted) return;
+        setState(() => _isSubmitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Submission failed: $e"),
+            backgroundColor: AppColors.errorColor,
+            duration: const Duration(seconds: 3),
+          ),
+        );
       }
     }
   }
@@ -228,7 +259,7 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
         return Icons.business;
       case "Name of Sub-Division / Range":
         return Icons.map;
-      case "Type Of Event":
+      case "Type of Event":
         return Icons.event_note;
       case "Name of Institution / Organization":
         return Icons.account_balance;
@@ -337,203 +368,6 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text("Delete"),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// Add this mixin to your ImagePickerMixin if it doesn't already have the buildFilePickerField method
-mixin ImagePickerMixin<T extends StatefulWidget> on State<T> {
-  XFile? _pickedImage;
-  final ImagePicker _picker = ImagePicker();
-
-  Future<void> pickImage() async {
-    try {
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        setState(() {
-          _pickedImage = image;
-        });
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error picking image: $e"),
-          backgroundColor: AppColors.errorColor,
-        ),
-      );
-    }
-  }
-
-  void clearImage() {
-    setState(() {
-      _pickedImage = null;
-    });
-  }
-
-  Widget buildImagePickerField({required String label}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 8),
-          GestureDetector(
-            onTap: pickImage,
-            child: Container(
-              height: 150,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: _pickedImage != null
-                  ? Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.file(
-                      _pickedImage!.path as dynamic,
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.broken_image, size: 40, color: Colors.grey[500]),
-                              const SizedBox(height: 8),
-                              Text(
-                                "Error loading image",
-                                style: TextStyle(color: Colors.grey[500], fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: GestureDetector(
-                      onTap: clearImage,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.close, color: Colors.white, size: 20),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-                  : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.camera_alt,
-                    size: 40,
-                    color: Colors.grey[500],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Tap to upload image",
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildFilePickerField({
-    required String label,
-    required String? fileName,
-    required VoidCallback onPressed,
-    required VoidCallback onClear,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 8),
-          InkWell(
-            onTap: onPressed,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.attach_file,
-                    size: 24,
-                    color: AppColors.primaryGreen,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      fileName ?? "Tap to select file",
-                      style: TextStyle(
-                        color: fileName != null ? Colors.black87 : Colors.grey[600],
-                        fontSize: 16,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (fileName != null)
-                    IconButton(
-                      icon: Icon(Icons.clear, color: Colors.grey[600]),
-                      onPressed: onClear,
-                    ),
-                ],
-              ),
-            ),
-          ),
-          if (fileName != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Text(
-                "File selected: $fileName",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.primaryGreen,
-                ),
-              ),
-            ),
         ],
       ),
     );

@@ -229,23 +229,26 @@ class _CDPageState extends State<CDPage> with TickerProviderStateMixin {
         itemCount: options.length,
         itemBuilder: (context, index) {
           final item = options[index];
-          return AnimatedBuilder(
-            animation: _cardAnimations[index],
-            builder: (context, child) {
-              return FadeTransition(
-                opacity: _cardAnimations[index],
-                child: Transform.scale(
-                  scale: 0.9 + (0.1 * _cardAnimations[index].value),
-                  child: SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0, 0.2),
-                      end: Offset.zero,
-                    ).animate(_cardAnimations[index]),
-                    child: _buildModernCard(item),
+          return RepaintBoundary(
+            key: ValueKey(item["title"]),
+            child: AnimatedBuilder(
+              animation: _cardAnimations[index],
+              builder: (context, child) {
+                return FadeTransition(
+                  opacity: _cardAnimations[index],
+                  child: Transform.scale(
+                    scale: 0.9 + (0.1 * _cardAnimations[index].value),
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0, 0.2),
+                        end: Offset.zero,
+                      ).animate(_cardAnimations[index]),
+                      child: _buildModernCard(item),
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),

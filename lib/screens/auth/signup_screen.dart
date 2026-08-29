@@ -1,15 +1,25 @@
+import 'dart:convert';
+
+import 'package:cdegad_kp/features/auth/models/auth_exception.dart';
+import 'package:cdegad_kp/features/auth/models/auth_response_model.dart';
+import 'package:cdegad_kp/features/auth/models/employee_signup_model.dart';
+import 'package:cdegad_kp/features/auth/providers/auth_provider.dart';
 import 'package:cdegad_kp/screens/home_screen.dart';
 import 'package:cdegad_kp/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class SignupPage extends StatefulWidget {
+const int _minSignupDelayMillis = 1000;
+
+class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});
 
   @override
-  State<SignupPage> createState() => _SignupPageState();
+  ConsumerState<SignupPage> createState() => _SignupPageState();
 }
 
-class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
+class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -80,23 +90,107 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   }
 
   void _handleSignup() async {
-    if (_formKey.currentState!.validate() && _agreeToTerms) {
-      setState(() => _isLoading = true);
-      await Future.delayed(const Duration(seconds: 2));
+    if (!_formKey.currentState!.validate()) return;
+    if (!_agreeToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please agree to Terms & Conditions"), backgroundColor: Colors.orange),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final stopwatch = Stopwatch()..start();
+
+    Object? result;
+    try {
+      result = await ref.read(authRepositoryProvider).employeeSignup(
+            EmployeeSignupModel(
+              fullName: _fullNameController.text.trim(),
+              emailAddress: _emailController.text.trim(),
+              password: _passwordController.text,
+              confirmPassword: _confirmPasswordController.text,
+              cnic: '',
+              division: '',
+              employeeNo: '',
+              mobile: '',
+              gender: '',
+            ),
+          );
+    } catch (e) {
+      result = e;
+    }
+
+    final remaining = _minSignupDelayMillis - stopwatch.elapsedMilliseconds;
+    if (remaining > 0) {
+      await Future.delayed(Duration(milliseconds: remaining));
+    }
+
+    if (!mounted) return;
+
+    if (result is AuthResponseModel) {
+      final prefs = await SharedPreferences.getInstance();
+      final token = result.token;
+      if (token != null && token.isNotEmpty) {
+        await prefs.setString('auth_token', token);
+      }
+      final user = result.user;
+      if (user != null && user.isNotEmpty) {
+        await prefs.setString('user_data', jsonEncode(user));
+      }
       if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Account Created Successfully"), backgroundColor: Colors.green),
       );
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (mounted) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => const HomeScreen()));
-      }
-    } else if (!_agreeToTerms) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please agree to Terms & Conditions"), backgroundColor: Colors.orange),
-      );
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => const HomeScreen()));
+      return;
     }
+
+    setState(() => _isLoading = false);
+
+    var message = 'Sign up failed. Please try again.';
+    if (result is AuthException) {
+      message = result.isOffline
+          ? 'Cannot reach the server. Please check your connection and try again.'
+          : result.message;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red.shade700),
+    );
+  }
+
+  void _showTermsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Terms & Conditions"),
+        content: const SingleChildScrollView(
+          child: Text(
+            "By creating an account, you agree to use this application for official "
+            "KP Forest Department purposes only. All data entered must be accurate "
+            "and submitted in accordance with departmental policies. This app is "
+            "currently in offline mode; data will sync once the backend is connected.",
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Close"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _socialLogin(String provider) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("$provider sign-up is not available in offline mode."),
+        backgroundColor: Colors.green.shade700,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -285,7 +379,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                               ),
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: () {},
+                                  onTap: _showTermsDialog,
                                   child: const Text.rich(
                                     TextSpan(
                                       text: "I agree to the ",
@@ -348,9 +442,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _social(Icons.g_mobiledata, "Google"),
-                              _social(Icons.facebook, "Facebook"),
-                              _social(Icons.apple, "Apple"),
+                              _social(Icons.g_mobiledata, "Google", () => _socialLogin("Google")),
+                              _social(Icons.facebook, "Facebook", () => _socialLogin("Facebook")),
+                              _social(Icons.apple, "Apple", () => _socialLogin("Apple")),
                             ],
                           ),
                           const SizedBox(height: 20),
@@ -406,16 +500,19 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _social(IconData icon, String label) {
-    return Column(
-      children: [
-        CircleAvatar(
-          backgroundColor: Colors.grey.shade200,
-          child: Icon(icon),
-        ),
-        const SizedBox(height: 5),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
+  Widget _social(IconData icon, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.grey.shade200,
+            child: Icon(icon),
+          ),
+          const SizedBox(height: 5),
+          Text(label, style: const TextStyle(fontSize: 12)),
+        ],
+      ),
     );
   }
 }

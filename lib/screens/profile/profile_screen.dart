@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -17,6 +18,144 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _phoneController = TextEditingController(text: "+92 300 0000000");
   final TextEditingController _designationController = TextEditingController(text: "Forest Officer");
   bool _isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedProfile();
+  }
+
+  Future<void> _loadSavedProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _nameController.text = prefs.getString('profile_name') ?? _nameController.text;
+      _emailController.text = prefs.getString('profile_email') ?? _emailController.text;
+      _phoneController.text = prefs.getString('profile_phone') ?? _phoneController.text;
+      _designationController.text = prefs.getString('profile_designation') ?? _designationController.text;
+    });
+  }
+
+  Future<void> _saveProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('profile_name', _nameController.text.trim());
+    await prefs.setString('profile_email', _emailController.text.trim());
+    await prefs.setString('profile_phone', _phoneController.text.trim());
+    await prefs.setString('profile_designation', _designationController.text.trim());
+  }
+
+  void _showActivityHistory() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Activity History"),
+        content: const SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.folder, color: Colors.green),
+                title: Text("CD Form Submitted"),
+                subtitle: Text("Today, 10:30 AM"),
+              ),
+              ListTile(
+                leading: Icon(Icons.edit, color: Colors.blue),
+                title: Text("GAD Form Updated"),
+                subtitle: Text("Yesterday, 4:15 PM"),
+              ),
+              ListTile(
+                leading: Icon(Icons.upload, color: Colors.orange),
+                title: Text("Extension Data Uploaded"),
+                subtitle: Text("2 days ago"),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Close"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSettings() {
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            title: const Text("Settings"),
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.notifications, color: Colors.green),
+                  title: Text("Enable Notifications"),
+                  subtitle: Text("Get notified about submissions"),
+                  trailing: Icon(Icons.notifications_active, color: Colors.grey),
+                ),
+                ListTile(
+                  leading: Icon(Icons.dark_mode, color: Colors.green),
+                  title: Text("Dark Mode"),
+                  subtitle: Text("Coming soon"),
+                  trailing: Icon(Icons.dark_mode_outlined, color: Colors.grey),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Close"),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _showHelpSupport() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Help & Support"),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "For assistance with this application, please contact:",
+            ),
+            SizedBox(height: 12),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.email, color: Colors.green),
+              title: Text("support@forest.gov.pk"),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.phone, color: Colors.green),
+              title: Text("+92 300 0000000"),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.info, color: Colors.green),
+              title: Text("Version 1.0.0"),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Close"),
+          ),
+        ],
+      ),
+    );
+  }
 
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(
@@ -116,6 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               setState(() => _isEditing = !_isEditing);
               if (!_isEditing) {
+                _saveProfile();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Profile updated successfully")),
                 );
@@ -230,19 +370,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildActionButton(
                       icon: Icons.history,
                       label: "Activity History",
-                      onTap: () {},
+                      onTap: _showActivityHistory,
                     ),
                     const SizedBox(height: 12),
                     _buildActionButton(
                       icon: Icons.settings,
                       label: "Settings",
-                      onTap: () {},
+                      onTap: _showSettings,
                     ),
                     const SizedBox(height: 12),
                     _buildActionButton(
                       icon: Icons.help,
                       label: "Help & Support",
-                      onTap: () {},
+                      onTap: _showHelpSupport,
                     ),
                   ],
                 ),

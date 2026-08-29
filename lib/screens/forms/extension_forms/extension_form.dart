@@ -221,20 +221,23 @@ class _ExtensionScreenState extends State<ExtensionScreen> with TickerProviderSt
         ),
         itemCount: 2,
         itemBuilder: (context, index) {
-          return AnimatedBuilder(
-            animation: Listenable.merge([_cardAnimations[index], _slideAnimations[index]]),
-            builder: (context, child) {
-              return FadeTransition(
-                opacity: _cardAnimations[index],
-                child: Transform.scale(
-                  scale: 0.9 + (0.1 * _cardAnimations[index].value),
-                  child: SlideTransition(
-                    position: _slideAnimations[index],
-                    child: _buildModernCard(index),
+          return RepaintBoundary(
+            key: ValueKey(index == 0 ? 'mass_planting' : 'awareness_raising'),
+            child: AnimatedBuilder(
+              animation: Listenable.merge([_cardAnimations[index], _slideAnimations[index]]),
+              builder: (context, child) {
+                return FadeTransition(
+                  opacity: _cardAnimations[index],
+                  child: Transform.scale(
+                    scale: 0.9 + (0.1 * _cardAnimations[index].value),
+                    child: SlideTransition(
+                      position: _slideAnimations[index],
+                      child: _buildModernCard(index),
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),

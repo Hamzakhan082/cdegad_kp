@@ -43,3 +43,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local agent / tooling config
+.agents/
+.cursor/
+.jetro/
+.mcp.json
+.windsurfrules
+CLAUDE.md
+AGENT.md
+.github/copilot-instructions.md

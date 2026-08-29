@@ -83,14 +83,16 @@ class _SplashScreenState extends State<SplashScreen>
             ),
           ),
 
-          // 🌲 Background Image
-          Opacity(
-            opacity: 0.25,
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/forest_bg.png"),
-                  fit: BoxFit.cover,
+          // Background Image
+          RepaintBoundary(
+            child: Opacity(
+              opacity: 0.25,
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/forest_bg.png"),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
@@ -110,26 +112,27 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // 🟢 Logo (clean modern style)
-                    Container(
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 25,
-                            spreadRadius: 3,
+                    RepaintBoundary(
+                      child: Container(
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 25,
+                              spreadRadius: 3,
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/logo1.png',
+                            width: 140,
+                            height: 140,
+                            fit: BoxFit.contain,
                           ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/logo1.png',
-                          width: 140,
-                          height: 140,
-                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
