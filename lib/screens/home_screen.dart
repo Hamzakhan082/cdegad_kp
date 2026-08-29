@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cdegad_kp/screens/downloads/downloads_screen.dart';
@@ -18,6 +20,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool _isLoading = true;
   int _currentIndex = 0;
   bool _show35MonthAlert = false;
+  String? _userName;
+  String? _userEmail;
 
   late AnimationController _fabAnimationController;
   late AnimationController _searchAnimationController;
@@ -93,6 +97,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }).toList();
 
     _startInitialLoadSequence();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString('user_data');
+    if (raw == null) return;
+    try {
+      final map = jsonDecode(raw) as Map<String, dynamic>;
+      final name = map['full_name']?.toString().trim();
+      final email = map['email']?.toString().trim();
+      if ((name == null || name.isEmpty) && (email == null || email.isEmpty)) return;
+      if (!mounted) return;
+      setState(() {
+        _userName = (name == null || name.isEmpty) ? null : name;
+        _userEmail = (email == null || email.isEmpty) ? null : email;
+      });
+    } catch (_) {}
   }
 
   void _startInitialLoadSequence() async {
@@ -308,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           decoration: InputDecoration(
             hintText: "Search services...",
             border: InputBorder.none,
-            prefixIcon: Icon(Icons.search, color: Colors.grey),
+            prefixIcon: const Icon(Icons.search, color: Colors.grey),
             suffixIcon: searchQuery.isNotEmpty ? IconButton(icon: const Icon(Icons.clear), onPressed: () { _searchController.clear(); setState(() => searchQuery = ""); }) : null,
           ),
         ),
@@ -391,12 +413,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       itemBuilder: (context, index) {
         final feature = filteredFeatures[index];
         final originalIndex = features.indexOf(feature);
-        return AnimatedBuilder(
-          animation: _cardAnimations[originalIndex],
-          builder: (context, child) {
-            return Transform.scale(scale: _cardAnimations[originalIndex].value, child: child);
-          },
-          child: _buildFeatureCard(feature),
+        return RepaintBoundary(
+          key: ValueKey(feature["title"]),
+          child: AnimatedBuilder(
+            animation: _cardAnimations[originalIndex],
+            builder: (context, child) {
+              return Transform.scale(scale: _cardAnimations[originalIndex].value, child: child);
+            },
+            child: _buildFeatureCard(feature),
+          ),
         );
       },
     );
@@ -474,16 +499,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Text("Recent Activities", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade800)),
         ),
         const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8)]),
-          child: Column(children: [
-            _buildActivityItem(Icons.check_circle, "CD Form Submitted", "Community Development form", Colors.green),
-            const Divider(),
-            _buildActivityItem(Icons.edit, "GAD Form Updated", "Gender and Community form", Colors.blue),
-            const Divider(),
-            _buildActivityItem(Icons.upload, "Extension Data Uploaded", "Forest extension report", Colors.orange),
-          ]),
+        RepaintBoundary(
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8)]),
+            child: Column(children: [
+              _buildActivityItem(Icons.check_circle, "CD Form Submitted", "Community Development form", Colors.green),
+              const Divider(),
+              _buildActivityItem(Icons.edit, "GAD Form Updated", "Gender and Community form", Colors.blue),
+              const Divider(),
+              _buildActivityItem(Icons.upload, "Extension Data Uploaded", "Forest extension report", Colors.orange),
+            ]),
+          ),
         ),
       ],
     );
@@ -499,12 +526,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget _buildNavigationDrawer() {
     return Drawer(
-      child: Container(
+      child: RepaintBoundary(
+        child: Container(
         decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white, Colors.green.shade50])),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             Container(
+              key: const ValueKey('drawer_header'),
               height: 200,
               decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF2E7D32), Color(0xFF43A047)], begin: Alignment.topLeft, end: Alignment.bottomRight)),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -514,9 +543,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   child: Row(children: [
                     Container(width: 60, height: 60, decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(30)), child: const Icon(Icons.account_circle, color: Colors.white, size: 40)),
                     const SizedBox(width: 16),
-                    const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text("User Name", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                      Text("user@forest.gov", style: TextStyle(color: Colors.white, fontSize: 14)),
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(_userName ?? "User Name", style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                      Text(_userEmail ?? "user@forest.gov", style: const TextStyle(color: Colors.white, fontSize: 14), overflow: TextOverflow.ellipsis),
                     ]),
                   ]),
                 ),
@@ -530,9 +559,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ListTile(leading: const Icon(Icons.person, color: Colors.green), title: const Text("Profile"), onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen())); }),
             ListTile(leading: const Icon(Icons.settings, color: Colors.green), title: const Text("Settings"), onTap: () { Navigator.pop(context); _showSnackBar("Settings Page - Coming Soon!"); }),
             const Divider(),
-            ListTile(leading: Icon(Icons.logout, color: Colors.red.shade400), title: Text("Logout", style: TextStyle(color: Colors.red.shade400)), onTap: () { Navigator.pop(context); _showSnackBar("Logging Out..."); }),
+            ListTile(leading: Icon(Icons.logout, color: Colors.red.shade400), title: Text("Logout", style: TextStyle(color: Colors.red.shade400)), onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+            }),
           ],
         ),
+      ),
       ),
     );
   }
@@ -541,7 +574,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return BottomNavigationBar(
       currentIndex: _currentIndex,
       onTap: (index) {
-        setState(() => _currentIndex = index);
         switch (index) {
           case 0:
             break;
@@ -554,6 +586,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           case 3:
             Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
             break;
+        }
+        if (_currentIndex != 0) {
+          setState(() => _currentIndex = 0);
         }
       },
       type: BottomNavigationBarType.fixed,

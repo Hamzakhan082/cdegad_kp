@@ -1,21 +1,30 @@
-import 'package:cdegad_kp/screens/home_screen.dart';
+import 'dart:convert';
+
+import 'package:cdegad_kp/features/auth/models/auth_exception.dart';
+import 'package:cdegad_kp/features/auth/models/auth_response_model.dart';
+import 'package:cdegad_kp/features/auth/models/employee_login_model.dart';
+import 'package:cdegad_kp/features/auth/providers/auth_provider.dart';
 import 'package:cdegad_kp/screens/auth/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatefulWidget {
+const int _minLoginDelayMillis = 1000;
+
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+class _LoginPageState extends ConsumerState<LoginPage> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = false;
-  final bool _isLoading = false;
+  bool _isLoading = false;
 
   late AnimationController _fadeController;
   late AnimationController _buttonController;
@@ -38,6 +47,132 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     Future.delayed(const Duration(milliseconds: 800), () {
       if (mounted) _buttonController.forward();
     });
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('saved_email');
+    final remember = prefs.getBool('remember_me') ?? false;
+    if (savedEmail != null) {
+      _emailController.text = savedEmail;
+      _rememberMe = remember;
+    }
+  }
+
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    final stopwatch = Stopwatch()..start();
+
+    await _persistRememberMe();
+
+    Object? result;
+    try {
+      result = await ref.read(authRepositoryProvider).employeeLogin(
+            EmployeeLoginModel(
+              emailAddress: _emailController.text.trim(),
+              password: _passwordController.text,
+            ),
+          );
+    } catch (e) {
+      result = e;
+    }
+
+    // Keep the loading state visible for a minimum duration so the user
+    // always sees feedback, even on a fast or flaky network.
+    final remaining = _minLoginDelayMillis - stopwatch.elapsedMilliseconds;
+    if (remaining > 0) {
+      await Future.delayed(Duration(milliseconds: remaining));
+    }
+
+    if (!mounted) return;
+
+    if (result is AuthResponseModel) {
+      await _persistSession(result);
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      return;
+    }
+
+    setState(() => _isLoading = false);
+
+    if (result is AuthException) {
+      if (result.isOffline) {
+        // Backend unreachable (offline deployment). Continue in offline mode;
+        // credentials are validated the moment the backend is reachable.
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        return;
+      }
+      _showError(result.message);
+      return;
+    }
+
+    _showError('Unable to sign in. Please try again.');
+  }
+
+  Future<void> _persistRememberMe() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_rememberMe) {
+      await prefs.setString('saved_email', _emailController.text.trim());
+      await prefs.setBool('remember_me', true);
+    } else {
+      await prefs.remove('saved_email');
+      await prefs.setBool('remember_me', false);
+    }
+  }
+
+  Future<void> _persistSession(AuthResponseModel auth) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = auth.token;
+    if (token != null && token.isNotEmpty) {
+      await prefs.setString('auth_token', token);
+    }
+    final user = auth.user;
+    if (user != null && user.isNotEmpty) {
+      await prefs.setString('user_data', jsonEncode(user));
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red.shade700,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _showForgotPasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Forgot Password"),
+        content: const Text(
+          "Password reset is not available in offline mode. Please contact your system administrator for assistance.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _socialLogin(String provider) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("$provider login is not available in offline mode."),
+        backgroundColor: Colors.green.shade700,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -84,15 +219,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           )
                         ],
                       ),
-                      child: CircleAvatar(
-                        radius: 70,
-                        backgroundColor: Colors.white,
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Image(
-                            image: AssetImage('assets/images/logo1.png'),
-                            width: 250,
-                            height: 250,
+                      child: RepaintBoundary(
+                        child: CircleAvatar(
+                          radius: 70,
+                          backgroundColor: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Image(
+                              image: const AssetImage('assets/images/logo1.png'),
+                              width: 250,
+                              height: 250,
+                            ),
                           ),
                         ),
                       ),
@@ -126,14 +263,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Form(
+                  RepaintBoundary(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +332,7 @@ Row(
                               ),
                               Flexible(
                                 child: TextButton(
-                                  onPressed: () {},
+                                  onPressed: _showForgotPasswordDialog,
                                   child: const Text("Forgot Password?", overflow: TextOverflow.ellipsis),
                                 ),
                               )
@@ -202,11 +340,7 @@ Row(
                           ),
                           const SizedBox(height: 15),
                           GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(builder: (ctx) => const HomeScreen()),
-                              );
-                            },
+                            onTap: _isLoading ? null : _handleLogin,
                             child: Container(
                               width: double.infinity,
                               height: 50,
@@ -251,9 +385,9 @@ Row(
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _social(Icons.g_mobiledata, "Google"),
-                              _social(Icons.facebook, "Facebook"),
-                              _social(Icons.apple, "Apple"),
+                              _social(Icons.g_mobiledata, "Google", () => _socialLogin("Google")),
+                              _social(Icons.facebook, "Facebook", () => _socialLogin("Facebook")),
+                              _social(Icons.apple, "Apple", () => _socialLogin("Apple")),
                             ],
                           ),
                           const SizedBox(height: 20),
@@ -281,11 +415,13 @@ Row(
                         ],
                       ),
                     ),
+                    ),
                   ),
                   const SizedBox(height: 30),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    decoration: const BoxDecoration(
+                  RepaintBoundary(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Color(0xFF0D5D2B), Color(0xFF1B8C4A)],
                       ),
@@ -299,6 +435,7 @@ Row(
                         _Feature(Icons.group, "Team"),
                       ],
                     ),
+                    ),
                   ),
                 ],
               ),
@@ -309,16 +446,19 @@ Row(
     );
   }
 
-  Widget _social(IconData icon, String label) {
-    return Column(
-      children: [
-        CircleAvatar(
-          backgroundColor: Colors.grey.shade200,
-          child: Icon(icon),
-        ),
-        const SizedBox(height: 5),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
+  Widget _social(IconData icon, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.grey.shade200,
+            child: Icon(icon),
+          ),
+          const SizedBox(height: 5),
+          Text(label, style: const TextStyle(fontSize: 12)),
+        ],
+      ),
     );
   }
 }

@@ -2,29 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../features/youth_women_nursery/providers/youth_women_nursery_provider.dart';
+import '../../../features/farm_agro_forestry/providers/farm_agro_forestry_provider.dart';
+import '../../../features/women_organization/repositories/women_organization_repository.dart';
+import '../../../features/mass_plantation/repositories/mass_plantation_repository.dart';
+import '../../../features/other_activity/repositories/other_activity_repository.dart';
 import '../../../screens/records/records_view_page.dart';
-
-void main() {
-  runApp(const GADApp());
-}
-
-class GADApp extends StatelessWidget {
-  const GADApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Forest Department GAD',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        useMaterial3: true,
-        fontFamily: 'Roboto',
-      ),
-      home: const GADPage(),
-    );
-  }
-}
 
 class GADPage extends StatefulWidget {
   const GADPage({super.key});
@@ -274,23 +259,26 @@ class _GADPageState extends State<GADPage> with TickerProviderStateMixin {
         itemCount: options.length,
         itemBuilder: (context, index) {
           final item = options[index];
-          return AnimatedBuilder(
-            animation: _cardAnimations[index],
-            builder: (context, child) {
-              return FadeTransition(
-                opacity: _cardAnimations[index],
-                child: Transform.scale(
-                  scale: 0.9 + (0.1 * _cardAnimations[index].value),
-                  child: SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0, 0.2),
-                      end: Offset.zero,
-                    ).animate(_cardAnimations[index]),
-                    child: _buildModernCard(item),
+          return RepaintBoundary(
+            key: ValueKey(item["title"]),
+            child: AnimatedBuilder(
+              animation: _cardAnimations[index],
+              builder: (context, child) {
+                return FadeTransition(
+                  opacity: _cardAnimations[index],
+                  child: Transform.scale(
+                    scale: 0.9 + (0.1 * _cardAnimations[index].value),
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0, 0.2),
+                        end: Offset.zero,
+                      ).animate(_cardAnimations[index]),
+                      child: _buildModernCard(item),
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),
@@ -655,19 +643,20 @@ class OptionPage extends StatelessWidget {
 }
 
 /// Dynamic form page with document upload
-class GADFormPage extends StatefulWidget {
+class GADFormPage extends ConsumerStatefulWidget {
   final String activity;
   final Gradient gradient;
   const GADFormPage({super.key, required this.activity, required this.gradient});
 
   @override
-  State<GADFormPage> createState() => _GADFormPageState();
+  ConsumerState<GADFormPage> createState() => _GADFormPageState();
 }
 
-class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin {
+class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
   final DateFormat _fmt = DateFormat('dd-MM-yyyy');
+  final ImagePicker _picker = ImagePicker();
   File? pickedImage;
   PlatformFile? selectedDocument;
   bool _isSubmitting = false;
@@ -706,33 +695,33 @@ class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin
   }
 
   void _initializeControllers() {
-    // Initialize controllers based on activity type
+    // Controllers keyed by the exact labels rendered in _buildFormFields so
+    // every entered value is captured for submission.
     switch (widget.activity) {
       case "Women Organization":
         _controllers.addAll({
           "Employee Name": TextEditingController(),
-          "Name of Forest Circle": TextEditingController(),
+          "Name Of Forest Circle": TextEditingController(),
           "Name of Forest Division": TextEditingController(),
-          "Name of Sub-Division / Range": TextEditingController(),
+          "Name of Sub Division / Range ": TextEditingController(),
           "Name of Village / PU": TextEditingController(),
+          "Refrence Coordinates of Village / PU": TextEditingController(),
           "Name of WO": TextEditingController(),
-          "Date of Registration": TextEditingController(),
-          "Project under Which Established": TextEditingController(),
+          "Name of Project Under Which Established": TextEditingController(),
+          "Date / Year of Establishment": TextEditingController(),
           "Name of Chairperson": TextEditingController(),
-          "Name of Sectary/Treasurer": TextEditingController(),
-          "Contact Number of Chairman": TextEditingController(),
-          "NContact Number of Chairperson": TextEditingController(),
-          "Number of WO Members": TextEditingController(),
+          "Sectary / Treasurer ": TextEditingController(),
+          "Contact Number": TextEditingController(),
         });
         break;
       case "Women Nursery":
         _controllers.addAll({
           "Employee Name": TextEditingController(),
           "Name of Forest Circle": TextEditingController(),
-          "Name of Project Under Which Established": TextEditingController(),
           "Name of Division": TextEditingController(),
           "Name of Sub-division | Range": TextEditingController(),
-          "WO": TextEditingController(),
+          "Name Of WO": TextEditingController(),
+          "Name of Project Under Which Established": TextEditingController(),
           "Name of Nursery Grower": TextEditingController(),
           "Contact Number": TextEditingController(),
           "CNIC of Nursery Grower": TextEditingController(),
@@ -748,21 +737,19 @@ class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin
           "Employee Name": TextEditingController(),
           "Name of Forest Circle": TextEditingController(),
           "Name of Division": TextEditingController(),
-          "Chief Guest's Name of Event": TextEditingController(),
+          "Name Of Project": TextEditingController(),
+          "Name of Sub-Division / Range": TextEditingController(),
+          "Name of Institute / Organization": TextEditingController(),
+          "Location / Venue": TextEditingController(),
+          "Chief Guest": TextEditingController(),
           "Date of Event": TextEditingController(),
-          "Location": TextEditingController(),
-          "Name of Institute": TextEditingController(),
-          "Number of Plants Planted": TextEditingController(),
-          "Major Species": TextEditingController(),
-          "Detail Of Plants": TextEditingController(),
-          "Number of Plants Utilized": TextEditingController(),
         });
         break;
       case "Farm / Agro Forestry":
         _controllers.addAll({
           "Employee Name": TextEditingController(),
           "Forest Division": TextEditingController(),
-          "Name of Sub-Division / Range": TextEditingController(),
+          "Name of Sub Division": TextEditingController(),
           "Plants Distributed Today": TextEditingController(),
           "Major Species": TextEditingController(),
           "Total No Of Plants Distributed": TextEditingController(),
@@ -771,11 +758,14 @@ class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin
       case "Other Activity":
         _controllers.addAll({
           "Employee Name": TextEditingController(),
-          "Activity Title": TextEditingController(),
-          "Name of Forest Division": TextEditingController(),
+          "Name of Forest Circle": TextEditingController(),
+          "Name of Division": TextEditingController(),
+          "Name of Sub-Division / Range": TextEditingController(),
+          "Name Of Project": TextEditingController(),
           "Name of WO": TextEditingController(),
           "Name of Village": TextEditingController(),
-          "Description": TextEditingController(),
+          "Activity Title": TextEditingController(),
+          "Activity Description": TextEditingController(),
         });
         break;
     }
@@ -819,6 +809,80 @@ class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin
     }
   }
 
+  Future<void> _pickImage() async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "Select Image",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: widget.gradient.colors.first.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.camera_alt, color: widget.gradient.colors.first),
+                ),
+                title: const Text("Take Photo"),
+                onTap: () async {
+                  final img = await _picker.pickImage(source: ImageSource.camera);
+                  if (img != null) {
+                    setState(() => pickedImage = File(img.path));
+                  }
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: widget.gradient.colors.first.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.photo, color: widget.gradient.colors.first),
+                ),
+                title: const Text("Choose From Gallery"),
+                onTap: () async {
+                  final img = await _picker.pickImage(source: ImageSource.gallery);
+                  if (img != null) {
+                    setState(() => pickedImage = File(img.path));
+                  }
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildMediaSection() {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -855,15 +919,18 @@ class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin
   }
 
   Widget _buildImagePicker() {
-    return Container(
-      height: 180,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: pickedImage != null
+    return RepaintBoundary(
+      child: GestureDetector(
+        onTap: _pickImage,
+        child: Container(
+        height: 180,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: pickedImage != null
           ? Stack(
         children: [
           ClipRRect(
@@ -913,14 +980,17 @@ class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin
             ),
           ),
         ],
+        ),
+      ),
       ),
     );
   }
 
   Widget _buildDocumentPicker() {
-    return GestureDetector(
-      onTap: () => _pickDocument(),
-      child: Container(
+    return RepaintBoundary(
+      child: GestureDetector(
+        onTap: () => _pickDocument(),
+        child: Container(
         height: 100,
         width: double.infinity,
         decoration: BoxDecoration(
@@ -1001,6 +1071,7 @@ class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin
               ),
             ),
           ],
+          ),
         ),
       ),
     );
@@ -1186,6 +1257,7 @@ class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin
               itemBuilder: (context, index) {
                 final intervention = addedInterventions[index];
                 return ListTile(
+                  key: ValueKey('intervention_${intervention['name']}_$index'),
                   leading: Icon(Icons.eco, color: widget.gradient.colors.first),
                   title: Text(intervention['name'] ?? ''),
                   subtitle: Text("Number: ${intervention['number'] ?? ''}"),
@@ -1361,6 +1433,7 @@ class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin
               itemBuilder: (context, index) {
                 final plant = plantDistributionList[index];
                 return ListTile(
+                  key: ValueKey('plant_${plant['type']}_$index'),
                   leading: Icon(Icons.eco, color: widget.gradient.colors.first),
                   title: Text(plant['type'] ?? ''),
                   subtitle: Text("Number: ${plant['number'] ?? ''} | Date: ${plant['date'] ?? ''}"),
@@ -1779,21 +1852,185 @@ class _GADFormPageState extends State<GADFormPage> with TickerProviderStateMixin
 
       setState(() => _isSubmitting = true);
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text("Form submitted successfully!"),
-            backgroundColor: widget.gradient.colors.first,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
-        Navigator.pop(context);
+      if (widget.activity == 'Women Organization' ||
+          widget.activity == 'Women Nursery' ||
+          widget.activity == 'Farm / Agro Forestry' ||
+          widget.activity == 'Other Activity' ||
+          widget.activity == 'Mass Planting Event') {
+        await _submitToApi();
+      } else {
+        await _simulateSubmit();
       }
+    }
+  }
+
+  Future<void> _submitToApi() async {
+    try {
+      switch (widget.activity) {
+        case "Women Organization":
+          await ref.read(womenOrganizationRepositoryProvider).createMultipart(
+                _buildApiFields().cast<String, dynamic>(),
+                image: pickedImage?.path,
+                document: selectedDocument?.path,
+              );
+          break;
+        case "Women Nursery":
+          await ref.read(youthWomenNurseryRepositoryProvider).createMultipart(
+                _buildApiFields().cast<String, dynamic>(),
+                image: pickedImage?.path,
+                document: selectedDocument?.path,
+              );
+          break;
+        case "Mass Planting Event":
+          await ref.read(massPlantationRepositoryProvider).createMultipart(
+                _buildApiFields().cast<String, dynamic>(),
+                image: pickedImage?.path,
+                document: selectedDocument?.path,
+              );
+          break;
+        case "Farm / Agro Forestry":
+          await ref.read(farmAgroForestryRepositoryProvider).createMultipart(
+                _buildApiFields().cast<String, dynamic>(),
+                image: pickedImage?.path,
+                document: selectedDocument?.path,
+              );
+          break;
+        case "Other Activity":
+          await ref.read(otherActivityRepositoryProvider).createMultipart(
+                _buildApiFields().cast<String, dynamic>(),
+                image: pickedImage?.path,
+                document: selectedDocument?.path,
+              );
+          break;
+      }
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Form submitted successfully!"),
+          backgroundColor: widget.gradient.colors.first,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Submission failed: $e"),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
+  }
+
+  Future<void> _simulateSubmit() async {
+    // Simulate API call (offline placeholder for forms without a backend yet).
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted) {
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Form submitted successfully!"),
+          backgroundColor: widget.gradient.colors.first,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      Navigator.pop(context);
+    }
+  }
+
+  /// Maps the visible form fields to the backend column names for the
+  /// activities that have a live API endpoint.
+  Map<String, String> _buildApiFields() {
+    String txt(String label) => _controllers[label]?.text.trim() ?? '';
+
+    switch (widget.activity) {
+      case "Women Organization":
+        return {
+          'employee_name': txt('Employee Name'),
+          'forest_region': selectedRegion ?? '',
+          'forest_circle_name': txt('Name Of Forest Circle'),
+          'division_name': txt('Name of Forest Division'),
+          'sub_division_range': txt('Name of Sub Division / Range '),
+          'village_pu': txt('Name of Village / PU'),
+          'reference_coordinates': txt('Refrence Coordinates of Village / PU'),
+          'name_of_wo': txt('Name of WO'),
+          'project_name': txt('Name of Project Under Which Established'),
+          'date_established': txt('Date / Year of Establishment'),
+          'chairperson_name': txt('Name of Chairperson'),
+          'secretary_treasurer': txt('Sectary / Treasurer '),
+          'contact_number': txt('Contact Number'),
+          'interventions':
+              addedInterventions.map((i) => '${i['name']} (${i['number']})').join(', '),
+        };
+      case "Women Nursery":
+        return {
+          'Employee_Name': txt('Employee Name'),
+          'Project_Name': txt('Name of Project Under Which Established'),
+          'Division_Name': txt('Name of Division'),
+          'Sub_Division_Range': txt('Name of Sub-division | Range'),
+          'VDC_WO': txt('Name Of WO'),
+          'Nursery_Owner_Name': txt('Name of Nursery Grower'),
+          'Nursery_Owner_Full_Name': txt('Name of Nursery Grower'),
+          'Village_Name': txt('Location | Village | Site Name'),
+          'Limits': txt('No of Unit/No of Plants'),
+          'Contact_Number': txt('Contact Number'),
+          'CNIC_Nursery_Owner': txt('CNIC of Nursery Grower'),
+          'Date_of_Agreement': txt('Date Of Agreement'),
+          'Reference_Coordinates': txt('Refrence Coordinates'),
+          'Forest_Region': selectedRegion ?? '',
+          'Forest_Circle_Name': txt('Name of Forest Circle'),
+          'Date': txt('Date of Establishment'),
+        };
+      case "Mass Planting Event":
+        return {
+          'employee_name': txt('Employee Name'),
+          'forest_region': selectedRegion ?? '',
+          'forest_circle_name': txt('Name of Forest Circle'),
+          'division_name': txt('Name of Division'),
+          'sub_division_range': txt('Name of Sub-Division / Range'),
+          'project_name': txt('Name Of Project'),
+          'institute_org': txt('Name of Institute / Organization'),
+          'venue': txt('Location / Venue'),
+          'chief_guest': txt('Chief Guest'),
+          'date_of_event': txt('Date of Event'),
+          'total_plants': plantDistributionList
+              .map((p) => int.tryParse(p['number'] ?? '') ?? 0)
+              .fold(0, (a, b) => a + b)
+              .toString(),
+          'plant_details':
+              plantDistributionList.map((p) => '${p['type']} (${p['number']})').join(', '),
+        };
+      case "Farm / Agro Forestry":
+        return {
+          'employee_name': txt('Employee Name'),
+          'forest_division': txt('Forest Division'),
+          'sub_division': txt('Name of Sub Division'),
+          'plants_distributed_today': txt('Plants Distributed Today'),
+          'major_species': txt('Major Species'),
+          'total_plants_distributed': txt('Total No Of Plants Distributed'),
+        };
+      case "Other Activity":
+        return {
+          'employee_name': txt('Employee Name'),
+          'activity_title': txt('Activity Title'),
+          'forest_circle_name': txt('Name of Forest Circle'),
+          'division_name': txt('Name of Division'),
+          'subdivision_name': txt('Name of Sub-Division / Range'),
+          'project_name': txt('Name Of Project'),
+          'name_of_wo': txt('Name of WO'),
+          'village_name': txt('Name of Village'),
+          'description': txt('Activity Description'),
+        };
+      default:
+        return {};
     }
   }
 }

@@ -1,17 +1,19 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../constants/constants.dart';
+import '../../../features/jfmc/providers/jfmc_provider.dart';
 import '../../../widgts/home_items.dart';
 
-class JFMCForm extends StatefulWidget {
+class JFMCForm extends ConsumerStatefulWidget {
   const JFMCForm({super.key});
 
   @override
-  State<JFMCForm> createState() => _JFMCFormState();
+  ConsumerState<JFMCForm> createState() => _JFMCFormState();
 }
 
-class _JFMCFormState extends State<JFMCForm> with ImagePickerMixin {
+class _JFMCFormState extends ConsumerState<JFMCForm> with ImagePickerMixin {
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false;
 
@@ -23,6 +25,7 @@ class _JFMCFormState extends State<JFMCForm> with ImagePickerMixin {
   final _jfmcNameController = TextEditingController();
   final _presidentNameController = TextEditingController();
   final _contactController = TextEditingController();
+  final _circleController = TextEditingController();
 
   DateTime? selectedDate;
   String? selectedRegion;
@@ -107,6 +110,7 @@ class _JFMCFormState extends State<JFMCForm> with ImagePickerMixin {
     _jfmcNameController.dispose();
     _presidentNameController.dispose();
     _contactController.dispose();
+    _circleController.dispose();
     _interventionNameController.dispose();
     super.dispose();
   }
@@ -155,9 +159,35 @@ class _JFMCFormState extends State<JFMCForm> with ImagePickerMixin {
   }
 
   void _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isSubmitting = true);
-      await Future.delayed(const Duration(seconds: 2));
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isSubmitting = true);
+
+    String d(TextEditingController c) => c.text.trim();
+
+    final fields = <String, dynamic>{
+      'employee_name': d(_employeeNameController),
+      'forest_region': selectedRegion ?? '',
+      'forest_circle_name': d(_circleController),
+      'forest_division': d(_divisionController),
+      'sub_division_range': d(_subDivisionController),
+      'village_pu': d(_villageController),
+      'forest_compartment': d(_forestCompartmentController),
+      'jfmc_name': d(_jfmcNameController),
+      'date_of_registration': selectedDate != null
+          ? '${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}'
+          : '',
+      'president_name': d(_presidentNameController),
+      'contact_number': d(_contactController),
+      'interventions': addedInterventions.map((i) => i['name'] ?? '').join(', '),
+      'description': addedInterventions.map((i) => i['name'] ?? '').join(', '),
+    };
+
+    try {
+      await ref.read(jfmcRepositoryProvider).createJfmcMultipart(
+            fields,
+            document: _supportingDocument?.path,
+          );
       if (!context.mounted) return;
       setState(() => _isSubmitting = false);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -167,6 +197,15 @@ class _JFMCFormState extends State<JFMCForm> with ImagePickerMixin {
         ),
       );
       Navigator.pop(context);
+    } catch (e) {
+      if (!context.mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Submission failed: $e"),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
     }
   }
 
@@ -325,7 +364,7 @@ class _JFMCFormState extends State<JFMCForm> with ImagePickerMixin {
               ),
               FormHelpers.buildTextField(
                 label: "Forest Circle",
-                controller: _divisionController,
+                controller: _circleController,
                 validator: (value) => value == null || value.isEmpty ? "Required" : null,
                 prefixIcon: Icons.business,
               ),

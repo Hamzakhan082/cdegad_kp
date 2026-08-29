@@ -1,18 +1,27 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart';
 
-class DownloadsScreen extends StatefulWidget {
+import 'package:cdegad_kp/core/api/api_endpoints.dart';
+import 'package:cdegad_kp/core/api/dio_client.dart';
+
+class DownloadsScreen extends ConsumerStatefulWidget {
   const DownloadsScreen({super.key});
 
   @override
-  State<DownloadsScreen> createState() => _DownloadsScreenState();
+  ConsumerState<DownloadsScreen> createState() => _DownloadsScreenState();
 }
 
-class _DownloadsScreenState extends State<DownloadsScreen> with TickerProviderStateMixin {
+class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
+    with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   String searchQuery = "";
   bool _isLoading = true;
+  bool _isUploading = false;
+  String? _loadError;
   List<Map<String, dynamic>> files = [];
   late AnimationController _loadingController;
 
@@ -27,45 +36,61 @@ class _DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSt
   }
 
   Future<void> _loadFiles() async {
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() {
-      files = [
-        {
-          "name": "Annual Report 2024.pdf",
-          "type": "pdf",
-          "size": "2.5 MB",
-          "date": "2024-12-15",
-          "icon": Icons.picture_as_pdf,
-          "color": Colors.red,
-        },
-        {
-          "name": "Forest Coverage Map.jpg",
-          "type": "image",
-          "size": "1.8 MB",
-          "date": "2024-11-20",
-          "icon": Icons.image,
-          "color": Colors.blue,
-        },
-        {
-          "name": "Tree Plantation Video.mp4",
-          "type": "video",
-          "size": "15.2 MB",
-          "date": "2024-10-10",
-          "icon": Icons.videocam,
-          "color": Colors.purple,
-        },
-        {
-          "name": "Budget Document 2025.docx",
-          "type": "doc",
-          "size": "850 KB",
-          "date": "2025-01-05",
-          "icon": Icons.description,
-          "color": Colors.blue,
-        },
-      ];
-      _isLoading = false;
-    });
-    _loadingController.stop();
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+        _loadError = null;
+      });
+    }
+    try {
+      final response = await ref.read(dioClientProvider).get(ApiEndpoints.downloads);
+      final data = (response.data is Map && response.data['data'] is List)
+          ? response.data['data'] as List
+          : <dynamic>[];
+      if (!mounted) return;
+      setState(() {
+        files = data.map((e) {
+          final row = (e as Map).cast<String, dynamic>();
+          final name = (row['original_name'] ?? row['filename'] ?? 'file').toString();
+          return {
+            'id': (row['id'] ?? '').toString(),
+            'name': name,
+            'filename': (row['filename'] ?? '').toString(),
+            'type': _extensionOf(name),
+            'size': _formatSize((row['size'] ?? 0).toString()),
+            'date': _shortDate((row['created_at'] ?? '').toString()),
+            'icon': _getFileIcon(_extensionOf(name)),
+            'color': _getFileColor(_extensionOf(name)),
+          };
+        }).toList();
+        _isLoading = false;
+      });
+      _loadingController.stop();
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _loadError = e.toString();
+      });
+      _loadingController.stop();
+    }
+  }
+
+  String _extensionOf(String name) {
+    final dot = name.lastIndexOf('.');
+    return dot == -1 ? '' : name.substring(dot + 1);
+  }
+
+  String _formatSize(String bytes) {
+    final n = double.tryParse(bytes) ?? 0;
+    if (n >= 1024 * 1024) return '${(n / (1024 * 1024)).toStringAsFixed(1)} MB';
+    if (n >= 1024) return '${(n / 1024).toStringAsFixed(1)} KB';
+    return '$n B';
+  }
+
+  String _shortDate(String value) {
+    final m = RegExp(r'^(\d{4}-\d{2}-\d{2})').firstMatch(value.trim());
+    return m?.group(1) ?? value;
   }
 
   Future<void> _uploadFile() async {
@@ -76,28 +101,34 @@ class _DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSt
         type: FileType.any,
       );
 
-      if (result != null) {
-        PlatformFile file = result.files.first;
-        setState(() {
-          files.add({
-            "name": file.name,
-            "type": file.extension ?? "file",
-            "size": "${(file.size / 1024).toStringAsFixed(2)} KB",
-            "date": DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            "icon": _getFileIcon(file.extension ?? ""),
-            "color": _getFileColor(file.extension ?? ""),
-          });
-        });
-
+      if (result != null && result.files.single.path != null) {
+        setState(() => _isUploading = true);
+        final file = result.files.single;
+        final multipart = await MultipartFile.fromFile(
+          file.path!,
+          filename: file.name,
+        );
+        await ref.read(dioClientProvider).postMultipart(
+              ApiEndpoints.upload,
+              fields: const {},
+              files: [multipart],
+              fileFieldName: 'file',
+            );
         if (!mounted) return;
+        setState(() => _isUploading = false);
         scaffoldMessenger.showSnackBar(
           SnackBar(content: Text('${file.name} uploaded successfully')),
         );
+        _loadFiles();
       }
     } catch (e) {
       if (!mounted) return;
+      setState(() => _isUploading = false);
       scaffoldMessenger.showSnackBar(
-        SnackBar(content: Text('Error uploading file: $e')),
+        SnackBar(
+          content: Text('Error uploading file: $e'),
+          backgroundColor: Colors.red.shade700,
+        ),
       );
     }
   }
@@ -151,18 +182,89 @@ class _DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSt
   }
 
   Future<void> _downloadFile(Map<String, dynamic> file) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Downloading ${file['name']}...')),
-    );
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Downloading ${file['name']}...'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+      final stored = file['filename'] as String? ?? file['name'];
+      final response = await ref
+          .read(dioClientProvider)
+          .downloadBytes(ApiEndpoints.uploadFile(stored));
+      final bytes = response.data;
+      if (bytes == null || bytes.isEmpty) {
+        throw Exception('Empty response from server');
+      }
+      final dir = await getApplicationDocumentsDirectory();
+      final downloadsDir = Directory('${dir.path}/downloads');
+      if (!downloadsDir.existsSync()) {
+        downloadsDir.createSync(recursive: true);
+      }
+      final filePath = '${downloadsDir.path}/${file['name']}';
+      final f = File(filePath);
+      f.writeAsBytesSync(bytes);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Saved to: $filePath'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Download failed: $e'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+    }
   }
 
-  Future<void> _deleteFile(int index) async {
-    setState(() {
-      files.removeAt(index);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('File deleted successfully')),
+  Future<void> _confirmDelete(int index) async {
+    final file = files[index];
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete File"),
+        content: Text("Are you sure you want to delete '${file['name']}'?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Delete", style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
     );
+
+    if (confirm == true) {
+      try {
+        await ref
+            .read(dioClientProvider)
+            .delete(ApiEndpoints.downloadsById((file['id'] ?? '').toString()));
+        if (!mounted) return;
+        setState(() {
+          files.removeAt(index);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('File deleted successfully')),
+        );
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Delete failed: $e'),
+            backgroundColor: Colors.red.shade700,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -224,6 +326,41 @@ class _DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSt
                         ),
                       ),
                     ],
+                  ),
+                ),
+              )
+            else if (_loadError != null)
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.cloud_off, size: 72, color: Colors.grey.shade400),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Could not load records',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey.shade700,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _loadError!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+                        ),
+                        const SizedBox(height: 20),
+                        OutlinedButton.icon(
+                          onPressed: _loadFiles,
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('Retry'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )
@@ -315,7 +452,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSt
                                               Text('Delete', style: TextStyle(color: Colors.red)),
                                             ],
                                           ),
-                                          onTap: () => _deleteFile(files.indexOf(file)),
+                                          onTap: () => _confirmDelete(files.indexOf(file)),
                                         ),
                                       ],
                                     ),
@@ -331,11 +468,20 @@ class _DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSt
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _uploadFile,
+        onPressed: _isUploading ? null : _uploadFile,
         backgroundColor: Colors.green.shade700,
         foregroundColor: Colors.white,
-        icon: const Icon(Icons.upload_file),
-        label: const Text('Upload File'),
+        icon: _isUploading
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : const Icon(Icons.upload_file),
+        label: Text(_isUploading ? 'Uploading...' : 'Upload File'),
       ),
     );
   }

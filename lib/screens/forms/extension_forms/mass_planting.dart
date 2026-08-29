@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../constants/constants.dart';
+import '../../../features/mass_plantation/repositories/mass_plantation_repository.dart';
+import '../../../widgts/home_items.dart';
 
 // ------------------- MAIN LANDING SCREEN -------------------
 class MassPlantingScreen extends StatefulWidget {
@@ -285,18 +288,19 @@ class MassPlantingViewRecordsScreen extends StatelessWidget {
 }
 
 // ------------------- FORM SCREEN -------------------
-class MassPlantingFormScreen extends StatefulWidget {
+class MassPlantingFormScreen extends ConsumerStatefulWidget {
   const MassPlantingFormScreen({super.key});
 
   @override
-  State<MassPlantingFormScreen> createState() => _MassPlantingFormScreenState();
+  ConsumerState<MassPlantingFormScreen> createState() => _MassPlantingFormScreenState();
 }
 
-class _MassPlantingFormScreenState extends State<MassPlantingFormScreen> with ImagePickerMixin {
+class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen> with ImagePickerMixin {
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false;
   DateTime? _selectedDate;
   String? _selectedFileName;
+  File? _selectedFile;
   String? selectedRegion;
 
   final List<String> regions = ['Region I', 'Region II', 'Region III'];
@@ -403,7 +407,7 @@ class _MassPlantingFormScreenState extends State<MassPlantingFormScreen> with Im
         context: context,
         initialDate: _selectedDate ?? DateTime.now(),
         firstDate: DateTime(2020),
-        lastDate: DateTime(2025)
+        lastDate: DateTime(2100)
     );
     if (picked != null && picked != _selectedDate) setState(() => _selectedDate = picked);
   }
@@ -430,8 +434,10 @@ class _MassPlantingFormScreenState extends State<MassPlantingFormScreen> with Im
       if (result != null && result.files.single.path != null) {
         setState(() {
           _selectedFileName = result.files.single.name;
+          _selectedFile = File(result.files.single.path!);
         });
 
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("File selected: $_selectedFileName"),
@@ -441,6 +447,7 @@ class _MassPlantingFormScreenState extends State<MassPlantingFormScreen> with Im
         );
       }
     } catch (e) {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error picking file: $e"),
@@ -560,39 +567,67 @@ class _MassPlantingFormScreenState extends State<MassPlantingFormScreen> with Im
   }
 
 void _submitForm() async {
-    if (_formKey.currentState!.validate() && _selectedDate != null) {
-      setState(() => _isSubmitting = true);
-
-      // Simulate saving data including file
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (!context.mounted) return;
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-
-        String message = "Record Saved Successfully\n";
-        message += "Plants: ${_plantDetails.length} types";
-
-        if (_selectedFileName != null) {
-          message += "\nFile attached: $_selectedFileName";
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: AppColors.primaryGreen,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-        Navigator.pop(context);
-      }
-    } else {
+    if (!_formKey.currentState!.validate() || _selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
                 content: Text("Please fill all fields and select a date"),
                 backgroundColor: AppColors.errorColor
             )
       );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    String value(String field) => _controllers[field]?.text.trim() ?? '';
+
+    final fields = <String, dynamic>{
+      'employee_name': value('Employee Name'),
+      'forest_region': selectedRegion ?? value('Name of Forest Region'),
+      'forest_circle_name': value('Name of Forest Circle'),
+      'division_name': value('Name of Division'),
+      'sub_division_range': value('Name of Sub-Division / Range'),
+      'project_name': value('Name of Project'),
+      'institute_org': value('Name of Institution / Organization'),
+      'venue': value('Location | Venue'),
+      'chief_guest': value('Chief Guest'),
+      'total_plants': value('Total Number of Plants'),
+      'date_of_event': '${_selectedDate!.year.toString().padLeft(4, '0')}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}',
+      'plant_details': _plantDetails.map((d) => '${d['name']} (${d['number']})').join(', '),
+    };
+
+    try {
+      await ref.read(massPlantationRepositoryProvider).createMultipart(
+            fields,
+            document: _selectedFile?.path,
+          );
+      if (!context.mounted) return;
+      setState(() => _isSubmitting = false);
+
+      String message = "Record Saved Successfully\n";
+      message += "Plants: ${_plantDetails.length} types";
+
+      if (_selectedFileName != null) {
+        message += "\nFile attached: $_selectedFileName";
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: AppColors.primaryGreen,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      if (!context.mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Submission failed: $e"),
+          backgroundColor: Colors.red.shade700,
+        ),
+);
     }
   }
 
@@ -748,288 +783,5 @@ IconData _getIconForField(String field) {
       case 'Total Number of Plants': return Icons.format_list_numbered;
       default: return Icons.label;
     }
-  }
-}
-
-// Define missing mixin with image and file picker
-mixin ImagePickerMixin<T extends StatefulWidget> on State<T> {
-  XFile? _pickedImage;
-  final ImagePicker _picker = ImagePicker();
-
-  Future<void> pickImage() async {
-    try {
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        setState(() {
-          _pickedImage = image;
-        });
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error picking image: $e"),
-          backgroundColor: AppColors.errorColor,
-        ),
-      );
-    }
-  }
-
-  void clearImage() {
-    setState(() {
-      _pickedImage = null;
-    });
-  }
-
-  Widget buildImagePickerField({required String label}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 8),
-          GestureDetector(
-            onTap: pickImage,
-            child: Container(
-              height: 150,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: _pickedImage != null
-                  ? Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.file(
-                      _pickedImage!.path as dynamic,
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.broken_image, size: 40, color: Colors.grey[500]),
-                              const SizedBox(height: 8),
-                              Text(
-                                "Error loading image",
-                                style: TextStyle(color: Colors.grey[500], fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: GestureDetector(
-                      onTap: clearImage,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.close, color: Colors.white, size: 20),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-                  : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.camera_alt,
-                    size: 40,
-                    color: Colors.grey[500],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Tap to upload image",
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildFilePickerField({
-    required String label,
-    required String? fileName,
-    required VoidCallback onPressed,
-    required VoidCallback onClear,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 8),
-          InkWell(
-            onTap: onPressed,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.attach_file,
-                    size: 24,
-                    color: AppColors.primaryGreen,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      fileName ?? "Tap to select file",
-                      style: TextStyle(
-                        color: fileName != null ? Colors.black87 : Colors.grey[600],
-                        fontSize: 16,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (fileName != null)
-                    IconButton(
-                      icon: Icon(Icons.clear, color: Colors.grey[600]),
-                      onPressed: onClear,
-                    ),
-                ],
-              ),
-            ),
-          ),
-          if (fileName != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Text(
-                "File selected: $fileName",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.primaryGreen,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-// Define missing FormHelpers class
-class FormHelpers {
-  static Widget buildTextField({
-    required String label,
-    required TextEditingController controller,
-    required String? Function(String?) validator,
-    IconData? prefixIcon,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: controller,
-        validator: validator,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: AppColors.secondaryGreen) : null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: const BorderSide(color: AppColors.secondaryGreen),
-          ),
-          filled: true,
-          fillColor: AppColors.surfaceColor,
-        ),
-      ),
-    );
-  }
-
-  static Widget buildDropdownField({
-    required String label,
-    required List<String> options,
-    required String? value,
-    required String? Function(String?) validator,
-    required Function(String?) onChanged,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownButtonFormField<String>(
-        initialValue: value,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: const BorderSide(color: AppColors.secondaryGreen),
-          ),
-          filled: true,
-          fillColor: AppColors.surfaceColor,
-        ),
-        validator: validator,
-        onChanged: onChanged,
-        items: options.map((String option) {
-          return DropdownMenuItem<String>(
-            value: option,
-            child: Text(option),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  static Widget buildSubmitButton({
-    required VoidCallback onPressed,
-    required bool isLoading,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryGreen,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
-            : const Text(
-          "Submit",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
   }
 }

@@ -1,17 +1,19 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../constants/constants.dart';
+import '../../../features/vdc/providers/vdc_provider.dart';
 import '../../../widgts/home_items.dart'; // Assuming this has FormHelpers and ImagePickerMixin
 
-class VDCForm extends StatefulWidget {
+class VDCForm extends ConsumerStatefulWidget {
   const VDCForm({super.key});
 
   @override
-  State<VDCForm> createState() => _VDCFormState();
+  ConsumerState<VDCForm> createState() => _VDCFormState();
 }
 
-class _VDCFormState extends State<VDCForm> with ImagePickerMixin {
+class _VDCFormState extends ConsumerState<VDCForm> with ImagePickerMixin {
   final _formKey = GlobalKey<FormState>();
   final _employeeNameController = TextEditingController();
   final _divisionController = TextEditingController();
@@ -22,9 +24,11 @@ class _VDCFormState extends State<VDCForm> with ImagePickerMixin {
   final _contactController = TextEditingController();
   final _vdcMembersController = TextEditingController();
   final _secretaryNameController = TextEditingController();
+  final _circleController = TextEditingController();
+  final _coordinatesController = TextEditingController();
+  final _projectNameController = TextEditingController();
 
   DateTime? selectedDate;
-  String? selectedActivity;
   String? selectedRegion;
   bool _isSubmitting = false;
 
@@ -33,7 +37,6 @@ class _VDCFormState extends State<VDCForm> with ImagePickerMixin {
   String? _selectedDocumentName;
 
   final List<String> regions = ['Region I', 'Region II', 'Region III'];
-  final List<String> activities = ['Nursery', 'Village Development Plan (VDP)', 'Other Activities'];
   final List<Map<String, String>> addedInterventions = [];
 
   final TextEditingController _interventionNameController = TextEditingController();
@@ -92,25 +95,56 @@ class _VDCFormState extends State<VDCForm> with ImagePickerMixin {
   }
 
   void _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      if (selectedActivity != null) {
-        final route = '/activity_${selectedActivity!.toLowerCase().replaceAll(' ', '_').replaceAll('(', '').replaceAll(')', '')}';
-        Navigator.pushNamed(context, route);
-        return;
-      }
+    if (!_formKey.currentState!.validate()) return;
 
-      setState(() => _isSubmitting = true);
-      await Future.delayed(const Duration(seconds: 2));
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("VDC Data Submitted Successfully!"),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-        Navigator.pop(context);
-      }
+    setState(() => _isSubmitting = true);
+
+    String d(TextEditingController c) => c.text.trim();
+
+    final fields = <String, dynamic>{
+      'employee_name': d(_employeeNameController),
+      'forest_region': selectedRegion ?? '',
+      'forest_circle_name': d(_circleController),
+      'forest_division': d(_divisionController),
+      'sub_division_range': d(_subDivisionController),
+      'village_pu': d(_villageController),
+      'reference_coordinates': d(_coordinatesController),
+      'vdc_name': d(_vdcController),
+      'date_of_registration': selectedDate != null
+          ? '${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}'
+          : '',
+      'project_name': d(_projectNameController),
+      'president_name': d(_presidentNameController),
+      'secretary_treasurer': d(_secretaryNameController),
+      'members_count': d(_vdcMembersController),
+      'contact_number': d(_contactController),
+      'interventions': addedInterventions.map((i) => i['name'] ?? '').join(', '),
+      'description': addedInterventions.map((i) => i['name'] ?? '').join(', '),
+    };
+
+    try {
+      await ref.read(vdcRepositoryProvider).createVdcMultipart(
+            fields,
+            document: _supportingDocument?.path,
+          );
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("VDC Data Submitted Successfully!"),
+          backgroundColor: AppColors.primaryGreen,
+        ),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Submission failed: $e"),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
     }
   }
 
@@ -267,6 +301,9 @@ class _VDCFormState extends State<VDCForm> with ImagePickerMixin {
     _contactController.dispose();
     _vdcMembersController.dispose();
     _secretaryNameController.dispose();
+    _circleController.dispose();
+    _coordinatesController.dispose();
+    _projectNameController.dispose();
     _interventionNameController.dispose();
     super.dispose();
   }
@@ -322,7 +359,7 @@ class _VDCFormState extends State<VDCForm> with ImagePickerMixin {
               ),
               FormHelpers.buildTextField(
                 label: "Forest Circle",
-                controller: _employeeNameController,
+                controller: _circleController,
                 validator: (value) => value == null || value.isEmpty ? "Required" : null,
                 prefixIcon: Icons.person,
               ),
@@ -346,7 +383,7 @@ class _VDCFormState extends State<VDCForm> with ImagePickerMixin {
               ),
               FormHelpers.buildTextField(
                 label: "Refrence Coordinates Of Village / PU",
-                controller: _villageController,
+                controller: _coordinatesController,
                 validator: (value) => value == null || value.isEmpty ? "Required" : null,
                 prefixIcon: Icons.home,
               ),
@@ -381,7 +418,7 @@ class _VDCFormState extends State<VDCForm> with ImagePickerMixin {
               ),
               FormHelpers.buildTextField(
                 label: "Name Of Project Under Which Established",
-                controller: _presidentNameController,
+                controller: _projectNameController,
                 validator: (value) => value == null || value.isEmpty ? "Required" : null,
                 prefixIcon: Icons.person_pin,
               ),
