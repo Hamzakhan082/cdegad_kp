@@ -272,6 +272,56 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
     }
   }
 
+  Future<void> _renameFile(Map<String, dynamic> file) async {
+    final controller = TextEditingController(text: file['name']?.toString());
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Rename File Record'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(labelText: 'Display name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (newName == null || newName.isEmpty || newName == file['name']) return;
+
+    try {
+      await ref
+          .read(dioClientProvider)
+          .put(
+            ApiEndpoints.downloadsById(file['id'].toString()),
+            data: {'original_name': newName},
+          );
+      if (!mounted) return;
+      await _loadFiles();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('File record updated successfully')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Rename failed: $e'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -463,6 +513,19 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
                                             ],
                                           ),
                                           onTap: () => _downloadFile(file),
+                                        ),
+                                        PopupMenuItem(
+                                          onTap: () => Future<void>.delayed(
+                                            Duration.zero,
+                                            () => _renameFile(file),
+                                          ),
+                                          child: const Row(
+                                            children: [
+                                              Icon(Icons.edit, size: 20),
+                                              SizedBox(width: 8),
+                                              Text('Rename'),
+                                            ],
+                                          ),
                                         ),
                                         PopupMenuItem(
                                           child: const Row(

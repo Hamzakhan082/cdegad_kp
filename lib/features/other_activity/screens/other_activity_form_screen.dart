@@ -10,7 +10,9 @@ import 'package:cdegad_kp/features/other_activity/models/other_activity_model.da
 import 'package:cdegad_kp/features/other_activity/providers/other_activity_provider.dart';
 
 class OtherActivityFormScreen extends ConsumerStatefulWidget {
-  const OtherActivityFormScreen({super.key});
+  final OtherActivityModel? existingActivity;
+
+  const OtherActivityFormScreen({super.key, this.existingActivity});
 
   @override
   ConsumerState<OtherActivityFormScreen> createState() =>
@@ -30,6 +32,22 @@ class _OtherActivityFormScreenState
   File? _imageFile;
   File? _documentFile;
   bool _isSubmitting = false;
+
+  bool get _isEditing => widget.existingActivity?.id != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final activity = widget.existingActivity;
+    if (activity != null) {
+      _nameController.text = activity.activityName;
+      _typeController.text = activity.activityType;
+      _districtController.text = activity.district;
+      _divisionController.text = activity.division;
+      _tehsilController.text = activity.tehsil;
+      _descriptionController.text = activity.description;
+    }
+  }
 
   @override
   void dispose() {
@@ -116,14 +134,30 @@ class _OtherActivityFormScreenState
         'description': _descriptionController.text.trim(),
       };
 
-      await ref
-          .read(otherActivityListProvider.notifier)
-          .create(OtherActivityModel.fromJson(fields));
+      final notifier = ref.read(otherActivityListProvider.notifier);
+      if (_isEditing) {
+        await notifier.updateMultipart(
+          widget.existingActivity!.id!,
+          fields,
+          image: _imageFile?.path,
+          document: _documentFile?.path,
+        );
+      } else {
+        await notifier.createMultipart(
+          fields,
+          image: _imageFile?.path,
+          document: _documentFile?.path,
+        );
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Activity created successfully'),
+          SnackBar(
+            content: Text(
+              _isEditing
+                  ? 'Activity updated successfully'
+                  : 'Activity created successfully',
+            ),
             backgroundColor: AppColors.primaryGreen,
           ),
         );
@@ -147,7 +181,7 @@ class _OtherActivityFormScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Activity'),
+        title: Text(_isEditing ? 'Edit Activity' : 'New Activity'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -236,8 +270,8 @@ class _OtherActivityFormScreenState
                               strokeWidth: 2.5,
                             ),
                           )
-                        : const Text(
-                            'Submit',
+                        : Text(
+                            _isEditing ? 'Save Changes' : 'Submit',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

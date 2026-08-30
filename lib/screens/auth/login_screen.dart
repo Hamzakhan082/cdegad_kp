@@ -111,12 +111,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
     setState(() => _isLoading = false);
 
     if (result is AuthException) {
-      if (result.isOffline) {
-        // Backend unreachable (offline deployment). Continue in offline mode;
-        // credentials are validated the moment the backend is reachable.
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-        return;
-      }
       _showError(result.message);
       return;
     }
@@ -163,7 +157,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
       builder: (context) => AlertDialog(
         title: const Text("Forgot Password"),
         content: const Text(
-          "Password reset is not available in offline mode. Please contact your system administrator for assistance.",
+          "Password reset is not configured. Please contact your system administrator for assistance.",
         ),
         actions: [
           TextButton(
@@ -171,16 +165,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
             child: const Text("OK"),
           ),
         ],
-      ),
-    );
-  }
-
-  void _socialLogin(String provider) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("$provider login is not available in offline mode."),
-        backgroundColor: Colors.green.shade700,
-        behavior: SnackBarBehavior.floating,
       ),
     );
   }
@@ -414,38 +398,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
                               ),
                             ),
                             const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                const Expanded(child: Divider()),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text("Or login with"),
-                                ),
-                                const Expanded(child: Divider()),
-                              ],
-                            ),
-                            const SizedBox(height: 15),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _social(
-                                  Icons.g_mobiledata,
-                                  "Google",
-                                  () => _socialLogin("Google"),
-                                ),
-                                _social(
-                                  Icons.facebook,
-                                  "Facebook",
-                                  () => _socialLogin("Facebook"),
-                                ),
-                                _social(
-                                  Icons.apple,
-                                  "Apple",
-                                  () => _socialLogin("Apple"),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
                             Center(
                               child: GestureDetector(
                                 onTap: () {
@@ -498,22 +450,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _social(IconData icon, String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.grey.shade200,
-            child: Icon(icon),
-          ),
-          const SizedBox(height: 5),
-          Text(label, style: const TextStyle(fontSize: 12)),
         ],
       ),
     );

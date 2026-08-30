@@ -16,6 +16,12 @@ abstract class OtherActivityRepository {
     String? image,
     String? document,
   });
+  Future<OtherActivityModel> updateMultipart(
+    String id,
+    Map<String, dynamic> fields, {
+    String? image,
+    String? document,
+  });
   Future<void> delete(String id);
 }
 
@@ -98,6 +104,43 @@ class OtherActivityRepositoryImpl implements OtherActivityRepository {
       await _dioClient.delete(ApiEndpoints.otherActivityById(id));
     } catch (e) {
       throw Exception('Failed to delete activity');
+    }
+  }
+
+  @override
+  Future<OtherActivityModel> updateMultipart(
+    String id,
+    Map<String, dynamic> fields, {
+    String? image,
+    String? document,
+  }) async {
+    try {
+      final fileFields = <String, MultipartFile>{};
+      if (image != null) {
+        fileFields['upload_image'] = await MultipartFile.fromFile(
+          image,
+          filename: image.split(Platform.pathSeparator).last,
+        );
+      }
+      if (document != null) {
+        fileFields['upload_file'] = await MultipartFile.fromFile(
+          document,
+          filename: document.split(Platform.pathSeparator).last,
+        );
+      }
+      final legacyFields = DashboardApiAdapter.otherRequest(fields);
+      final response = await _dioClient.putFormData(
+        ApiEndpoints.otherActivityById(id),
+        fields: legacyFields,
+        fileFields: fileFields,
+      );
+      return OtherActivityModel.fromJson(
+        DashboardApiAdapter.otherRow(
+          DashboardApiAdapter.record(response.data, fallback: legacyFields),
+        ),
+      );
+    } catch (e) {
+      throw Exception('Failed to update activity: $e');
     }
   }
 }

@@ -6,13 +6,41 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cdegad_kp/main.dart';
 import 'package:cdegad_kp/screens/home_screen.dart';
 import 'package:cdegad_kp/screens/forms/cd_forms/cd.dart';
+import 'package:cdegad_kp/features/auth/models/auth_response_model.dart';
+import 'package:cdegad_kp/features/auth/models/employee_login_model.dart';
+import 'package:cdegad_kp/features/auth/providers/auth_provider.dart';
+import 'package:cdegad_kp/features/auth/repositories/auth_repository.dart';
+
+class _SuccessfulAuthRepository implements AuthRepository {
+  @override
+  Future<AuthResponseModel> employeeLogin(EmployeeLoginModel model) async {
+    return const AuthResponseModel(
+      token: 'test-token',
+      message: 'Login successful',
+      user: {
+        'id': 1,
+        'full_name': 'Test Employee',
+        'email': 'admin@forest.gov.pk',
+      },
+    );
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  Widget app() => const ProviderScope(child: MyApp());
+  Widget app({AuthRepository? authRepository}) => ProviderScope(
+    overrides: [
+      if (authRepository != null)
+        authRepositoryProvider.overrideWithValue(authRepository),
+    ],
+    child: const MyApp(),
+  );
 
   testWidgets('Splash screen shows branding then navigates to login', (
     WidgetTester tester,
@@ -35,7 +63,7 @@ void main() {
   testWidgets('Login validates the form and navigates to home on success', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(app());
+    await tester.pumpWidget(app(authRepository: _SuccessfulAuthRepository()));
     await tester.pump(const Duration(seconds: 4));
     await tester.pump(const Duration(milliseconds: 800));
 

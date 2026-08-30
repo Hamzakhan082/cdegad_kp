@@ -23,13 +23,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String? _userName;
   String? _userEmail;
 
-  late AnimationController _fabAnimationController;
   late AnimationController _searchAnimationController;
   late AnimationController _loadingController;
   late AnimationController _headerAnimationController;
   late List<AnimationController> _cardControllers;
 
-  late Animation<double> _fabAnimation;
   late Animation<double> _searchAnimation;
   late Animation<double> _headerAnimation;
   late Animation<Offset> _headerSlideAnimation;
@@ -73,18 +71,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       "description": "Gender and community development",
     },
     {
-      "icon": Icons.people,
-      "title": "HR",
-      "subtitle": "Human Resources",
-      "color": Colors.orange,
-      "gradient": const LinearGradient(
-        colors: [Color(0xFFF57C00), Color(0xFFE65100)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      "description": "Manage HR and personnel",
-    },
-    {
       "icon": Icons.download,
       "title": "Downloads",
       "subtitle": "All Department Records",
@@ -105,10 +91,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       duration: const Duration(seconds: 2),
       vsync: this,
     );
-    _fabAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
     _searchAnimationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -118,12 +100,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       vsync: this,
     );
 
-    _fabAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _fabAnimationController,
-        curve: Curves.easeOutBack,
-      ),
-    );
     _searchAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _searchAnimationController,
@@ -192,7 +168,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _headerAnimationController.forward();
     _searchAnimationController.forward();
     _startStaggeredCardAnimations();
-    _fabAnimationController.forward();
   }
 
   Future<void> _check35MonthAlert() async {
@@ -227,7 +202,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _loadingController.dispose();
     _headerAnimationController.dispose();
     _searchAnimationController.dispose();
-    _fabAnimationController.dispose();
     for (var controller in _cardControllers) {
       controller.dispose();
     }
@@ -265,7 +239,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
       drawer: _buildNavigationDrawer(),
       bottomNavigationBar: _buildBottomNavigationBar(),
-      floatingActionButton: _buildFloatingActionButton(),
     );
   }
 
@@ -314,8 +287,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             const SizedBox(height: 24),
             _buildFeatureGrid(filteredFeatures),
             const SizedBox(height: 20),
-            const SizedBox(height: 20),
-            _buildRecentActivities(),
           ],
         ),
       ),
@@ -595,9 +566,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           case "GAD":
             Navigator.pushNamed(context, '/gad');
             break;
-          case "HR":
-            _showSnackBar("HR feature coming soon!");
-            break;
           case "Downloads":
             Navigator.push(
               context,
@@ -661,98 +629,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildRecentActivities() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Text(
-            "Recent Activities",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        RepaintBoundary(
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 8,
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                _buildActivityItem(
-                  Icons.check_circle,
-                  "CD Form Submitted",
-                  "Community Development form",
-                  Colors.green,
-                ),
-                const Divider(),
-                _buildActivityItem(
-                  Icons.edit,
-                  "GAD Form Updated",
-                  "Gender and Community form",
-                  Colors.blue,
-                ),
-                const Divider(),
-                _buildActivityItem(
-                  Icons.upload,
-                  "Extension Data Uploaded",
-                  "Forest extension report",
-                  Colors.orange,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActivityItem(
-    IconData icon,
-    String title,
-    String subtitle,
-    Color color,
-  ) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: TextStyle(fontWeight: FontWeight.w600)),
-              Text(
-                subtitle,
-                style: TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -890,14 +766,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.settings, color: Colors.green),
-                title: const Text("Settings"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showSnackBar("Settings Page - Coming Soon!");
-                },
-              ),
               const Divider(),
               ListTile(
                 leading: Icon(Icons.logout, color: Colors.red.shade400),
@@ -905,7 +773,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   "Logout",
                   style: TextStyle(color: Colors.red.shade400),
                 ),
-                onTap: () {
+                onTap: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('auth_token');
+                  await prefs.remove('user_data');
+                  if (!mounted) return;
                   Navigator.pop(context);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
@@ -968,17 +840,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
       ],
-    );
-  }
-
-  Widget _buildFloatingActionButton() {
-    return ScaleTransition(
-      scale: _fabAnimation,
-      child: FloatingActionButton(
-        onPressed: () => _showSnackBar("Add new form"),
-        backgroundColor: Colors.green,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
     );
   }
 

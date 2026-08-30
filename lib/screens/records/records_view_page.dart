@@ -9,6 +9,22 @@ import '../../../features/women_organization/repositories/women_organization_rep
 import '../../../features/youth_women_nursery/providers/youth_women_nursery_provider.dart';
 import '../../../features/farm_agro_forestry/providers/farm_agro_forestry_provider.dart';
 import '../../../features/other_activity/repositories/other_activity_repository.dart';
+import '../../../features/vdc/models/vdc_model.dart';
+import '../../../features/vdc/screens/vdc_form_screen.dart';
+import '../../../features/jfmc/models/jfmc_model.dart';
+import '../../../features/jfmc/screens/jfmc_form_screen.dart';
+import '../../../features/mass_plantation/models/mass_plantation_model.dart';
+import '../../../features/mass_plantation/screens/mass_plantation_form_screen.dart';
+import '../../../features/awareness/models/awareness_model.dart';
+import '../../../features/awareness/screens/awareness_form_screen.dart';
+import '../../../features/women_organization/models/women_organization_model.dart';
+import '../../../features/women_organization/screens/women_organization_form_screen.dart';
+import '../../../features/youth_women_nursery/models/youth_women_nursery_model.dart';
+import '../../../features/youth_women_nursery/screens/youth_women_nursery_form_screen.dart';
+import '../../../features/farm_agro_forestry/models/farm_agro_forestry_model.dart';
+import '../../../features/farm_agro_forestry/screens/farm_agro_forestry_form_screen.dart';
+import '../../../features/other_activity/models/other_activity_model.dart';
+import '../../../features/other_activity/screens/other_activity_form_screen.dart';
 
 class RecordsViewPage extends ConsumerStatefulWidget {
   final String formType;
@@ -106,17 +122,21 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
     try {
       final List<Map<String, dynamic>> raw;
       if (widget.formType == 'All') {
-        final all = await Future.wait([
-          _fetchFormRecords('VDC'),
-          _fetchFormRecords('JFMC'),
-          _fetchFormRecords('Mass Planting Event'),
-          _fetchFormRecords('Awareness Raising Sessions'),
-          _fetchFormRecords('Women Organization'),
-          _fetchFormRecords('Women Nursery'),
-          _fetchFormRecords('Farm / Agro Forestry'),
-          _fetchFormRecords('Other Activity'),
-        ]);
-        raw = all.expand((rows) => rows).toList();
+        const types = [
+          'VDC',
+          'JFMC',
+          'Mass Planting Event',
+          'Awareness Raising Sessions',
+          'Women Organization',
+          'Women Nursery',
+          'Farm / Agro Forestry',
+          'Other Activity',
+        ];
+        final all = await Future.wait(types.map(_fetchFormRecords));
+        raw = [
+          for (var i = 0; i < types.length; i++)
+            for (final row in all[i]) {...row, '_recordFormType': types[i]},
+        ];
       } else {
         raw = await _fetchFormRecords(widget.formType);
       }
@@ -124,7 +144,12 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
       if (!mounted) return;
       setState(() {
         _allRecords = raw
-            .map((row) => _normalizeRecord(row, widget.formType))
+            .map(
+              (row) => _normalizeRecord(
+                row,
+                row['_recordFormType']?.toString() ?? widget.formType,
+              ),
+            )
             .toList();
         _isLoading = false;
       });
@@ -153,15 +178,23 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
       'id': (row['id'] ?? '').toString(),
       'name': pick([
         'vdc_name',
+        'villageName',
         'committee_name',
+        'committeeName',
         'name_of_wo',
+        'organizationName',
         'institute_org',
         'venue',
+        'title',
         'activity_title',
+        'activityName',
         'type_of_event',
+        'plantationName',
         'major_species',
         'nursery_owner_name',
+        'nurseryName',
         'project_name',
+        'farmName',
         'employee_name',
       ]),
       'date': _toIsoDate(
@@ -172,6 +205,9 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
           'date_establishment',
           'date_of_agreement',
           'created_at',
+          'createdAt',
+          'sessionDate',
+          'eventDate',
         ]),
       ),
       'employee': pick(['employee_name']),
@@ -785,6 +821,55 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
     );
   }
 
+  Future<void> _openEditForm(Map<String, dynamic> record) async {
+    final formType = record['formType']?.toString() ?? widget.formType;
+    final data = Map<String, dynamic>.from(record['data'] as Map);
+    Widget? page;
+
+    switch (formType) {
+      case 'VDC':
+        page = VdcFormScreen(existingVdc: VdcModel.fromJson(data));
+        break;
+      case 'JFMC':
+        page = JfmcFormScreen(existingJfmc: JfmcModel.fromJson(data));
+        break;
+      case 'Mass Planting Event':
+        page = MassPlantationFormScreen(
+          existing: MassPlantationModel.fromJson(data),
+        );
+        break;
+      case 'Awareness Raising Sessions':
+        page = AwarenessFormScreen(existing: AwarenessModel.fromJson(data));
+        break;
+      case 'Women Organization':
+        page = WomenOrganizationFormScreen(
+          editItem: WomenOrganizationModel.fromJson(data),
+        );
+        break;
+      case 'Women Nursery':
+        page = YouthWomenNurseryFormScreen(
+          existingModel: YouthWomenNurseryModel.fromJson(data),
+        );
+        break;
+      case 'Farm / Agro Forestry':
+        page = FarmAgroForestryFormScreen(
+          existingModel: FarmAgroForestryModel.fromJson(data),
+        );
+        break;
+      case 'Other Activity':
+        page = OtherActivityFormScreen(
+          existingActivity: OtherActivityModel.fromJson(data),
+        );
+        break;
+    }
+
+    if (page == null) return;
+    final changed = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => page!));
+    if (changed == true && mounted) await _loadRecords();
+  }
+
   void _showEditOptions(BuildContext context, Map<String, dynamic> record) {
     showModalBottomSheet(
       context: context,
@@ -824,16 +909,7 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
               subtitle: const Text("Modify this record"),
               onTap: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text("Edit mode activated"),
-                    backgroundColor: gradient.first,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                );
+                _openEditForm(record);
               },
             ),
             ListTile(

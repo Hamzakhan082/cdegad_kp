@@ -153,6 +153,28 @@ class DioClient {
     );
   }
 
+  Future<Response> putFormData(
+    String path, {
+    required Map<String, dynamic> fields,
+    Map<String, MultipartFile>? fileFields,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+  }) async {
+    await _initInterceptors();
+    final formData = FormData.fromMap({...fields, ...?fileFields});
+
+    return _dio.put(
+      path,
+      data: formData,
+      queryParameters: queryParameters,
+      options: options?.copyWith(contentType: 'multipart/form-data'),
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+    );
+  }
+
   /// Downloads a file as raw bytes (e.g. from the `/uploads` static route).
   Future<Response<List<int>>> downloadBytes(
     String path, {

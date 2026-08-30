@@ -193,7 +193,7 @@ class _SignupPageState extends ConsumerState<SignupPage>
             "By creating an account, you agree to use this application for official "
             "KP Forest Department purposes only. All data entered must be accurate "
             "and submitted in accordance with departmental policies. This app is "
-            "currently in offline mode; data will sync once the backend is connected.",
+            "intended for authorized departmental use on the local network.",
           ),
         ),
         actions: [
@@ -202,16 +202,6 @@ class _SignupPageState extends ConsumerState<SignupPage>
             child: const Text("Close"),
           ),
         ],
-      ),
-    );
-  }
-
-  void _socialLogin(String provider) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("$provider sign-up is not available in offline mode."),
-        backgroundColor: Colors.green.shade700,
-        behavior: SnackBarBehavior.floating,
       ),
     );
   }
@@ -498,38 +488,6 @@ class _SignupPageState extends ConsumerState<SignupPage>
                             ),
                           ),
                           const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              const Expanded(child: Divider()),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text("Or sign up with"),
-                              ),
-                              const Expanded(child: Divider()),
-                            ],
-                          ),
-                          const SizedBox(height: 15),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _social(
-                                Icons.g_mobiledata,
-                                "Google",
-                                () => _socialLogin("Google"),
-                              ),
-                              _social(
-                                Icons.facebook,
-                                "Facebook",
-                                () => _socialLogin("Facebook"),
-                              ),
-                              _social(
-                                Icons.apple,
-                                "Apple",
-                                () => _socialLogin("Apple"),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
                           Center(
                             child: GestureDetector(
                               onTap: () {
@@ -579,22 +537,6 @@ class _SignupPageState extends ConsumerState<SignupPage>
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _social(IconData icon, String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.grey.shade200,
-            child: Icon(icon),
-          ),
-          const SizedBox(height: 5),
-          Text(label, style: const TextStyle(fontSize: 12)),
         ],
       ),
     );

@@ -22,6 +22,41 @@ class OtherActivityListNotifier
     return result;
   }
 
+  Future<OtherActivityModel> createMultipart(
+    Map<String, dynamic> fields, {
+    String? image,
+    String? document,
+  }) async {
+    final repo = ref.read(otherActivityRepositoryProvider);
+    final result = await repo.createMultipart(
+      fields,
+      image: image,
+      document: document,
+    );
+    state = AsyncValue.data([result, ...state.value ?? []]);
+    return result;
+  }
+
+  Future<OtherActivityModel> updateMultipart(
+    String id,
+    Map<String, dynamic> fields, {
+    String? image,
+    String? document,
+  }) async {
+    final repo = ref.read(otherActivityRepositoryProvider);
+    final result = await repo.updateMultipart(
+      id,
+      fields,
+      image: image,
+      document: document,
+    );
+    final current = state.value ?? [];
+    state = AsyncValue.data([
+      for (final item in current) item.id == id ? result : item,
+    ]);
+    return result;
+  }
+
   Future<void> remove(String id) async {
     final repo = ref.read(otherActivityRepositoryProvider);
     await repo.delete(id);
