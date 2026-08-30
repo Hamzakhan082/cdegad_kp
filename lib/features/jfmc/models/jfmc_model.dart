@@ -2,10 +2,24 @@ import 'dart:convert';
 
 class JfmcModel {
   static final Set<String> _knownKeys = {
-    'id', 'committeeName', 'committee_name', 'district', 'division',
-    'tehsil', 'province', 'description', 'membersCount', 'members_count',
-    'imageUrl', 'image_url', 'documentUrl', 'document_url', 'createdAt',
-    'created_at', 'updatedAt', 'updated_at',
+    'id',
+    'committeeName',
+    'committee_name',
+    'district',
+    'division',
+    'tehsil',
+    'province',
+    'description',
+    'membersCount',
+    'members_count',
+    'imageUrl',
+    'image_url',
+    'documentUrl',
+    'document_url',
+    'createdAt',
+    'created_at',
+    'updatedAt',
+    'updated_at',
   };
 
   final dynamic id;
@@ -48,15 +62,17 @@ class JfmcModel {
 
     return JfmcModel(
       id: json['id'],
-      committeeName: json['committeeName'] as String? ??
-          json['committee_name'] as String? ?? '',
+      committeeName:
+          json['committeeName'] as String? ??
+          json['committee_name'] as String? ??
+          '',
       district: json['district'] as String? ?? '',
       division: json['division'] as String? ?? '',
       tehsil: json['tehsil'] as String? ?? '',
       province: json['province'] as String? ?? '',
       description: json['description'] as String? ?? '',
-      membersCount: json['membersCount'] as int? ??
-          json['members_count'] as int?,
+      membersCount:
+          json['membersCount'] as int? ?? json['members_count'] as int?,
       imageUrl: json['imageUrl'] as String? ?? json['image_url'] as String?,
       documentUrl:
           json['documentUrl'] as String? ?? json['document_url'] as String?,

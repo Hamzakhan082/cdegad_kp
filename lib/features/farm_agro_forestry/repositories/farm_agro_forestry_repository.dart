@@ -1,8 +1,9 @@
 import 'dart:io';
+import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:cdegad_kp/core/api/dio_client.dart';
 import 'package:cdegad_kp/core/api/api_endpoints.dart';
+import 'package:cdegad_kp/core/api/dashboard_api_adapter.dart';
 import 'package:cdegad_kp/features/farm_agro_forestry/models/farm_agro_forestry_model.dart';
 
 abstract class FarmAgroForestryRepository {
@@ -27,8 +28,12 @@ class FarmAgroForestryRepositoryImpl implements FarmAgroForestryRepository {
   Future<List<FarmAgroForestryModel>> getAll() async {
     try {
       final response = await _dioClient.get(ApiEndpoints.farmAgroForestry);
-      final data = response.data['data'] as List;
-      return data.map((e) => FarmAgroForestryModel.fromJson(e)).toList();
+      return DashboardApiAdapter.list(response.data)
+          .map(
+            (e) =>
+                FarmAgroForestryModel.fromJson(DashboardApiAdapter.farmRow(e)),
+          )
+          .toList();
     } catch (e) {
       throw Exception('Failed to fetch farm data');
     }
@@ -37,9 +42,12 @@ class FarmAgroForestryRepositoryImpl implements FarmAgroForestryRepository {
   @override
   Future<FarmAgroForestryModel> getById(String id) async {
     try {
-      final response =
-          await _dioClient.get(ApiEndpoints.farmAgroForestryById(id));
-      return FarmAgroForestryModel.fromJson(response.data['data']);
+      final response = await _dioClient.get(
+        ApiEndpoints.farmAgroForestryById(id),
+      );
+      return FarmAgroForestryModel.fromJson(
+        DashboardApiAdapter.farmRow(DashboardApiAdapter.record(response.data)),
+      );
     } catch (e) {
       throw Exception('Failed to fetch farm');
     }
@@ -48,11 +56,16 @@ class FarmAgroForestryRepositoryImpl implements FarmAgroForestryRepository {
   @override
   Future<FarmAgroForestryModel> create(FarmAgroForestryModel model) async {
     try {
+      final fields = DashboardApiAdapter.farmRequest(model.toJson());
       final response = await _dioClient.post(
         ApiEndpoints.farmAgroForestry,
-        data: model.toJson(),
+        data: fields,
       );
-      return FarmAgroForestryModel.fromJson(response.data['data']);
+      return FarmAgroForestryModel.fromJson(
+        DashboardApiAdapter.farmRow(
+          DashboardApiAdapter.record(response.data, fallback: fields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to create farm');
     }
@@ -65,21 +78,24 @@ class FarmAgroForestryRepositoryImpl implements FarmAgroForestryRepository {
     String? document,
   }) async {
     try {
-      final fileFields = <String, MultipartFile>{};
+      final legacyFields = DashboardApiAdapter.farmRequest(fields);
       if (image != null) {
-        fileFields['upload_image'] = await MultipartFile.fromFile(image,
-            filename: image.split(Platform.pathSeparator).last);
+        legacyFields['upload_image'] =
+            'data:image/jpeg;base64,${base64Encode(await File(image).readAsBytes())}';
       }
       if (document != null) {
-        fileFields['upload_file'] = await MultipartFile.fromFile(document,
-            filename: document.split(Platform.pathSeparator).last);
+        legacyFields['upload_file'] =
+            'data:application/octet-stream;base64,${base64Encode(await File(document).readAsBytes())}';
       }
-      final response = await _dioClient.postFormData(
+      final response = await _dioClient.post(
         ApiEndpoints.farmAgroForestry,
-        fields: fields,
-        fileFields: fileFields,
+        data: legacyFields,
       );
-      return FarmAgroForestryModel.fromJson(response.data['data']);
+      return FarmAgroForestryModel.fromJson(
+        DashboardApiAdapter.farmRow(
+          DashboardApiAdapter.record(response.data, fallback: legacyFields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to create farm: $e');
     }
@@ -91,11 +107,16 @@ class FarmAgroForestryRepositoryImpl implements FarmAgroForestryRepository {
     FarmAgroForestryModel model,
   ) async {
     try {
+      final fields = DashboardApiAdapter.farmRequest(model.toJson());
       final response = await _dioClient.put(
         ApiEndpoints.farmAgroForestryById(id),
-        data: model.toJson(),
+        data: fields,
       );
-      return FarmAgroForestryModel.fromJson(response.data['data']);
+      return FarmAgroForestryModel.fromJson(
+        DashboardApiAdapter.farmRow(
+          DashboardApiAdapter.record(response.data, fallback: fields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to update farm');
     }

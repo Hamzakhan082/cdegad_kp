@@ -21,39 +21,49 @@ class GADPage extends StatefulWidget {
 class _GADPageState extends State<GADPage> with TickerProviderStateMixin {
   final List<Map<String, dynamic>> options = [
     {
-      "title": "Women Organization",// only woman organization.
+      "title": "Women Organization", // only woman organization.
       "icon": Icons.diversity_3,
       "color": const Color(0xFFE91E63),
-      "gradient": const LinearGradient(colors: [Color(0xFFE91E63), Color(0xFFAD1457)]),
-      "description": "Empowering women through community organization"
+      "gradient": const LinearGradient(
+        colors: [Color(0xFFE91E63), Color(0xFFAD1457)],
+      ),
+      "description": "Empowering women through community organization",
     },
     {
       "title": "Women Nursery",
       "icon": Icons.nature_people,
       "color": const Color(0xFF9C27B0),
-      "gradient": const LinearGradient(colors: [Color(0xFF9C27B0), Color(0xFF6A1B9A)]),
-      "description": "Nurturing young minds in environmental care"
+      "gradient": const LinearGradient(
+        colors: [Color(0xFF9C27B0), Color(0xFF6A1B9A)],
+      ),
+      "description": "Nurturing young minds in environmental care",
     },
     {
       "title": "Mass Planting Event",
       "icon": Icons.park,
       "color": const Color(0xFF009688),
-      "gradient": const LinearGradient(colors: [Color(0xFF009688), Color(0xFF00695C)]),
-      "description": "Community-driven plantation initiatives"
+      "gradient": const LinearGradient(
+        colors: [Color(0xFF009688), Color(0xFF00695C)],
+      ),
+      "description": "Community-driven plantation initiatives",
     },
     {
       "title": "Farm / Agro Forestry",
       "icon": Icons.agriculture,
       "color": const Color(0xFF4CAF50),
-      "gradient": const LinearGradient(colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)]),
-      "description": "Sustainable farming and forestry practices"
+      "gradient": const LinearGradient(
+        colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
+      ),
+      "description": "Sustainable farming and forestry practices",
     },
     {
       "title": "Other Activity",
       "icon": Icons.extension,
       "color": const Color(0xFF2196F3),
-      "gradient": const LinearGradient(colors: [Color(0xFF2196F3), Color(0xFF1565C0)]),
-      "description": "Various community development activities"
+      "gradient": const LinearGradient(
+        colors: [Color(0xFF2196F3), Color(0xFF1565C0)],
+      ),
+      "description": "Various community development activities",
     },
   ];
 
@@ -80,7 +90,7 @@ class _GADPageState extends State<GADPage> with TickerProviderStateMixin {
 
     _cardAnimations = List.generate(
       options.length,
-          (index) => Tween<double>(begin: 0.0, end: 1.0).animate(
+      (index) => Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
           parent: _cardController,
           curve: Interval(
@@ -151,7 +161,11 @@ class _GADPageState extends State<GADPage> with TickerProviderStateMixin {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF2E7D32), Color(0xFF43A047), Color(0xFF66BB6A)],
+                  colors: [
+                    Color(0xFF2E7D32),
+                    Color(0xFF43A047),
+                    Color(0xFF66BB6A),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -215,7 +229,9 @@ class _GADPageState extends State<GADPage> with TickerProviderStateMixin {
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -293,15 +309,22 @@ class _GADPageState extends State<GADPage> with TickerProviderStateMixin {
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
                 OptionPage(activity: item["title"], gradient: item["gradient"]),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOutCubic)),
-                child: FadeTransition(opacity: animation, child: child),
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(1.0, 0.0),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeInOutCubic,
+                          ),
+                        ),
+                    child: FadeTransition(opacity: animation, child: child),
+                  );
+                },
           ),
         );
       },
@@ -362,11 +385,7 @@ class _GADPageState extends State<GADPage> with TickerProviderStateMixin {
                       color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Icon(
-                      item["icon"],
-                      color: Colors.white,
-                      size: 28,
-                    ),
+                    child: Icon(item["icon"], color: Colors.white, size: 28),
                   ),
                   const Spacer(),
                   // Title
@@ -532,15 +551,25 @@ class OptionPage extends StatelessWidget {
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
                       GADFormPage(activity: activity, gradient: gradient),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    return SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(1.0, 0.0),
-                        end: Offset.zero,
-                      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOutCubic)),
-                      child: FadeTransition(opacity: animation, child: child),
-                    );
-                  },
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                        return SlideTransition(
+                          position:
+                              Tween<Offset>(
+                                begin: const Offset(1.0, 0.0),
+                                end: Offset.zero,
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeInOutCubic,
+                                ),
+                              ),
+                          child: FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          ),
+                        );
+                      },
                 ),
               );
             },
@@ -610,11 +639,7 @@ class OptionPage extends StatelessWidget {
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 32,
-                ),
+                child: Icon(icon, color: color, size: 32),
               ),
               const SizedBox(height: 16),
               Text(
@@ -628,10 +653,7 @@ class OptionPage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -646,13 +668,18 @@ class OptionPage extends StatelessWidget {
 class GADFormPage extends ConsumerStatefulWidget {
   final String activity;
   final Gradient gradient;
-  const GADFormPage({super.key, required this.activity, required this.gradient});
+  const GADFormPage({
+    super.key,
+    required this.activity,
+    required this.gradient,
+  });
 
   @override
   ConsumerState<GADFormPage> createState() => _GADFormPageState();
 }
 
-class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderStateMixin {
+class _GADFormPageState extends ConsumerState<GADFormPage>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
   final DateFormat _fmt = DateFormat('dd-MM-yyyy');
@@ -777,14 +804,33 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
         allowMultiple: false,
         type: FileType.custom,
         allowedExtensions: [
-          'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
-          'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp',
-          'zip', 'rar', '7z', 'txt', 'csv',
-          'mp4', 'avi', 'mov', 'mp3', 'wav'
+          'pdf',
+          'doc',
+          'docx',
+          'xls',
+          'xlsx',
+          'ppt',
+          'pptx',
+          'jpg',
+          'jpeg',
+          'png',
+          'gif',
+          'bmp',
+          'webp',
+          'zip',
+          'rar',
+          '7z',
+          'txt',
+          'csv',
+          'mp4',
+          'avi',
+          'mov',
+          'mp3',
+          'wav',
         ],
       );
 
-      if (!context.mounted) return;
+      if (!mounted) return;
       if (result != null && result.files.single.path != null) {
         setState(() {
           selectedDocument = result.files.single;
@@ -799,7 +845,7 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
         );
       }
     } catch (e) {
-      if (!context.mounted) return;
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error picking document: $e"),
@@ -844,15 +890,20 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
                     color: widget.gradient.colors.first.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(Icons.camera_alt, color: widget.gradient.colors.first),
+                  child: Icon(
+                    Icons.camera_alt,
+                    color: widget.gradient.colors.first,
+                  ),
                 ),
                 title: const Text("Take Photo"),
                 onTap: () async {
-                  final img = await _picker.pickImage(source: ImageSource.camera);
+                  final img = await _picker.pickImage(
+                    source: ImageSource.camera,
+                  );
                   if (img != null) {
                     setState(() => pickedImage = File(img.path));
                   }
-                  if (!context.mounted) return;
+                  if (!mounted) return;
                   Navigator.pop(context);
                 },
               ),
@@ -867,11 +918,13 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
                 ),
                 title: const Text("Choose From Gallery"),
                 onTap: () async {
-                  final img = await _picker.pickImage(source: ImageSource.gallery);
+                  final img = await _picker.pickImage(
+                    source: ImageSource.gallery,
+                  );
                   if (img != null) {
                     setState(() => pickedImage = File(img.path));
                   }
-                  if (!context.mounted) return;
+                  if (!mounted) return;
                   Navigator.pop(context);
                 },
               ),
@@ -923,65 +976,65 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
       child: GestureDetector(
         onTap: _pickImage,
         child: Container(
-        height: 180,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200),
-        ),
-        child: pickedImage != null
-          ? Stack(
-        children: [
-          ClipRRect(
+          height: 180,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
             borderRadius: BorderRadius.circular(16),
-            child: Image.file(
-              pickedImage!,
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.cover,
-            ),
+            border: Border.all(color: Colors.grey.shade200),
           ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: GestureDetector(
-              onTap: () => setState(() => pickedImage = null),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  shape: BoxShape.circle,
+          child: pickedImage != null
+              ? Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.file(
+                        pickedImage!,
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: () => setState(() => pickedImage = null),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.image_outlined,
+                      size: 40,
+                      color: Colors.grey.shade400,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Tap to add image",
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
-                child: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            ),
-          ),
-        ],
-      )
-          : Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.image_outlined,
-            size: 40,
-            color: Colors.grey.shade400,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "Tap to add image",
-            style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 14,
-            ),
-          ),
-        ],
         ),
-      ),
       ),
     );
   }
@@ -991,87 +1044,87 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
       child: GestureDetector(
         onTap: () => _pickDocument(),
         child: Container(
-        height: 100,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200),
-        ),
-        child: selectedDocument != null
-            ? Stack(
-          children: [
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.description,
-                    size: 32,
-                    color: widget.gradient.colors.first,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    selectedDocument?.name ?? "Document selected",
-                    style: TextStyle(
-                      color: Colors.grey.shade700,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "${(selectedDocument?.size ?? 0) / 1024} KB",
-                    style: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              top: 8,
-              right: 8,
-              child: GestureDetector(
-                onTap: () => setState(() => selectedDocument = null),
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        )
-            : Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.description,
-              size: 32,
-              color: Colors.grey.shade400,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Tap to upload document",
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 14,
-              ),
-            ),
-          ],
+          height: 100,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade200),
           ),
+          child: selectedDocument != null
+              ? Stack(
+                  children: [
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.description,
+                            size: 32,
+                            color: widget.gradient.colors.first,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            selectedDocument?.name ?? "Document selected",
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "${(selectedDocument?.size ?? 0) / 1024} KB",
+                            style: TextStyle(
+                              color: Colors.grey.shade500,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: () => setState(() => selectedDocument = null),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.description,
+                      size: 32,
+                      color: Colors.grey.shade400,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Tap to upload document",
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );
@@ -1101,14 +1154,20 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           ),
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
           labelStyle: TextStyle(
             color: widget.gradient.colors.first,
             fontWeight: FontWeight.w500,
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: widget.gradient.colors.first, width: 2),
+            borderSide: BorderSide(
+              color: widget.gradient.colors.first,
+              width: 2,
+            ),
           ),
         ),
         keyboardType: type,
@@ -1136,21 +1195,30 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
         readOnly: true,
         decoration: InputDecoration(
           labelText: label,
-          suffixIcon: Icon(Icons.calendar_today, color: widget.gradient.colors.first),
+          suffixIcon: Icon(
+            Icons.calendar_today,
+            color: widget.gradient.colors.first,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
           ),
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
           labelStyle: TextStyle(
             color: widget.gradient.colors.first,
             fontWeight: FontWeight.w500,
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: widget.gradient.colors.first, width: 2),
+            borderSide: BorderSide(
+              color: widget.gradient.colors.first,
+              width: 2,
+            ),
           ),
         ),
         onTap: () async {
@@ -1160,15 +1228,21 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
             lastDate: DateTime(2100),
             initialDate: DateTime.now(),
           );
-          if (!context.mounted) return;
+          if (!mounted) return;
           if (picked != null) _controllers[label]?.text = _fmt.format(picked);
         },
-        validator: (v) => v == null || v.isEmpty ? 'Please select $label' : null,
+        validator: (v) =>
+            v == null || v.isEmpty ? 'Please select $label' : null,
       ),
     );
   }
 
-  Widget _buildDropdown(String label, List<String> options, String? value, Function(String?) onChanged) {
+  Widget _buildDropdown(
+    String label,
+    List<String> options,
+    String? value,
+    Function(String?) onChanged,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -1192,16 +1266,20 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           ),
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
           labelStyle: TextStyle(
             color: widget.gradient.colors.first,
             fontWeight: FontWeight.w500,
           ),
         ),
-        items: options.map((option) => DropdownMenuItem(
-          value: option,
-          child: Text(option),
-        )).toList(),
+        items: options
+            .map(
+              (option) => DropdownMenuItem(value: option, child: Text(option)),
+            )
+            .toList(),
         onChanged: onChanged,
         validator: (v) => v == null ? 'Please select $label' : null,
       ),
@@ -1333,7 +1411,7 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
   void _showAddPlantDistributionDialog() {
     _plantTypeController.clear();
     _plantNumberController.clear();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1366,7 +1444,8 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           ),
           ElevatedButton(
             onPressed: () {
-              if (_plantTypeController.text.isNotEmpty && _plantNumberController.text.isNotEmpty) {
+              if (_plantTypeController.text.isNotEmpty &&
+                  _plantNumberController.text.isNotEmpty) {
                 setState(() {
                   plantDistributionList.add({
                     'type': _plantTypeController.text,
@@ -1436,7 +1515,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
                   key: ValueKey('plant_${plant['type']}_$index'),
                   leading: Icon(Icons.eco, color: widget.gradient.colors.first),
                   title: Text(plant['type'] ?? ''),
-                  subtitle: Text("Number: ${plant['number'] ?? ''} | Date: ${plant['date'] ?? ''}"),
+                  subtitle: Text(
+                    "Number: ${plant['number'] ?? ''} | Date: ${plant['date'] ?? ''}",
+                  ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
@@ -1459,7 +1540,12 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
         return [
           _buildMediaSection(),
           _buildText("Employee Name"),
-          _buildDropdown("Forest Region", regions, selectedRegion, (value) => setState(() => selectedRegion = value)),
+          _buildDropdown(
+            "Forest Region",
+            regions,
+            selectedRegion,
+            (value) => setState(() => selectedRegion = value),
+          ),
           _buildText("Name Of Forest Circle"),
           _buildText("Name of Forest Division"),
           _buildText("Name of Sub Division / Range "),
@@ -1473,17 +1559,27 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           _buildText("Contact Number"),
           _buildInterventionSection(),
         ];
-      case "Women Nursery":// new remove ka
+      case "Women Nursery": // new remove ka
         return [
           _buildMediaSection(),
           _buildText("Employee Name"),
-          _buildDropdown("Forest Region", regions, selectedRegion, (value) => setState(() => selectedRegion = value)),
+          _buildDropdown(
+            "Forest Region",
+            regions,
+            selectedRegion,
+            (value) => setState(() => selectedRegion = value),
+          ),
           _buildText("Name of Forest Circle"),
           _buildText("Name of Division"),
           _buildText("Name of Sub-division | Range"),
           _buildText("Name Of WO"),
           _buildText("Name of Project Under Which Established"),
-          _buildDropdown("Type Of Nursery", nurseryTypes, selectedNurseryType, (value) => setState(() => selectedNurseryType = value)),
+          _buildDropdown(
+            "Type Of Nursery",
+            nurseryTypes,
+            selectedNurseryType,
+            (value) => setState(() => selectedNurseryType = value),
+          ),
           _buildText("Name of Nursery Grower"),
           _buildText("Contact Number", type: TextInputType.phone),
           _buildText("CNIC of Nursery Grower"),
@@ -1497,7 +1593,12 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
         return [
           _buildMediaSection(),
           _buildText("Employee Name"),
-          _buildDropdown("Name Of Forest Region", regions, selectedRegion, (value) => setState(() => selectedRegion = value)),
+          _buildDropdown(
+            "Name Of Forest Region",
+            regions,
+            selectedRegion,
+            (value) => setState(() => selectedRegion = value),
+          ),
           _buildText("Name of Forest Circle"),
           _buildText("Name of Division"),
           _buildText("Name Of Project"),
@@ -1505,7 +1606,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           _buildText("Name of Institute / Organization"),
           _buildText("Location / Venue"),
           _buildText("Chief Guest"),
-          _buildDate("Date of Event"),// instad of plant distribution writ detail of plants.
+          _buildDate(
+            "Date of Event",
+          ), // instad of plant distribution writ detail of plants.
           _buildPlantDistributionSection(),
         ];
       case "Farm / Agro Forestry":
@@ -1516,13 +1619,21 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           _buildText("Name of Sub Division"),
           _buildText("Plants Distributed Today", type: TextInputType.number),
           _buildText("Major Species"),
-          _buildText("Total No Of Plants Distributed", type: TextInputType.number),
+          _buildText(
+            "Total No Of Plants Distributed",
+            type: TextInputType.number,
+          ),
         ];
       case "Other Activity":
         return [
           _buildMediaSection(),
           _buildText("Employee Name"),
-          _buildDropdown("Name Of Forest Region", regions, selectedRegion, (value) => setState(() => selectedRegion = value)),
+          _buildDropdown(
+            "Name Of Forest Region",
+            regions,
+            selectedRegion,
+            (value) => setState(() => selectedRegion = value),
+          ),
           _buildText("Name of Forest Circle"),
           _buildText("Name of Division"),
           _buildText("Name of Sub-Division / Range"),
@@ -1629,11 +1740,7 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
                 color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-                size: 20,
-              ),
+              child: const Icon(Icons.edit, color: Colors.white, size: 20),
             ),
           ),
         ],
@@ -1685,7 +1792,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
                     content: const Text("Edit mode activated"),
                     backgroundColor: widget.gradient.colors.first,
                     behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 );
               },
@@ -1718,7 +1827,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Delete Record"),
-        content: const Text("Are you sure you want to delete this record? This action cannot be undone."),
+        content: const Text(
+          "Are you sure you want to delete this record? This action cannot be undone.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -1734,7 +1845,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
                   content: const Text("Record deleted successfully"),
                   backgroundColor: Colors.red,
                   behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               );
             },
@@ -1789,21 +1902,21 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
                 child: Center(
                   child: _isSubmitting
                       ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
                       : const Text(
-                    "Submit Form",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                          "Submit Form",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -1821,7 +1934,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Help - ${widget.activity}'),
-            content: const Text('Fill in all the required fields and attach an image and document to submit the form.'),
+            content: const Text(
+              'Fill in all the required fields and attach an image and document to submit the form.',
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -1844,7 +1959,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
             content: const Text("Please add an image and document"),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
         return;
@@ -1868,35 +1985,45 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
     try {
       switch (widget.activity) {
         case "Women Organization":
-          await ref.read(womenOrganizationRepositoryProvider).createMultipart(
+          await ref
+              .read(womenOrganizationRepositoryProvider)
+              .createMultipart(
                 _buildApiFields().cast<String, dynamic>(),
                 image: pickedImage?.path,
                 document: selectedDocument?.path,
               );
           break;
         case "Women Nursery":
-          await ref.read(youthWomenNurseryRepositoryProvider).createMultipart(
+          await ref
+              .read(youthWomenNurseryRepositoryProvider)
+              .createMultipart(
                 _buildApiFields().cast<String, dynamic>(),
                 image: pickedImage?.path,
                 document: selectedDocument?.path,
               );
           break;
         case "Mass Planting Event":
-          await ref.read(massPlantationRepositoryProvider).createMultipart(
+          await ref
+              .read(massPlantationRepositoryProvider)
+              .createMultipart(
                 _buildApiFields().cast<String, dynamic>(),
                 image: pickedImage?.path,
                 document: selectedDocument?.path,
               );
           break;
         case "Farm / Agro Forestry":
-          await ref.read(farmAgroForestryRepositoryProvider).createMultipart(
+          await ref
+              .read(farmAgroForestryRepositoryProvider)
+              .createMultipart(
                 _buildApiFields().cast<String, dynamic>(),
                 image: pickedImage?.path,
                 document: selectedDocument?.path,
               );
           break;
         case "Other Activity":
-          await ref.read(otherActivityRepositoryProvider).createMultipart(
+          await ref
+              .read(otherActivityRepositoryProvider)
+              .createMultipart(
                 _buildApiFields().cast<String, dynamic>(),
                 image: pickedImage?.path,
                 document: selectedDocument?.path,
@@ -1910,7 +2037,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           content: const Text("Form submitted successfully!"),
           backgroundColor: widget.gradient.colors.first,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       Navigator.pop(context);
@@ -1922,7 +2051,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           content: Text("Submission failed: $e"),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     }
@@ -1939,7 +2070,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           content: const Text("Form submitted successfully!"),
           backgroundColor: widget.gradient.colors.first,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       Navigator.pop(context);
@@ -1967,8 +2100,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
           'chairperson_name': txt('Name of Chairperson'),
           'secretary_treasurer': txt('Sectary / Treasurer '),
           'contact_number': txt('Contact Number'),
-          'interventions':
-              addedInterventions.map((i) => '${i['name']} (${i['number']})').join(', '),
+          'interventions': addedInterventions
+              .map((i) => '${i['name']} (${i['number']})')
+              .join(', '),
         };
       case "Women Nursery":
         return {
@@ -2005,8 +2139,9 @@ class _GADFormPageState extends ConsumerState<GADFormPage> with TickerProviderSt
               .map((p) => int.tryParse(p['number'] ?? '') ?? 0)
               .fold(0, (a, b) => a + b)
               .toString(),
-          'plant_details':
-              plantDistributionList.map((p) => '${p['type']} (${p['number']})').join(', '),
+          'plant_details': plantDistributionList
+              .map((p) => '${p['type']} (${p['number']})')
+              .join(', '),
         };
       case "Farm / Agro Forestry":
         return {

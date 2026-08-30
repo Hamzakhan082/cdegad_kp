@@ -14,8 +14,9 @@ void main() {
 
   Widget app() => const ProviderScope(child: MyApp());
 
-  testWidgets('Splash screen shows branding then navigates to login',
-      (WidgetTester tester) async {
+  testWidgets('Splash screen shows branding then navigates to login', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(app());
     await tester.pump();
 
@@ -31,8 +32,9 @@ void main() {
     expect(find.text('Sign in to continue'), findsOneWidget);
   });
 
-  testWidgets('Login validates the form and navigates to home on success',
-      (WidgetTester tester) async {
+  testWidgets('Login validates the form and navigates to home on success', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(app());
     await tester.pump(const Duration(seconds: 4));
     await tester.pump(const Duration(milliseconds: 800));
@@ -49,7 +51,10 @@ void main() {
     expect(find.text('Min 6 chars'), findsOneWidget);
 
     // Fill valid credentials and submit.
-    await tester.enterText(find.byType(TextFormField).at(0), 'admin@forest.gov.pk');
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'admin@forest.gov.pk',
+    );
     await tester.enterText(find.byType(TextFormField).at(1), 'password123');
     await tester.ensureVisible(loginButton);
     await tester.tap(loginButton);
@@ -68,8 +73,9 @@ void main() {
     expect(find.text('GAD'), findsWidgets);
   });
 
-  testWidgets('Home feature grid navigates to the CD page',
-      (WidgetTester tester) async {
+  testWidgets('Home feature grid navigates to the CD page', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 1400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -77,9 +83,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        routes: {
-          '/cd': (context) => const CDPage(),
-        },
+        routes: {'/cd': (context) => const CDPage()},
         home: const HomeScreen(),
       ),
     );
@@ -97,7 +101,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400)); // route transition
 
     expect(
-      find.text('Select an option to manage and track community development initiatives'),
+      find.text(
+        'Select an option to manage and track community development initiatives',
+      ),
       findsOneWidget,
     );
   });

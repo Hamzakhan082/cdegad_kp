@@ -32,14 +32,16 @@ class YouthWomenNurseryModel {
   factory YouthWomenNurseryModel.fromJson(Map<String, dynamic> json) {
     return YouthWomenNurseryModel(
       id: json['id'],
-      nurseryName: json['nurseryName'] as String? ??
+      nurseryName:
+          json['nurseryName'] as String? ??
           json['nursery_name'] as String? ??
           '',
       district: json['district'] as String? ?? '',
       division: json['division'] as String? ?? '',
       tehsil: json['tehsil'] as String? ?? '',
       province: json['province'] as String? ?? '',
-      totalPlants: json['totalPlants'] as String? ??
+      totalPlants:
+          json['totalPlants'] as String? ??
           json['total_plants'] as String? ??
           '',
       species: json['species'] as String? ?? '',

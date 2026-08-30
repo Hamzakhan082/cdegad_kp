@@ -27,28 +27,178 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
 
   // Plant types list
   final List<String> _plantTypes = [
-    'Acacia Albida', 'Farnesiana', 'Quercus', 'Acasia Glavca', 'Orange', 'Rambil', 'Habiscus', 'Bogan belia',
-    'Acacia Perconsonia', 'Gander', 'Reen', 'Acer', 'Pasta', 'Rat ki Rani', 'Hair Pom', 'Bottle Bursh',
-    'Acacia Victoria', 'Gledcia', 'Reetha', 'Alistonia', 'Peach', 'Rose', 'Jasmine', 'Cassia Gluaka',
-    'Ailanthus', 'Horsechestnut', 'Retha', 'Amaltas', 'Pecon', 'Rose Merry', 'Jeranaim', 'Chambali',
-    'Albeeda', 'Imli', 'Robinia', 'Antara', 'Pear', 'Safora', 'Jocoranda', 'Conocarpus',
-    'Bakian', 'Ipple Ipple', 'Robinia Kikar', 'Arjun', 'Persimen', 'Sanatha', 'Juranda', 'Darontha',
-    'Batkaral', 'Jand', 'Sarikh', 'Artonia', 'Plum', 'Sarro', 'Kachnar', 'Daruna',
-    'Ber', 'Kail', 'Sharol', 'Astarkolya', 'Pomegranate', 'Shanai', 'Kangi Palm', 'Din Ka Raja',
-    'Bheens', 'Kanghar', 'Shesham', 'Bambarina', 'Russian Olive', 'Silver', 'Kasra', 'Dodonai',
-    'Black Palm', 'Kikar', 'Shinus Moli', 'Oalendier', 'Shahtoot', 'Silver Oak', 'Lagerstromia', 'Euphobia',
-    'Candle Beri', 'Korasia', 'Simal', 'Victoria Singa', 'Toot', 'Sohajna', 'Lal Pati', 'Facansonia',
-    'Casia Fastola', 'Marfa', 'Sirin', 'Walnut', 'Sepium', 'Logistum', 'Ficus',
-    'Casurina', 'Mazari', 'Siris', 'Zarcha', 'Stercolia', 'Maria', 'Ficus Black',
-    'Charbi', 'Millia', 'Siyal Kikar', 'Amlok', 'Olive', 'Subzdranti', 'Marwa', 'Ficus Golden',
-    'Chinar', 'Mud grass', 'Sum', 'Amrood', 'Alobukhara', 'Suk Chan', 'Moranga', 'Ficus Lake',
-    'Chir', 'Oak', 'Ulcia', 'Anardana', 'Alocha', 'Sukchai', 'Morphank', 'Ficus Novie',
-    'Chir Pine', 'Perciqqna', 'Willow', 'Apple', 'Almond', 'Synofila', 'Motia', 'Ficus White',
-    'Deodar', 'Persion Pine', 'Palm', 'Apricot', 'Mulberry', 'Sypres', 'Mruch', 'Gandery',
-    'Dhaman', 'Phullai', 'Panda Ficus', 'Banana', 'Narang', 'Table Palm', 'Nim', 'Gandula',
-    'Eucalyptus', 'Poplar', 'Parkinsonia', 'Chalghoza', 'Guava', 'Tarminilia', 'Oleander', 'Garanta',
-    'Praso', 'Gul Kaneer', 'Falsa', 'Injeer', 'Tocoma', 'Loqat', 'Gardenia',
-    'Grabelia', 'Lemon', 'Grapes', 'Jaman', 'Gul Toot', 'Gren Duranta', 'Gazinia'
+    'Acacia Albida',
+    'Farnesiana',
+    'Quercus',
+    'Acasia Glavca',
+    'Orange',
+    'Rambil',
+    'Habiscus',
+    'Bogan belia',
+    'Acacia Perconsonia',
+    'Gander',
+    'Reen',
+    'Acer',
+    'Pasta',
+    'Rat ki Rani',
+    'Hair Pom',
+    'Bottle Bursh',
+    'Acacia Victoria',
+    'Gledcia',
+    'Reetha',
+    'Alistonia',
+    'Peach',
+    'Rose',
+    'Jasmine',
+    'Cassia Gluaka',
+    'Ailanthus',
+    'Horsechestnut',
+    'Retha',
+    'Amaltas',
+    'Pecon',
+    'Rose Merry',
+    'Jeranaim',
+    'Chambali',
+    'Albeeda',
+    'Imli',
+    'Robinia',
+    'Antara',
+    'Pear',
+    'Safora',
+    'Jocoranda',
+    'Conocarpus',
+    'Bakian',
+    'Ipple Ipple',
+    'Robinia Kikar',
+    'Arjun',
+    'Persimen',
+    'Sanatha',
+    'Juranda',
+    'Darontha',
+    'Batkaral',
+    'Jand',
+    'Sarikh',
+    'Artonia',
+    'Plum',
+    'Sarro',
+    'Kachnar',
+    'Daruna',
+    'Ber',
+    'Kail',
+    'Sharol',
+    'Astarkolya',
+    'Pomegranate',
+    'Shanai',
+    'Kangi Palm',
+    'Din Ka Raja',
+    'Bheens',
+    'Kanghar',
+    'Shesham',
+    'Bambarina',
+    'Russian Olive',
+    'Silver',
+    'Kasra',
+    'Dodonai',
+    'Black Palm',
+    'Kikar',
+    'Shinus Moli',
+    'Oalendier',
+    'Shahtoot',
+    'Silver Oak',
+    'Lagerstromia',
+    'Euphobia',
+    'Candle Beri',
+    'Korasia',
+    'Simal',
+    'Victoria Singa',
+    'Toot',
+    'Sohajna',
+    'Lal Pati',
+    'Facansonia',
+    'Casia Fastola',
+    'Marfa',
+    'Sirin',
+    'Walnut',
+    'Sepium',
+    'Logistum',
+    'Ficus',
+    'Casurina',
+    'Mazari',
+    'Siris',
+    'Zarcha',
+    'Stercolia',
+    'Maria',
+    'Ficus Black',
+    'Charbi',
+    'Millia',
+    'Siyal Kikar',
+    'Amlok',
+    'Olive',
+    'Subzdranti',
+    'Marwa',
+    'Ficus Golden',
+    'Chinar',
+    'Mud grass',
+    'Sum',
+    'Amrood',
+    'Alobukhara',
+    'Suk Chan',
+    'Moranga',
+    'Ficus Lake',
+    'Chir',
+    'Oak',
+    'Ulcia',
+    'Anardana',
+    'Alocha',
+    'Sukchai',
+    'Morphank',
+    'Ficus Novie',
+    'Chir Pine',
+    'Perciqqna',
+    'Willow',
+    'Apple',
+    'Almond',
+    'Synofila',
+    'Motia',
+    'Ficus White',
+    'Deodar',
+    'Persion Pine',
+    'Palm',
+    'Apricot',
+    'Mulberry',
+    'Sypres',
+    'Mruch',
+    'Gandery',
+    'Dhaman',
+    'Phullai',
+    'Panda Ficus',
+    'Banana',
+    'Narang',
+    'Table Palm',
+    'Nim',
+    'Gandula',
+    'Eucalyptus',
+    'Poplar',
+    'Parkinsonia',
+    'Chalghoza',
+    'Guava',
+    'Tarminilia',
+    'Oleander',
+    'Garanta',
+    'Praso',
+    'Gul Kaneer',
+    'Falsa',
+    'Injeer',
+    'Tocoma',
+    'Loqat',
+    'Gardenia',
+    'Grabelia',
+    'Lemon',
+    'Grapes',
+    'Jaman',
+    'Gul Toot',
+    'Gren Duranta',
+    'Gazinia',
   ];
 
   // Controllers for plant counts
@@ -69,13 +219,33 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
         allowMultiple: false,
         type: FileType.custom,
         allowedExtensions: [
-          'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
-          'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp',
-          'zip', 'rar', '7z', 'txt', 'csv',
-          'mp4', 'avi', 'mov', 'mp3', 'wav'
+          'pdf',
+          'doc',
+          'docx',
+          'xls',
+          'xlsx',
+          'ppt',
+          'pptx',
+          'jpg',
+          'jpeg',
+          'png',
+          'gif',
+          'bmp',
+          'webp',
+          'zip',
+          'rar',
+          '7z',
+          'txt',
+          'csv',
+          'mp4',
+          'avi',
+          'mov',
+          'mp3',
+          'wav',
         ],
       );
 
+      if (!mounted) return;
       if (result != null && result.files.single.path != null) {
         setState(() {
           _supportingDocument = File(result.files.single.path!);
@@ -91,6 +261,7 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error picking document: $e"),
@@ -120,7 +291,7 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
       _totalPlantsController.text = totalDistributed.toString();
 
       await Future.delayed(const Duration(seconds: 2));
-      if (!context.mounted) return;
+      if (!mounted) return;
       setState(() => _isSubmitting = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -152,7 +323,10 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Farm Forestry Form", style: AppTextStyles.appBarTitle),
+        title: const Text(
+          "Farm Forestry Form",
+          style: AppTextStyles.appBarTitle,
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -187,25 +361,31 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
               FormHelpers.buildTextField(
                 label: "Employee Name",
                 controller: _farmNameController,
-                validator: (value) => value == null || value.isEmpty ? "Required" : null,
+                validator: (value) =>
+                    value == null || value.isEmpty ? "Required" : null,
                 prefixIcon: Icons.agriculture,
               ),
               FormHelpers.buildTextField(
                 label: "Forest Division",
                 controller: _locationController,
-                validator: (value) => value == null || value.isEmpty ? "Required" : null,
+                validator: (value) =>
+                    value == null || value.isEmpty ? "Required" : null,
                 prefixIcon: Icons.location_on,
               ),
               FormHelpers.buildTextField(
                 label: "Name of Sub Division",
                 controller: _cropTypeController,
-                validator: (value) => value == null || value.isEmpty ? "Required" : null,
+                validator: (value) =>
+                    value == null || value.isEmpty ? "Required" : null,
                 prefixIcon: Icons.grass,
               ),
               _buildPlantDistributionTable(),
               _buildTotalPlantsField(),
               const SizedBox(height: 24),
-              FormHelpers.buildSubmitButton(onPressed: _submitForm, isLoading: _isSubmitting),
+              FormHelpers.buildSubmitButton(
+                onPressed: _submitForm,
+                isLoading: _isSubmitting,
+              ),
             ],
           ),
         ),
@@ -243,8 +423,13 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
             borderSide: BorderSide(color: AppColors.primaryGreen, width: 2),
           ),
           filled: true,
-          fillColor: Colors.grey.shade100, // Lighter background to indicate it's disabled
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          fillColor: Colors
+              .grey
+              .shade100, // Lighter background to indicate it's disabled
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
           labelStyle: TextStyle(
             color: AppColors.primaryGreen,
             fontWeight: FontWeight.w500,
@@ -260,10 +445,7 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
       children: [
         Row(
           children: [
-            Text(
-              "No Of Plants Distributed",
-              style: AppTextStyles.formLabel,
-            ),
+            Text("No Of Plants Distributed", style: AppTextStyles.formLabel),
             const Spacer(),
             TextButton(
               onPressed: () {
@@ -301,7 +483,10 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
             children: [
               // Header
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 12,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primaryGreen.withValues(alpha: 0.1),
                   borderRadius: const BorderRadius.only(
@@ -366,7 +551,8 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
                               onChanged: (value) {
                                 // Auto-calculate total
                                 int total = 0;
-                                for (var controller in _plantCountControllers.values) {
+                                for (var controller
+                                    in _plantCountControllers.values) {
                                   total += int.tryParse(controller.text) ?? 0;
                                 }
                                 _totalPlantsController.text = total.toString();
@@ -390,10 +576,7 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Upload Supporting Document",
-          style: AppTextStyles.formLabel,
-        ),
+        Text("Upload Supporting Document", style: AppTextStyles.formLabel),
         const SizedBox(height: 8),
         GestureDetector(
           onTap: _pickDocument,
@@ -407,31 +590,82 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
             ),
             child: _supportingDocument != null
                 ? Stack(
-              children: [
-                Center(
-                  child: Column(
+                    children: [
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.description,
+                              size: 32,
+                              color: AppColors.primaryGreen,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _selectedDocumentName ?? "Document selected",
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "${(_supportingDocument?.lengthSync() ?? 0) / 1024} KB",
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: GestureDetector(
+                          onTap: () => setState(() {
+                            _supportingDocument = null;
+                            _selectedDocumentName = null;
+                          }),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.description,
+                        Icons.cloud_upload_outlined,
                         size: 32,
-                        color: AppColors.primaryGreen,
+                        color: Colors.grey.shade400,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        _selectedDocumentName ?? "Document selected",
+                        "Tap to upload document",
                         style: TextStyle(
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade600,
                           fontSize: 14,
-                          fontWeight: FontWeight.w500,
                         ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
                       Text(
-                        "${(_supportingDocument?.lengthSync() ?? 0) / 1024} KB",
+                        "PDF, DOC, XLS, Images, and more",
                         style: TextStyle(
                           color: Colors.grey.shade500,
                           fontSize: 12,
@@ -439,57 +673,6 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
                       ),
                     ],
                   ),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: GestureDetector(
-                    onTap: () => setState(() {
-                      _supportingDocument = null;
-                      _selectedDocumentName = null;
-                    }),
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
-                : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.cloud_upload_outlined,
-                  size: 32,
-                  color: Colors.grey.shade400,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Tap to upload document",
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "PDF, DOC, XLS, Images, and more",
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ],
@@ -570,7 +753,9 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Delete Record"),
-        content: const Text("Are you sure you want to delete this record? This action cannot be undone."),
+        content: const Text(
+          "Are you sure you want to delete this record? This action cannot be undone.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -595,6 +780,5 @@ class _FarmAgroFormState extends State<FarmAgroForm> with ImagePickerMixin {
     );
   }
 }
-
 
 // REMOVE this form.

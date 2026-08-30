@@ -106,7 +106,16 @@ class _AwarenessFormScreenState extends ConsumerState<AwarenessFormScreen> {
   Future<void> _pickDocument() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'],
+      allowedExtensions: [
+        'pdf',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'ppt',
+        'pptx',
+        'txt',
+      ],
     );
     if (result != null && result.files.single.path != null) {
       setState(() {
@@ -174,7 +183,11 @@ class _AwarenessFormScreenState extends ConsumerState<AwarenessFormScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_isEditing ? 'Record updated successfully' : 'Record created successfully'),
+          content: Text(
+            _isEditing
+                ? 'Record updated successfully'
+                : 'Record created successfully',
+          ),
           backgroundColor: AppColors.primaryGreen,
         ),
       );
@@ -182,7 +195,10 @@ class _AwarenessFormScreenState extends ConsumerState<AwarenessFormScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.errorColor),
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: AppColors.errorColor,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -220,8 +236,18 @@ class _AwarenessFormScreenState extends ConsumerState<AwarenessFormScreen> {
                 _buildField('District', _districtCtrl, Icons.location_city),
                 _buildField('Division', _divisionCtrl, Icons.business),
                 _buildField('Tehsil', _tehsilCtrl, Icons.map),
-                _buildField('Participants Count', _participantsCtrl, Icons.people, keyboardType: TextInputType.number),
-                _buildField('Description', _descriptionCtrl, Icons.description, maxLines: 3),
+                _buildField(
+                  'Participants Count',
+                  _participantsCtrl,
+                  Icons.people,
+                  keyboardType: TextInputType.number,
+                ),
+                _buildField(
+                  'Description',
+                  _descriptionCtrl,
+                  Icons.description,
+                  maxLines: 3,
+                ),
                 const SizedBox(height: 20),
                 _buildSectionHeader('Session Date'),
                 const SizedBox(height: 12),
@@ -240,17 +266,25 @@ class _AwarenessFormScreenState extends ConsumerState<AwarenessFormScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGreen,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: _isSubmitting
                         ? const SizedBox(
                             width: 22,
                             height: 22,
-                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
                           )
                         : Text(
                             _isEditing ? 'Update Record' : 'Save Record',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                   ),
                 ),
@@ -294,15 +328,22 @@ class _AwarenessFormScreenState extends ConsumerState<AwarenessFormScreen> {
           fillColor: AppColors.surfaceColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.dividerColor.withAlpha(128)),
+            borderSide: BorderSide(
+              color: AppColors.dividerColor.withAlpha(128),
+            ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.dividerColor.withAlpha(128)),
+            borderSide: BorderSide(
+              color: AppColors.dividerColor.withAlpha(128),
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
+            borderSide: const BorderSide(
+              color: AppColors.primaryGreen,
+              width: 2,
+            ),
           ),
         ),
       ),
@@ -315,20 +356,30 @@ class _AwarenessFormScreenState extends ConsumerState<AwarenessFormScreen> {
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: 'Session Date',
-          prefixIcon: const Icon(Icons.calendar_today, color: AppColors.secondaryGreen),
+          prefixIcon: const Icon(
+            Icons.calendar_today,
+            color: AppColors.secondaryGreen,
+          ),
           filled: true,
           fillColor: AppColors.surfaceColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.dividerColor.withAlpha(128)),
+            borderSide: BorderSide(
+              color: AppColors.dividerColor.withAlpha(128),
+            ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.dividerColor.withAlpha(128)),
+            borderSide: BorderSide(
+              color: AppColors.dividerColor.withAlpha(128),
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
+            borderSide: const BorderSide(
+              color: AppColors.primaryGreen,
+              width: 2,
+            ),
           ),
         ),
         child: Text(
@@ -336,7 +387,9 @@ class _AwarenessFormScreenState extends ConsumerState<AwarenessFormScreen> {
               ? '${_sessionDate!.toLocal()}'.split(' ')[0]
               : 'Select date',
           style: TextStyle(
-            color: _sessionDate != null ? AppColors.textPrimary : AppColors.textSecondary,
+            color: _sessionDate != null
+                ? AppColors.textPrimary
+                : AppColors.textSecondary,
           ),
         ),
       ),
@@ -351,7 +404,8 @@ class _AwarenessFormScreenState extends ConsumerState<AwarenessFormScreen> {
           child: const Icon(Icons.image, color: AppColors.primaryGreen),
         ),
         title: Text(
-          _pickedImageName ?? (_existingImageUrl != null ? 'Image attached' : 'Pick Image'),
+          _pickedImageName ??
+              (_existingImageUrl != null ? 'Image attached' : 'Pick Image'),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -372,7 +426,10 @@ class _AwarenessFormScreenState extends ConsumerState<AwarenessFormScreen> {
           child: const Icon(Icons.attach_file, color: AppColors.secondaryGreen),
         ),
         title: Text(
-          _pickedDocName ?? (_existingDocumentUrl != null ? 'Document attached' : 'Pick Document'),
+          _pickedDocName ??
+              (_existingDocumentUrl != null
+                  ? 'Document attached'
+                  : 'Pick Document'),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

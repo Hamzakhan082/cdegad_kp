@@ -84,12 +84,18 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
         child: Wrap(
           children: [
             ListTile(
-              leading: const Icon(Icons.camera_alt, color: AppColors.primaryGreen),
+              leading: const Icon(
+                Icons.camera_alt,
+                color: AppColors.primaryGreen,
+              ),
               title: const Text('Camera'),
               onTap: () => Navigator.pop(ctx, ImageSource.camera),
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: AppColors.primaryGreen),
+              leading: const Icon(
+                Icons.photo_library,
+                color: AppColors.primaryGreen,
+              ),
               title: const Text('Gallery'),
               onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
@@ -100,7 +106,12 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
     if (source == null) return;
 
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source, maxWidth: 800, imageQuality: 85);
+    final picked = await picker.pickImage(
+      source: source,
+      maxWidth: 800,
+      imageQuality: 85,
+    );
+    if (!mounted) return;
     if (picked != null) {
       setState(() => _photo = File(picked.path));
     }
@@ -118,7 +129,9 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
       return;
     }
 
-    ref.read(authProvider.notifier).employeeSignup(
+    ref
+        .read(authProvider.notifier)
+        .employeeSignup(
           fullName: _fullNameController.text.trim(),
           emailAddress: _emailController.text.trim(),
           password: _passwordController.text,
@@ -245,7 +258,10 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                         children: [
                           const Text(
                             'Create Account',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           const Text(
@@ -259,7 +275,8 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                             controller: _fullNameController,
                             hint: 'Full Name',
                             icon: Icons.person,
-                            validator: (v) => v!.isEmpty ? 'Full name required' : null,
+                            validator: (v) =>
+                                v!.isEmpty ? 'Full name required' : null,
                           ),
                           const SizedBox(height: 12),
                           _buildTextField(
@@ -285,10 +302,12 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                                     ? Icons.visibility_off
                                     : Icons.visibility,
                               ),
-                              onPressed: () =>
-                                  setState(() => _obscurePassword = !_obscurePassword),
+                              onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              ),
                             ),
-                            validator: (v) => v!.length < 6 ? 'Min 6 chars' : null,
+                            validator: (v) =>
+                                v!.length < 6 ? 'Min 6 chars' : null,
                           ),
                           const SizedBox(height: 12),
                           _buildTextField(
@@ -303,10 +322,13 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                                     : Icons.visibility,
                               ),
                               onPressed: () => setState(
-                                  () => _obscureConfirmPassword = !_obscureConfirmPassword),
+                                () => _obscureConfirmPassword =
+                                    !_obscureConfirmPassword,
+                              ),
                             ),
-                            validator: (v) =>
-                                v != _passwordController.text ? 'Passwords do not match' : null,
+                            validator: (v) => v != _passwordController.text
+                                ? 'Passwords do not match'
+                                : null,
                           ),
                           const SizedBox(height: 12),
                           _buildTextField(
@@ -314,14 +336,16 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                             hint: 'CNIC',
                             icon: Icons.badge,
                             keyboardType: TextInputType.number,
-                            validator: (v) => v!.isEmpty ? 'CNIC required' : null,
+                            validator: (v) =>
+                                v!.isEmpty ? 'CNIC required' : null,
                           ),
                           const SizedBox(height: 12),
                           _buildTextField(
                             controller: _divisionController,
                             hint: 'Division',
                             icon: Icons.location_city,
-                            validator: (v) => v!.isEmpty ? 'Division required' : null,
+                            validator: (v) =>
+                                v!.isEmpty ? 'Division required' : null,
                           ),
                           const SizedBox(height: 12),
                           _buildTextField(
@@ -329,7 +353,8 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                             hint: 'Employee No',
                             icon: Icons.numbers,
                             keyboardType: TextInputType.number,
-                            validator: (v) => v!.isEmpty ? 'Employee number required' : null,
+                            validator: (v) =>
+                                v!.isEmpty ? 'Employee number required' : null,
                           ),
                           const SizedBox(height: 12),
                           _buildTextField(
@@ -337,14 +362,20 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                             hint: 'Mobile Number',
                             icon: Icons.phone,
                             keyboardType: TextInputType.phone,
-                            validator: (v) => v!.isEmpty ? 'Mobile number required' : null,
+                            validator: (v) =>
+                                v!.isEmpty ? 'Mobile number required' : null,
                           ),
                           const SizedBox(height: 12),
                           DropdownButtonFormField<String>(
-                            value: _selectedGender.isEmpty ? null : _selectedGender,
+                            initialValue: _selectedGender.isEmpty
+                                ? null
+                                : _selectedGender,
                             decoration: InputDecoration(
                               hintText: 'Gender',
-                              prefixIcon: const Icon(Icons.wc, color: AppColors.primaryGreen),
+                              prefixIcon: const Icon(
+                                Icons.wc,
+                                color: AppColors.primaryGreen,
+                              ),
                               filled: true,
                               fillColor: Colors.grey.shade100,
                               border: OutlineInputBorder(
@@ -353,19 +384,31 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                               ),
                             ),
                             items: const [
-                              DropdownMenuItem(value: 'Male', child: Text('Male')),
-                              DropdownMenuItem(value: 'Female', child: Text('Female')),
-                              DropdownMenuItem(value: 'Other', child: Text('Other')),
+                              DropdownMenuItem(
+                                value: 'Male',
+                                child: Text('Male'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'Female',
+                                child: Text('Female'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'Other',
+                                child: Text('Other'),
+                              ),
                             ],
-                            onChanged: (v) => setState(() => _selectedGender = v ?? ''),
-                            validator: (v) => v == null ? 'Gender required' : null,
+                            onChanged: (v) =>
+                                setState(() => _selectedGender = v ?? ''),
+                            validator: (v) =>
+                                v == null ? 'Gender required' : null,
                           ),
                           const SizedBox(height: 14),
                           Row(
                             children: [
                               Checkbox(
                                 value: _agreeToTerms,
-                                onChanged: (v) => setState(() => _agreeToTerms = v!),
+                                onChanged: (v) =>
+                                    setState(() => _agreeToTerms = v!),
                               ),
                               Expanded(
                                 child: GestureDetector(
@@ -376,7 +419,9 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                                       children: [
                                         TextSpan(
                                           text: 'Terms & Conditions',
-                                          style: TextStyle(color: AppColors.primaryGreen),
+                                          style: TextStyle(
+                                            color: AppColors.primaryGreen,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -394,16 +439,25 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 gradient: const LinearGradient(
-                                  colors: [AppColors.gradientStart, AppColors.gradientEnd],
+                                  colors: [
+                                    AppColors.gradientStart,
+                                    AppColors.gradientEnd,
+                                  ],
                                 ),
                               ),
                               child: Center(
                                 child: isLoading
-                                    ? const CircularProgressIndicator(color: Colors.white)
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
                                     : const Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Icon(Icons.person_add, color: Colors.white),
+                                          Icon(
+                                            Icons.person_add,
+                                            color: Colors.white,
+                                          ),
                                           SizedBox(width: 8),
                                           Text(
                                             'Sign Up',
@@ -423,7 +477,8 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                               onTap: () => Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => const EmployeeLoginScreen()),
+                                  builder: (_) => const EmployeeLoginScreen(),
+                                ),
                               ),
                               child: const Text.rich(
                                 TextSpan(
@@ -431,7 +486,9 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
                                   children: [
                                     TextSpan(
                                       text: 'Login',
-                                      style: TextStyle(color: AppColors.primaryGreen),
+                                      style: TextStyle(
+                                        color: AppColors.primaryGreen,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -463,7 +520,11 @@ class _EmployeeSignupScreenState extends ConsumerState<EmployeeSignupScreen>
               backgroundColor: AppColors.backgroundLight,
               backgroundImage: _photo != null ? FileImage(_photo!) : null,
               child: _photo == null
-                  ? const Icon(Icons.camera_alt, size: 30, color: AppColors.primaryGreen)
+                  ? const Icon(
+                      Icons.camera_alt,
+                      size: 30,
+                      color: AppColors.primaryGreen,
+                    )
                   : null,
             ),
             const SizedBox(height: 6),

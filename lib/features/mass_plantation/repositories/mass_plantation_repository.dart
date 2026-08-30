@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:cdegad_kp/core/api/api_endpoints.dart';
 import 'package:cdegad_kp/core/api/dio_client.dart';
+import 'package:cdegad_kp/core/api/dashboard_api_adapter.dart';
 import 'package:cdegad_kp/features/mass_plantation/models/mass_plantation_model.dart';
 
 abstract class MassPlantationRepository {
@@ -29,8 +30,11 @@ class MassPlantationRepositoryImpl implements MassPlantationRepository {
   Future<List<MassPlantationModel>> getAll() async {
     try {
       final response = await _dioClient.get(ApiEndpoints.massPlantation);
-      final data = response.data['data'] as List;
-      return data.map((e) => MassPlantationModel.fromJson(e)).toList();
+      return DashboardApiAdapter.list(response.data)
+          .map(
+            (e) => MassPlantationModel.fromJson(DashboardApiAdapter.massRow(e)),
+          )
+          .toList();
     } catch (e) {
       throw Exception('Failed to load mass plantations: $e');
     }
@@ -39,8 +43,12 @@ class MassPlantationRepositoryImpl implements MassPlantationRepository {
   @override
   Future<MassPlantationModel> getById(String id) async {
     try {
-      final response = await _dioClient.get(ApiEndpoints.massPlantationById(id));
-      return MassPlantationModel.fromJson(response.data['data']);
+      final response = await _dioClient.get(
+        ApiEndpoints.massPlantationById(id),
+      );
+      return MassPlantationModel.fromJson(
+        DashboardApiAdapter.massRow(DashboardApiAdapter.record(response.data)),
+      );
     } catch (e) {
       throw Exception('Failed to load mass plantation: $e');
     }
@@ -49,11 +57,16 @@ class MassPlantationRepositoryImpl implements MassPlantationRepository {
   @override
   Future<MassPlantationModel> create(MassPlantationModel model) async {
     try {
+      final fields = DashboardApiAdapter.massRequest(model.toJson());
       final response = await _dioClient.post(
         ApiEndpoints.massPlantation,
-        data: model.toJson(),
+        data: fields,
       );
-      return MassPlantationModel.fromJson(response.data['data']);
+      return MassPlantationModel.fromJson(
+        DashboardApiAdapter.massRow(
+          DashboardApiAdapter.record(response.data, fallback: fields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to create mass plantation: $e');
     }
@@ -68,32 +81,49 @@ class MassPlantationRepositoryImpl implements MassPlantationRepository {
     try {
       final fileFields = <String, MultipartFile>{};
       if (image != null) {
-        fileFields['upload_image'] = await MultipartFile.fromFile(image,
-            filename: image.split(Platform.pathSeparator).last);
+        fileFields['upload_image'] = await MultipartFile.fromFile(
+          image,
+          filename: image.split(Platform.pathSeparator).last,
+        );
       }
       if (document != null) {
-        fileFields['upload_file'] = await MultipartFile.fromFile(document,
-            filename: document.split(Platform.pathSeparator).last);
+        fileFields['upload_documents'] = await MultipartFile.fromFile(
+          document,
+          filename: document.split(Platform.pathSeparator).last,
+        );
       }
+      final legacyFields = DashboardApiAdapter.massRequest(fields);
       final response = await _dioClient.postFormData(
         ApiEndpoints.massPlantation,
-        fields: fields,
+        fields: legacyFields,
         fileFields: fileFields,
       );
-      return MassPlantationModel.fromJson(response.data['data']);
+      return MassPlantationModel.fromJson(
+        DashboardApiAdapter.massRow(
+          DashboardApiAdapter.record(response.data, fallback: legacyFields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to create mass plantation: $e');
     }
   }
 
   @override
-  Future<MassPlantationModel> update(String id, MassPlantationModel model) async {
+  Future<MassPlantationModel> update(
+    String id,
+    MassPlantationModel model,
+  ) async {
     try {
+      final fields = DashboardApiAdapter.massRequest(model.toJson());
       final response = await _dioClient.put(
         ApiEndpoints.massPlantationById(id),
-        data: model.toJson(),
+        data: fields,
       );
-      return MassPlantationModel.fromJson(response.data['data']);
+      return MassPlantationModel.fromJson(
+        DashboardApiAdapter.massRow(
+          DashboardApiAdapter.record(response.data, fallback: fields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to update mass plantation: $e');
     }

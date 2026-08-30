@@ -1,9 +1,26 @@
 class FarmAgroForestryModel {
   static final Set<String> _knownKeys = {
-    'id', 'farmName', 'farm_name', 'ownerName', 'owner_name', 'district',
-    'division', 'tehsil', 'province', 'totalArea', 'total_area', 'crops',
-    'description', 'imageUrl', 'image_url', 'documentUrl', 'document_url',
-    'createdAt', 'created_at', 'updatedAt', 'updated_at',
+    'id',
+    'farmName',
+    'farm_name',
+    'ownerName',
+    'owner_name',
+    'district',
+    'division',
+    'tehsil',
+    'province',
+    'totalArea',
+    'total_area',
+    'crops',
+    'description',
+    'imageUrl',
+    'image_url',
+    'documentUrl',
+    'document_url',
+    'createdAt',
+    'created_at',
+    'updatedAt',
+    'updated_at',
   };
 
   final dynamic id;
@@ -50,19 +67,16 @@ class FarmAgroForestryModel {
 
     return FarmAgroForestryModel(
       id: json['id'],
-      farmName: json['farmName'] as String? ??
-          json['farm_name'] as String? ??
-          '',
-      ownerName: json['ownerName'] as String? ??
-          json['owner_name'] as String? ??
-          '',
+      farmName:
+          json['farmName'] as String? ?? json['farm_name'] as String? ?? '',
+      ownerName:
+          json['ownerName'] as String? ?? json['owner_name'] as String? ?? '',
       district: json['district'] as String? ?? '',
       division: json['division'] as String? ?? '',
       tehsil: json['tehsil'] as String? ?? '',
       province: json['province'] as String? ?? '',
-      totalArea: json['totalArea'] as String? ??
-          json['total_area'] as String? ??
-          '',
+      totalArea:
+          json['totalArea'] as String? ?? json['total_area'] as String? ?? '',
       crops: json['crops'] as String? ?? '',
       description: json['description'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? json['image_url'] as String?,

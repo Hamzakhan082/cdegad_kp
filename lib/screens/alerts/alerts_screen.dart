@@ -21,7 +21,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
       alerts = [
         {
           "title": "35 Months Completed",
-          "message": "Department review period has been completed. Please submit the required reports.",
+          "message":
+              "Department review period has been completed. Please submit the required reports.",
           "date": "2026-04-29",
           "priority": "high",
           "icon": Icons.warning,
@@ -29,7 +30,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
         },
         {
           "title": "Form Submission Deadline",
-          "message": "CD Form submission deadline is approaching. Submit before 30th April.",
+          "message":
+              "CD Form submission deadline is approaching. Submit before 30th April.",
           "date": "2026-04-25",
           "priority": "medium",
           "icon": Icons.event,
@@ -37,7 +39,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
         },
         {
           "title": "New Extension Guidelines",
-          "message": "Updated guidelines for forest extension programs have been released.",
+          "message":
+              "Updated guidelines for forest extension programs have been released.",
           "date": "2026-04-20",
           "priority": "low",
           "icon": Icons.info,
@@ -68,11 +71,18 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.notifications_off, size: 80, color: Colors.grey.shade400),
+                    Icon(
+                      Icons.notifications_off,
+                      size: 80,
+                      color: Colors.grey.shade400,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       "No alerts at the moment",
-                      style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ),
@@ -151,7 +161,11 @@ class _AlertsScreenState extends State<AlertsScreen> {
       ),
       child: Text(
         label,
-        style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 10,
+          color: color,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

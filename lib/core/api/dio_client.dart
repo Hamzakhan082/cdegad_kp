@@ -33,12 +33,7 @@ class DioClient {
     if (_interceptorsInitialized) return;
     final prefs = await SharedPreferences.getInstance();
     _dio.interceptors.clear();
-    _dio.interceptors.add(
-      AppInterceptor(
-        prefs: prefs,
-        onUnauthorized: () {},
-      ),
-    );
+    _dio.interceptors.add(AppInterceptor(prefs: prefs, onUnauthorized: () {}));
     _interceptorsInitialized = true;
   }
 
@@ -128,9 +123,7 @@ class DioClient {
       path,
       data: formData,
       queryParameters: queryParameters,
-      options: options?.copyWith(
-        contentType: 'multipart/form-data',
-      ),
+      options: options?.copyWith(contentType: 'multipart/form-data'),
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
     );
@@ -148,18 +141,13 @@ class DioClient {
     ProgressCallback? onSendProgress,
   }) async {
     await _initInterceptors();
-    final formData = FormData.fromMap({
-      ...fields,
-      ...?fileFields,
-    });
+    final formData = FormData.fromMap({...fields, ...?fileFields});
 
     return _dio.post(
       path,
       data: formData,
       queryParameters: queryParameters,
-      options: options?.copyWith(
-        contentType: 'multipart/form-data',
-      ),
+      options: options?.copyWith(contentType: 'multipart/form-data'),
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
     );

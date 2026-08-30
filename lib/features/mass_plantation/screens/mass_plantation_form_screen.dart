@@ -109,7 +109,16 @@ class _MassPlantationFormScreenState
   Future<void> _pickDocument() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'],
+      allowedExtensions: [
+        'pdf',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'ppt',
+        'pptx',
+        'txt',
+      ],
     );
     if (result != null && result.files.single.path != null) {
       setState(() {
@@ -166,7 +175,11 @@ class _MassPlantationFormScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_isEditing ? 'Record updated successfully' : 'Record created successfully'),
+          content: Text(
+            _isEditing
+                ? 'Record updated successfully'
+                : 'Record created successfully',
+          ),
           backgroundColor: AppColors.primaryGreen,
         ),
       );
@@ -174,7 +187,10 @@ class _MassPlantationFormScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.errorColor),
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: AppColors.errorColor,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -207,7 +223,11 @@ class _MassPlantationFormScreenState
               children: [
                 _buildSectionHeader('Plantation Details'),
                 const SizedBox(height: 12),
-                _buildField('Plantation Name', _plantationNameCtrl, Icons.forest),
+                _buildField(
+                  'Plantation Name',
+                  _plantationNameCtrl,
+                  Icons.forest,
+                ),
                 _buildField('District', _districtCtrl, Icons.location_city),
                 _buildField('Division', _divisionCtrl, Icons.business),
                 _buildField('Tehsil', _tehsilCtrl, Icons.map),
@@ -215,10 +235,20 @@ class _MassPlantationFormScreenState
                 const SizedBox(height: 20),
                 _buildSectionHeader('Planting Information'),
                 const SizedBox(height: 12),
-                _buildField('Total Plants', _totalPlantsCtrl, Icons.format_list_numbered, keyboardType: TextInputType.number),
+                _buildField(
+                  'Total Plants',
+                  _totalPlantsCtrl,
+                  Icons.format_list_numbered,
+                  keyboardType: TextInputType.number,
+                ),
                 _buildField('Species', _speciesCtrl, Icons.eco),
                 _buildField('Area', _areaCtrl, Icons.square_foot),
-                _buildField('Description', _descriptionCtrl, Icons.description, maxLines: 3),
+                _buildField(
+                  'Description',
+                  _descriptionCtrl,
+                  Icons.description,
+                  maxLines: 3,
+                ),
                 const SizedBox(height: 20),
                 _buildSectionHeader('Attachments'),
                 const SizedBox(height: 12),
@@ -233,17 +263,25 @@ class _MassPlantationFormScreenState
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGreen,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: _isSubmitting
                         ? const SizedBox(
                             width: 22,
                             height: 22,
-                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
                           )
                         : Text(
                             _isEditing ? 'Update Record' : 'Save Record',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                   ),
                 ),
@@ -287,15 +325,22 @@ class _MassPlantationFormScreenState
           fillColor: AppColors.surfaceColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.dividerColor.withAlpha(128)),
+            borderSide: BorderSide(
+              color: AppColors.dividerColor.withAlpha(128),
+            ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.dividerColor.withAlpha(128)),
+            borderSide: BorderSide(
+              color: AppColors.dividerColor.withAlpha(128),
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
+            borderSide: const BorderSide(
+              color: AppColors.primaryGreen,
+              width: 2,
+            ),
           ),
         ),
       ),
@@ -310,7 +355,8 @@ class _MassPlantationFormScreenState
           child: const Icon(Icons.image, color: AppColors.primaryGreen),
         ),
         title: Text(
-          _pickedImageName ?? (_existingImageUrl != null ? 'Image attached' : 'Pick Image'),
+          _pickedImageName ??
+              (_existingImageUrl != null ? 'Image attached' : 'Pick Image'),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -331,7 +377,10 @@ class _MassPlantationFormScreenState
           child: const Icon(Icons.attach_file, color: AppColors.secondaryGreen),
         ),
         title: Text(
-          _pickedDocName ?? (_existingDocumentUrl != null ? 'Document attached' : 'Pick Document'),
+          _pickedDocName ??
+              (_existingDocumentUrl != null
+                  ? 'Document attached'
+                  : 'Pick Document'),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class FloatyLogo extends StatefulWidget {
   final Widget child;
 
-  const FloatyLogo({
-    super.key,
-    required this.child,
-  });
+  const FloatyLogo({super.key, required this.child});
 
   @override
   State<FloatyLogo> createState() => _FloatyLogoState();

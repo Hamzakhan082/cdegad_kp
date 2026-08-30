@@ -13,18 +13,25 @@ class DashboardSignupModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'full_name': fullName,
-      'email': emailAddress,
-      'password': password,
+      'Full_Name': fullName,
+      'Email_Adress': emailAddress,
+      'Password': password,
+      'Confirm_passwords': confirmPassword,
     };
   }
 
   factory DashboardSignupModel.fromJson(Map<String, dynamic> json) {
     return DashboardSignupModel(
-      fullName: json['full_name']?.toString() ?? json['FullName']?.toString() ?? '',
-      emailAddress: json['email']?.toString() ?? json['EmailAddress']?.toString() ?? '',
-      password: json['password']?.toString() ?? json['Password']?.toString() ?? '',
-      confirmPassword: json['password']?.toString() ?? json['ConfirmPassword']?.toString() ?? '',
+      fullName:
+          json['full_name']?.toString() ?? json['FullName']?.toString() ?? '',
+      emailAddress:
+          json['email']?.toString() ?? json['EmailAddress']?.toString() ?? '',
+      password:
+          json['password']?.toString() ?? json['Password']?.toString() ?? '',
+      confirmPassword:
+          json['password']?.toString() ??
+          json['ConfirmPassword']?.toString() ??
+          '',
     );
   }
 }

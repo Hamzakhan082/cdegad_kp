@@ -4,18 +4,19 @@ import 'package:cdegad_kp/core/api/dio_client.dart';
 import 'package:cdegad_kp/features/farm_agro_forestry/models/farm_agro_forestry_model.dart';
 import 'package:cdegad_kp/features/farm_agro_forestry/repositories/farm_agro_forestry_repository.dart';
 
-final farmAgroForestryRepositoryProvider =
-    Provider<FarmAgroForestryRepository>((ref) {
-  final dioClient = ref.read(dioClientProvider);
-  return FarmAgroForestryRepositoryImpl(dioClient);
-});
+final farmAgroForestryRepositoryProvider = Provider<FarmAgroForestryRepository>(
+  (ref) {
+    final dioClient = ref.read(dioClientProvider);
+    return FarmAgroForestryRepositoryImpl(dioClient);
+  },
+);
 
 class FarmAgroForestryNotifier
     extends StateNotifier<AsyncValue<List<FarmAgroForestryModel>>> {
   final FarmAgroForestryRepository _repository;
 
   FarmAgroForestryNotifier(this._repository)
-      : super(const AsyncValue.loading()) {
+    : super(const AsyncValue.loading()) {
     load();
   }
 
@@ -68,10 +69,11 @@ class FarmAgroForestryNotifier
   }
 }
 
-final farmAgroForestryNotifierProvider = StateNotifierProvider<
-    FarmAgroForestryNotifier, AsyncValue<List<FarmAgroForestryModel>>>(
-  (ref) {
-    final repo = ref.read(farmAgroForestryRepositoryProvider);
-    return FarmAgroForestryNotifier(repo);
-  },
-);
+final farmAgroForestryNotifierProvider =
+    StateNotifierProvider<
+      FarmAgroForestryNotifier,
+      AsyncValue<List<FarmAgroForestryModel>>
+    >((ref) {
+      final repo = ref.read(farmAgroForestryRepositoryProvider);
+      return FarmAgroForestryNotifier(repo);
+    });

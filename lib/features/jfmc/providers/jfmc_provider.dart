@@ -9,10 +9,10 @@ final jfmcRepositoryProvider = Provider<JfmcRepository>((ref) {
   return JfmcRepositoryImpl(dioClient);
 });
 
-final jfmcListProvider = StateNotifierProvider<JfmcListNotifier,
-    AsyncValue<List<JfmcModel>>>((ref) {
-  return JfmcListNotifier(ref.read(jfmcRepositoryProvider));
-});
+final jfmcListProvider =
+    StateNotifierProvider<JfmcListNotifier, AsyncValue<List<JfmcModel>>>((ref) {
+      return JfmcListNotifier(ref.read(jfmcRepositoryProvider));
+    });
 
 class JfmcListNotifier extends StateNotifier<AsyncValue<List<JfmcModel>>> {
   final JfmcRepository _repository;
@@ -44,11 +44,17 @@ class JfmcListNotifier extends StateNotifier<AsyncValue<List<JfmcModel>>> {
     }
   }
 
-  Future<JfmcModel?> createMultipart(Map<String, dynamic> fields,
-      {String? image, String? document}) async {
+  Future<JfmcModel?> createMultipart(
+    Map<String, dynamic> fields, {
+    String? image,
+    String? document,
+  }) async {
     try {
-      final created = await _repository.createJfmcMultipart(fields,
-          image: image, document: document);
+      final created = await _repository.createJfmcMultipart(
+        fields,
+        image: image,
+        document: document,
+      );
       state = AsyncValue.data([created, ...state.value ?? []]);
       return created;
     } catch (e, st) {
@@ -75,8 +81,9 @@ class JfmcListNotifier extends StateNotifier<AsyncValue<List<JfmcModel>>> {
     try {
       await _repository.deleteJfmc(id);
       final current = state.value ?? [];
-      state =
-          AsyncValue.data(current.where((e) => e.id.toString() != id).toList());
+      state = AsyncValue.data(
+        current.where((e) => e.id.toString() != id).toList(),
+      );
       return true;
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -96,8 +103,11 @@ class JfmcCrud {
 
   Future<JfmcModel> getById(String id) => _repository.getJfmcById(id);
   Future<JfmcModel> create(JfmcModel jfmc) => _repository.createJfmc(jfmc);
-  Future<JfmcModel> createMultipart(Map<String, dynamic> fields,
-          {String? image, String? document}) =>
+  Future<JfmcModel> createMultipart(
+    Map<String, dynamic> fields, {
+    String? image,
+    String? document,
+  }) =>
       _repository.createJfmcMultipart(fields, image: image, document: document);
   Future<JfmcModel> update(String id, JfmcModel jfmc) =>
       _repository.updateJfmc(id, jfmc);

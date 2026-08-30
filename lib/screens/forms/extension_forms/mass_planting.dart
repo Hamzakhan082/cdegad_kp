@@ -14,7 +14,8 @@ class MassPlantingScreen extends StatefulWidget {
   State<MassPlantingScreen> createState() => _MassPlantingScreenState();
 }
 
-class _MassPlantingScreenState extends State<MassPlantingScreen> with TickerProviderStateMixin {
+class _MassPlantingScreenState extends State<MassPlantingScreen>
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   late List<Animation<double>> _scaleAnimations;
   late List<Animation<Offset>> _slideAnimations;
@@ -31,16 +32,27 @@ class _MassPlantingScreenState extends State<MassPlantingScreen> with TickerProv
       return Tween<double>(begin: 0.8, end: 1.0).animate(
         CurvedAnimation(
           parent: _animationController,
-          curve: Interval(0.1 + index * 0.2, 0.6 + index * 0.2, curve: Curves.elasticOut),
+          curve: Interval(
+            0.1 + index * 0.2,
+            0.6 + index * 0.2,
+            curve: Curves.elasticOut,
+          ),
         ),
       );
     });
 
     _slideAnimations = List.generate(2, (index) {
-      return Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+      return Tween<Offset>(
+        begin: const Offset(0, 0.3),
+        end: Offset.zero,
+      ).animate(
         CurvedAnimation(
           parent: _animationController,
-          curve: Interval(0.1 + index * 0.2, 0.6 + index * 0.2, curve: Curves.easeOutCubic),
+          curve: Interval(
+            0.1 + index * 0.2,
+            0.6 + index * 0.2,
+            curve: Curves.easeOutCubic,
+          ),
         ),
       );
     });
@@ -58,7 +70,10 @@ class _MassPlantingScreenState extends State<MassPlantingScreen> with TickerProv
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mass Planting Event", style: AppTextStyles.appBarTitle),
+        title: const Text(
+          "Mass Planting Event",
+          style: AppTextStyles.appBarTitle,
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -99,7 +114,12 @@ class _MassPlantingScreenState extends State<MassPlantingScreen> with TickerProv
                     "Enter New Record",
                     Icons.add_circle,
                     AppColors.primaryGreen,
-                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MassPlantingFormScreen())),
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MassPlantingFormScreen(),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 30),
                   _buildAnimatedButton(
@@ -107,7 +127,12 @@ class _MassPlantingScreenState extends State<MassPlantingScreen> with TickerProv
                     "View Records",
                     Icons.list_alt,
                     AppColors.secondaryGreen,
-                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => MassPlantingViewRecordsScreen())),
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MassPlantingViewRecordsScreen(),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -118,9 +143,18 @@ class _MassPlantingScreenState extends State<MassPlantingScreen> with TickerProv
     );
   }
 
-  Widget _buildAnimatedButton(int index, String title, IconData icon, Color color, VoidCallback onPressed) {
+  Widget _buildAnimatedButton(
+    int index,
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onPressed,
+  ) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_scaleAnimations[index], _slideAnimations[index]]),
+      animation: Listenable.merge([
+        _scaleAnimations[index],
+        _slideAnimations[index],
+      ]),
       builder: (context, child) {
         return Transform.scale(
           scale: _scaleAnimations[index].value,
@@ -130,26 +164,46 @@ class _MassPlantingScreenState extends State<MassPlantingScreen> with TickerProv
               height: 120,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: color.withValues(alpha: 0.3), spreadRadius: 1, blurRadius: 10, offset: const Offset(0, 5))],
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.3),
+                    spreadRadius: 1,
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
               ),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: color,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    padding: const EdgeInsets.all(16)
+                  backgroundColor: color,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.all(16),
                 ),
                 onPressed: onPressed,
                 child: Row(
                   children: [
                     Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
-                        child: Icon(icon, size: 32)
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(icon, size: 32),
                     ),
                     const SizedBox(width: 20),
-                    Expanded(child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                     const Icon(Icons.arrow_forward_ios),
                   ],
                 ),
@@ -178,7 +232,7 @@ class MassPlantingViewRecordsScreen extends StatelessWidget {
       'plantsPlanted': '450',
       'majorSpecies': 'Pine, Oak',
       'institute': 'Green Earth Foundation',
-      'attachedFile': 'planting_report.pdf'
+      'attachedFile': 'planting_report.pdf',
     },
     {
       'fullName': 'Alice Johnson',
@@ -191,7 +245,7 @@ class MassPlantingViewRecordsScreen extends StatelessWidget {
       'plantsPlanted': '280',
       'majorSpecies': 'Mango, Neem',
       'institute': 'Nature Conservation Society',
-      'attachedFile': 'event_summary.docx'
+      'attachedFile': 'event_summary.docx',
     },
   ];
 
@@ -199,76 +253,129 @@ class MassPlantingViewRecordsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mass Planting Records", style: AppTextStyles.appBarTitle),
+        title: const Text(
+          "Mass Planting Records",
+          style: AppTextStyles.appBarTitle,
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [AppColors.primaryGreen, AppColors.secondaryGreen], begin: Alignment.topLeft, end: Alignment.bottomRight),
+            gradient: LinearGradient(
+              colors: [AppColors.primaryGreen, AppColors.secondaryGreen],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
         ),
-        leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.of(context).pop()),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       backgroundColor: AppColors.backgroundLight,
       body: _records.isEmpty
           ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.inbox, size: 80, color: Colors.grey.shade400),
-            const SizedBox(height: 16),
-            Text("No records found", style: TextStyle(fontSize: 18, color: Colors.grey.shade600)),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MassPlantingFormScreen())),
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryGreen),
-              child: const Text("Add New Record"),
-            ),
-          ],
-        ),
-      )
-          : ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _records.length,
-        itemBuilder: (context, index) {
-          final record = _records[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 16),
-            elevation: 4,
-            shadowColor: AppColors.primaryGreen.withValues(alpha: 0.2),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                      children: [
-                        CircleAvatar(
-                            backgroundColor: AppColors.primaryGreen.withValues(alpha: 0.1),
-                            child: Icon(Icons.nature_people, color: AppColors.primaryGreen)
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                            child: Text(
-                                record['fullName'],
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
-                            )
-                        )
-                      ]
+                  Icon(Icons.inbox, size: 80, color: Colors.grey.shade400),
+                  const SizedBox(height: 16),
+                  Text(
+                    "No records found",
+                    style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
                   ),
-                  const SizedBox(height: 12),
-                  _buildDetailRow(Icons.business, "Division", record['division']),
-                  _buildDetailRow(Icons.location_on, "Location", record['location']),
-                  _buildDetailRow(Icons.person, "Chief Guest", record['chiefGuest']),
-                  _buildDetailRow(Icons.calendar_today, "Date", "${record['date']} (${record['season']})"),
-                  _buildDetailRow(Icons.format_list_numbered, "Plants Planted", "${record['plantsPlanted']}/${record['plantsDistributed']}"),
-                  if (record['attachedFile'] != null)
-                    _buildDetailRow(Icons.attach_file, "Attached File", record['attachedFile']),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MassPlantingFormScreen(),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryGreen,
+                    ),
+                    child: const Text("Add New Record"),
+                  ),
                 ],
               ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _records.length,
+              itemBuilder: (context, index) {
+                final record = _records[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  elevation: 4,
+                  shadowColor: AppColors.primaryGreen.withValues(alpha: 0.2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: AppColors.primaryGreen
+                                  .withValues(alpha: 0.1),
+                              child: Icon(
+                                Icons.nature_people,
+                                color: AppColors.primaryGreen,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                record['fullName'],
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDetailRow(
+                          Icons.business,
+                          "Division",
+                          record['division'],
+                        ),
+                        _buildDetailRow(
+                          Icons.location_on,
+                          "Location",
+                          record['location'],
+                        ),
+                        _buildDetailRow(
+                          Icons.person,
+                          "Chief Guest",
+                          record['chiefGuest'],
+                        ),
+                        _buildDetailRow(
+                          Icons.calendar_today,
+                          "Date",
+                          "${record['date']} (${record['season']})",
+                        ),
+                        _buildDetailRow(
+                          Icons.format_list_numbered,
+                          "Plants Planted",
+                          "${record['plantsPlanted']}/${record['plantsDistributed']}",
+                        ),
+                        if (record['attachedFile'] != null)
+                          _buildDetailRow(
+                            Icons.attach_file,
+                            "Attached File",
+                            record['attachedFile'],
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 
@@ -276,12 +383,12 @@ class MassPlantingViewRecordsScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-          children: [
-            Icon(icon, size: 16, color: AppColors.primaryGreen),
-            const SizedBox(width: 8),
-            Text("$label: ", style: const TextStyle(fontWeight: FontWeight.bold)),
-            Expanded(child: Text(value))
-          ]
+        children: [
+          Icon(icon, size: 16, color: AppColors.primaryGreen),
+          const SizedBox(width: 8),
+          Text("$label: ", style: const TextStyle(fontWeight: FontWeight.bold)),
+          Expanded(child: Text(value)),
+        ],
       ),
     );
   }
@@ -292,10 +399,12 @@ class MassPlantingFormScreen extends ConsumerStatefulWidget {
   const MassPlantingFormScreen({super.key});
 
   @override
-  ConsumerState<MassPlantingFormScreen> createState() => _MassPlantingFormScreenState();
+  ConsumerState<MassPlantingFormScreen> createState() =>
+      _MassPlantingFormScreenState();
 }
 
-class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen> with ImagePickerMixin {
+class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
+    with ImagePickerMixin {
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false;
   DateTime? _selectedDate;
@@ -329,7 +438,6 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
     for (var field in _fields) {
       _controllers[field] = TextEditingController();
     }
-
   }
 
   @override
@@ -349,7 +457,8 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
   }
 
   void _addPlantDetail() {
-    if (_speciesController.text.isNotEmpty && _plantsController.text.isNotEmpty) {
+    if (_speciesController.text.isNotEmpty &&
+        _plantsController.text.isNotEmpty) {
       setState(() {
         _plantDetails.add({
           'name': _speciesController.text,
@@ -390,13 +499,15 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel")),
+            child: const Text("Cancel"),
+          ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _addPlantDetail();
             },
-            child: const Text("Add")),
+            child: const Text("Add"),
+          ),
         ],
       ),
     );
@@ -404,12 +515,15 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
 
   Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: _selectedDate ?? DateTime.now(),
-        firstDate: DateTime(2020),
-        lastDate: DateTime(2100)
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
     );
-    if (picked != null && picked != _selectedDate) setState(() => _selectedDate = picked);
+    if (!mounted) return;
+    if (picked != null && picked != _selectedDate) {
+      setState(() => _selectedDate = picked);
+    }
   }
 
   Future<void> _pickFile() async {
@@ -427,7 +541,7 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
           // Text files
           'txt', 'csv',
           // Other common formats
-          'mp4', 'avi', 'mov', 'mp3', 'wav'
+          'mp4', 'avi', 'mov', 'mp3', 'wav',
         ],
       );
 
@@ -437,7 +551,7 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
           _selectedFile = File(result.files.single.path!);
         });
 
-        if (!context.mounted) return;
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("File selected: $_selectedFileName"),
@@ -447,7 +561,7 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
         );
       }
     } catch (e) {
-      if (!context.mounted) return;
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error picking file: $e"),
@@ -482,10 +596,7 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
             const SizedBox(height: 20),
             const Text(
               "Edit Options",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             ListTile(
@@ -506,7 +617,9 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
                     content: const Text("Edit mode activated"),
                     backgroundColor: AppColors.primaryGreen,
                     behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 );
               },
@@ -539,7 +652,9 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Delete Record"),
-        content: const Text("Are you sure you want to delete this record? This action cannot be undone."),
+        content: const Text(
+          "Are you sure you want to delete this record? This action cannot be undone.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -555,7 +670,9 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
                   content: const Text("Record deleted successfully"),
                   backgroundColor: Colors.red,
                   behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               );
             },
@@ -566,13 +683,13 @@ class _MassPlantingFormScreenState extends ConsumerState<MassPlantingFormScreen>
     );
   }
 
-void _submitForm() async {
+  void _submitForm() async {
     if (!_formKey.currentState!.validate() || _selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text("Please fill all fields and select a date"),
-                backgroundColor: AppColors.errorColor
-            )
+        const SnackBar(
+          content: Text("Please fill all fields and select a date"),
+          backgroundColor: AppColors.errorColor,
+        ),
       );
       return;
     }
@@ -592,16 +709,18 @@ void _submitForm() async {
       'venue': value('Location | Venue'),
       'chief_guest': value('Chief Guest'),
       'total_plants': value('Total Number of Plants'),
-      'date_of_event': '${_selectedDate!.year.toString().padLeft(4, '0')}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}',
-      'plant_details': _plantDetails.map((d) => '${d['name']} (${d['number']})').join(', '),
+      'date_of_event':
+          '${_selectedDate!.year.toString().padLeft(4, '0')}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}',
+      'plant_details': _plantDetails
+          .map((d) => '${d['name']} (${d['number']})')
+          .join(', '),
     };
 
     try {
-      await ref.read(massPlantationRepositoryProvider).createMultipart(
-            fields,
-            document: _selectedFile?.path,
-          );
-      if (!context.mounted) return;
+      await ref
+          .read(massPlantationRepositoryProvider)
+          .createMultipart(fields, document: _selectedFile?.path);
+      if (!mounted) return;
       setState(() => _isSubmitting = false);
 
       String message = "Record Saved Successfully\n";
@@ -620,14 +739,14 @@ void _submitForm() async {
       );
       Navigator.pop(context);
     } catch (e) {
-      if (!context.mounted) return;
+      if (!mounted) return;
       setState(() => _isSubmitting = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Submission failed: $e"),
           backgroundColor: Colors.red.shade700,
         ),
-);
+      );
     }
   }
 
@@ -635,7 +754,10 @@ void _submitForm() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mass Planting Record", style: AppTextStyles.appBarTitle),
+        title: const Text(
+          "Mass Planting Record",
+          style: AppTextStyles.appBarTitle,
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -645,15 +767,15 @@ void _submitForm() async {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-                colors: [AppColors.primaryGreen, AppColors.secondaryGreen],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight
+              colors: [AppColors.primaryGreen, AppColors.secondaryGreen],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
         ),
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.of(context).pop()
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       backgroundColor: AppColors.backgroundLight,
@@ -670,7 +792,7 @@ void _submitForm() async {
                 fileName: _selectedFileName,
                 onPressed: _pickFile,
                 onClear: _clearSelectedFile,
-),
+              ),
               ..._fields.asMap().entries.map((entry) {
                 final field = entry.value;
                 if (field == 'Name of Forest Region') {
@@ -679,14 +801,16 @@ void _submitForm() async {
                     options: regions,
                     value: selectedRegion,
                     validator: (value) => value == null ? 'Required' : null,
-                    onChanged: (value) => setState(() => selectedRegion = value),
+                    onChanged: (value) =>
+                        setState(() => selectedRegion = value),
                   );
                 }
                 return FormHelpers.buildTextField(
                   label: field,
                   controller: _controllers[field]!,
-                  validator: (value) => value == null || value.isEmpty ? 'Required' : null,
-                  prefixIcon: _getIconForField(field)
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Required' : null,
+                  prefixIcon: _getIconForField(field),
                 );
               }),
               const SizedBox(height: 16),
@@ -697,7 +821,10 @@ void _submitForm() async {
                   const Expanded(
                     child: Text(
                       "Plant Details",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   ElevatedButton.icon(
@@ -719,7 +846,10 @@ void _submitForm() async {
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8),
                     child: ListTile(
-                      leading: const Icon(Icons.eco, color: AppColors.primaryGreen),
+                      leading: const Icon(
+                        Icons.eco,
+                        color: AppColors.primaryGreen,
+                      ),
                       title: Text(plant['name'] ?? ''),
                       subtitle: Text("Plants: ${plant['number'] ?? ''}"),
                       trailing: IconButton(
@@ -731,7 +861,10 @@ void _submitForm() async {
                 }),
               ],
               const SizedBox(height: 25),
-              FormHelpers.buildSubmitButton(onPressed: _submitForm, isLoading: _isSubmitting),
+              FormHelpers.buildSubmitButton(
+                onPressed: _submitForm,
+                isLoading: _isSubmitting,
+              ),
             ],
           ),
         ),
@@ -747,41 +880,58 @@ void _submitForm() async {
         child: InputDecorator(
           decoration: InputDecoration(
             labelText: "Date of Event",
-            prefixIcon: const Icon(Icons.calendar_today, color: AppColors.secondaryGreen),
+            prefixIcon: const Icon(
+              Icons.calendar_today,
+              color: AppColors.secondaryGreen,
+            ),
             border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.0),
-                borderSide: const BorderSide(color: AppColors.secondaryGreen)
+              borderRadius: BorderRadius.circular(12.0),
+              borderSide: const BorderSide(color: AppColors.secondaryGreen),
             ),
             filled: true,
             fillColor: AppColors.surfaceColor,
           ),
           child: Text(
-              _selectedDate != null ? "${_selectedDate!.toLocal()}".split(' ')[0] : 'Select Date',
-              style: TextStyle(
-                  color: _selectedDate != null ? Colors.black : Colors.grey
-              )
+            _selectedDate != null
+                ? "${_selectedDate!.toLocal()}".split(' ')[0]
+                : 'Select Date',
+            style: TextStyle(
+              color: _selectedDate != null ? Colors.black : Colors.grey,
+            ),
           ),
         ),
       ),
     );
   }
-// Mass planting event same as to
-IconData _getIconForField(String field) {
+
+  // Mass planting event same as to
+  IconData _getIconForField(String field) {
     switch (field) {
-      case 'Employee Name': return Icons.person;
-      case 'Name of Forest Region': return Icons.map;
-      case 'Name of Forest Circle': return Icons.business;
-      case 'Name of Division': return Icons.business;
-      case 'Name of Sub-Division / Range': return Icons.business;
-      case 'Name of Project': return Icons.folder;
-      case 'Name of Institution / Organization': return Icons.account_balance;
-      case 'Location | Venue': return Icons.location_on;
-      case 'Chief Guest': return Icons.person_pin;
+      case 'Employee Name':
+        return Icons.person;
+      case 'Name of Forest Region':
+        return Icons.map;
+      case 'Name of Forest Circle':
+        return Icons.business;
+      case 'Name of Division':
+        return Icons.business;
+      case 'Name of Sub-Division / Range':
+        return Icons.business;
+      case 'Name of Project':
+        return Icons.folder;
+      case 'Name of Institution / Organization':
+        return Icons.account_balance;
+      case 'Location | Venue':
+        return Icons.location_on;
+      case 'Chief Guest':
+        return Icons.person_pin;
       case 'Number of Plant Distributed':
       case 'Name of Species':
       case 'No of plant planted':
-      case 'Total Number of Plants': return Icons.format_list_numbered;
-      default: return Icons.label;
+      case 'Total Number of Plants':
+        return Icons.format_list_numbered;
+      default:
+        return Icons.label;
     }
   }
 }

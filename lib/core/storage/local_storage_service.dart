@@ -75,7 +75,9 @@ class LocalStorageService {
   }
 
   Future<Map<String, dynamic>> create(
-      String collection, Map<String, dynamic> data) async {
+    String collection,
+    Map<String, dynamic> data,
+  ) async {
     await _acquireLock(collection);
     try {
       final items = await getAll(collection);
@@ -83,7 +85,7 @@ class LocalStorageService {
       final record = {
         ...data,
         'id': id,
-        'created_at': DateTime.now().toIso8601String()
+        'created_at': DateTime.now().toIso8601String(),
       };
       items.insert(0, record);
       _cache[collection] = items;
@@ -95,7 +97,10 @@ class LocalStorageService {
   }
 
   Future<Map<String, dynamic>> update(
-      String collection, String id, Map<String, dynamic> data) async {
+    String collection,
+    String id,
+    Map<String, dynamic> data,
+  ) async {
     await _acquireLock(collection);
     try {
       final items = await getAll(collection);
@@ -105,7 +110,7 @@ class LocalStorageService {
         ...items[index],
         ...data,
         'id': items[index]['id'],
-        'updated_at': DateTime.now().toIso8601String()
+        'updated_at': DateTime.now().toIso8601String(),
       };
       items[index] = updated;
       _cache[collection] = items;
@@ -137,7 +142,9 @@ class LocalStorageService {
   }
 
   Future<void> _save(
-      String collection, List<Map<String, dynamic>> items) async {
+    String collection,
+    List<Map<String, dynamic>> items,
+  ) async {
     final file = await _file(collection);
     await file.writeAsString(jsonEncode(items));
   }

@@ -2,10 +2,25 @@ import 'dart:convert';
 
 class AwarenessModel {
   static final Set<String> _knownKeys = {
-    'id', 'title', 'topic', 'district', 'division', 'tehsil',
-    'participantsCount', 'participants_count', 'description', 'imageUrl',
-    'image_url', 'documentUrl', 'document_url', 'sessionDate',
-    'session_date', 'createdAt', 'created_at', 'updatedAt', 'updated_at',
+    'id',
+    'title',
+    'topic',
+    'district',
+    'division',
+    'tehsil',
+    'participantsCount',
+    'participants_count',
+    'description',
+    'imageUrl',
+    'image_url',
+    'documentUrl',
+    'document_url',
+    'sessionDate',
+    'session_date',
+    'createdAt',
+    'created_at',
+    'updatedAt',
+    'updated_at',
   };
 
   final dynamic id;
@@ -55,14 +70,16 @@ class AwarenessModel {
       district: json['district'] as String? ?? '',
       division: json['division'] as String? ?? '',
       tehsil: json['tehsil'] as String? ?? '',
-      participantsCount: json['participantsCount'] as String? ??
-          json['participants_count'] as String? ?? '',
+      participantsCount:
+          json['participantsCount'] as String? ??
+          json['participants_count'] as String? ??
+          '',
       description: json['description'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? json['image_url'] as String?,
       documentUrl:
           json['documentUrl'] as String? ?? json['document_url'] as String?,
-      sessionDate: json['sessionDate'] as String? ??
-          json['session_date'] as String?,
+      sessionDate:
+          json['sessionDate'] as String? ?? json['session_date'] as String?,
       createdAt: json['createdAt'] as String? ?? json['created_at'] as String?,
       updatedAt: json['updatedAt'] as String? ?? json['updated_at'] as String?,
       extraFields: extra,

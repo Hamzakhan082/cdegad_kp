@@ -6,16 +6,16 @@ import 'package:cdegad_kp/features/youth_women_nursery/repositories/youth_women_
 
 final youthWomenNurseryRepositoryProvider =
     Provider<YouthWomenNurseryRepository>((ref) {
-  final dioClient = ref.read(dioClientProvider);
-  return YouthWomenNurseryRepositoryImpl(dioClient);
-});
+      final dioClient = ref.read(dioClientProvider);
+      return YouthWomenNurseryRepositoryImpl(dioClient);
+    });
 
 class YouthWomenNurseryNotifier
     extends StateNotifier<AsyncValue<List<YouthWomenNurseryModel>>> {
   final YouthWomenNurseryRepository _repository;
 
   YouthWomenNurseryNotifier(this._repository)
-      : super(const AsyncValue.loading()) {
+    : super(const AsyncValue.loading()) {
     load();
   }
 
@@ -70,10 +70,11 @@ class YouthWomenNurseryNotifier
   }
 }
 
-final youthWomenNurseryNotifierProvider = StateNotifierProvider<
-    YouthWomenNurseryNotifier, AsyncValue<List<YouthWomenNurseryModel>>>(
-  (ref) {
-    final repo = ref.read(youthWomenNurseryRepositoryProvider);
-    return YouthWomenNurseryNotifier(repo);
-  },
-);
+final youthWomenNurseryNotifierProvider =
+    StateNotifierProvider<
+      YouthWomenNurseryNotifier,
+      AsyncValue<List<YouthWomenNurseryModel>>
+    >((ref) {
+      final repo = ref.read(youthWomenNurseryRepositoryProvider);
+      return YouthWomenNurseryNotifier(repo);
+    });

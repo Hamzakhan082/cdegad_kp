@@ -1,9 +1,22 @@
 class OtherActivityModel {
   static final Set<String> _knownKeys = {
-    'id', 'activityName', 'activity_name', 'activityType', 'activity_type',
-    'district', 'division', 'tehsil', 'description', 'imageUrl',
-    'image_url', 'documentUrl', 'document_url', 'createdAt', 'created_at',
-    'updatedAt', 'updated_at',
+    'id',
+    'activityName',
+    'activity_name',
+    'activityType',
+    'activity_type',
+    'district',
+    'division',
+    'tehsil',
+    'description',
+    'imageUrl',
+    'image_url',
+    'documentUrl',
+    'document_url',
+    'createdAt',
+    'created_at',
+    'updatedAt',
+    'updated_at',
   };
 
   final String? id;
@@ -44,10 +57,8 @@ class OtherActivityModel {
 
     return OtherActivityModel(
       id: json['id']?.toString(),
-      activityName:
-          json['activityName'] ?? json['activity_name'] ?? '',
-      activityType:
-          json['activityType'] ?? json['activity_type'] ?? '',
+      activityName: json['activityName'] ?? json['activity_name'] ?? '',
+      activityType: json['activityType'] ?? json['activity_type'] ?? '',
       district: json['district'] ?? '',
       division: json['division'] ?? '',
       tehsil: json['tehsil'] ?? '',

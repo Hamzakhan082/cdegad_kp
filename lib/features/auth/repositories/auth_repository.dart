@@ -43,7 +43,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthResponseModel> mobileSignup(MobileSignupModel model) =>
       _post(ApiEndpoints.appSignup, model.toJson());
 
-  Future<AuthResponseModel> _post(String path, Map<String, dynamic> body) async {
+  Future<AuthResponseModel> _post(
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     try {
       final response = await _dioClient.post(path, data: body);
       final data = response.data is Map

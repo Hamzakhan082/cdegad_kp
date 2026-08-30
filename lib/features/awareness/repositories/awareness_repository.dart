@@ -1,10 +1,11 @@
 import 'dart:io';
+import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:cdegad_kp/core/api/api_endpoints.dart';
 import 'package:cdegad_kp/core/api/dio_client.dart';
+import 'package:cdegad_kp/core/api/dashboard_api_adapter.dart';
 import 'package:cdegad_kp/features/awareness/models/awareness_model.dart';
 
 abstract class AwarenessRepository {
@@ -29,8 +30,11 @@ class AwarenessRepositoryImpl implements AwarenessRepository {
   Future<List<AwarenessModel>> getAll() async {
     try {
       final response = await _dioClient.get(ApiEndpoints.awareness);
-      final data = response.data['data'] as List;
-      return data.map((e) => AwarenessModel.fromJson(e)).toList();
+      return DashboardApiAdapter.list(response.data)
+          .map(
+            (e) => AwarenessModel.fromJson(DashboardApiAdapter.awarenessRow(e)),
+          )
+          .toList();
     } catch (e) {
       throw Exception('Failed to load awareness records: $e');
     }
@@ -40,7 +44,11 @@ class AwarenessRepositoryImpl implements AwarenessRepository {
   Future<AwarenessModel> getById(String id) async {
     try {
       final response = await _dioClient.get(ApiEndpoints.awarenessById(id));
-      return AwarenessModel.fromJson(response.data['data']);
+      return AwarenessModel.fromJson(
+        DashboardApiAdapter.awarenessRow(
+          DashboardApiAdapter.record(response.data),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to load awareness record: $e');
     }
@@ -49,11 +57,16 @@ class AwarenessRepositoryImpl implements AwarenessRepository {
   @override
   Future<AwarenessModel> create(AwarenessModel model) async {
     try {
+      final fields = DashboardApiAdapter.awarenessRequest(model.toJson());
       final response = await _dioClient.post(
         ApiEndpoints.awareness,
-        data: model.toJson(),
+        data: fields,
       );
-      return AwarenessModel.fromJson(response.data['data']);
+      return AwarenessModel.fromJson(
+        DashboardApiAdapter.awarenessRow(
+          DashboardApiAdapter.record(response.data, fallback: fields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to create awareness record: $e');
     }
@@ -66,21 +79,24 @@ class AwarenessRepositoryImpl implements AwarenessRepository {
     String? document,
   }) async {
     try {
-      final fileFields = <String, MultipartFile>{};
+      final legacyFields = DashboardApiAdapter.awarenessRequest(fields);
       if (image != null) {
-        fileFields['upload_image'] = await MultipartFile.fromFile(image,
-            filename: image.split(Platform.pathSeparator).last);
+        legacyFields['upload_image'] =
+            'data:image/jpeg;base64,${base64Encode(await File(image).readAsBytes())}';
       }
       if (document != null) {
-        fileFields['upload_file'] = await MultipartFile.fromFile(document,
-            filename: document.split(Platform.pathSeparator).last);
+        legacyFields['upload_documents'] =
+            'data:application/octet-stream;base64,${base64Encode(await File(document).readAsBytes())}';
       }
-      final response = await _dioClient.postFormData(
+      final response = await _dioClient.post(
         ApiEndpoints.awareness,
-        fields: fields,
-        fileFields: fileFields,
+        data: legacyFields,
       );
-      return AwarenessModel.fromJson(response.data['data']);
+      return AwarenessModel.fromJson(
+        DashboardApiAdapter.awarenessRow(
+          DashboardApiAdapter.record(response.data, fallback: legacyFields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to create awareness record: $e');
     }
@@ -89,11 +105,16 @@ class AwarenessRepositoryImpl implements AwarenessRepository {
   @override
   Future<AwarenessModel> update(String id, AwarenessModel model) async {
     try {
+      final fields = DashboardApiAdapter.awarenessRequest(model.toJson());
       final response = await _dioClient.put(
         ApiEndpoints.awarenessById(id),
-        data: model.toJson(),
+        data: fields,
       );
-      return AwarenessModel.fromJson(response.data['data']);
+      return AwarenessModel.fromJson(
+        DashboardApiAdapter.awarenessRow(
+          DashboardApiAdapter.record(response.data, fallback: fields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to update awareness record: $e');
     }

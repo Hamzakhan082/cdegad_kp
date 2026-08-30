@@ -43,7 +43,9 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
       });
     }
     try {
-      final response = await ref.read(dioClientProvider).get(ApiEndpoints.downloads);
+      final response = await ref
+          .read(dioClientProvider)
+          .get(ApiEndpoints.downloads);
       final data = (response.data is Map && response.data['data'] is List)
           ? response.data['data'] as List
           : <dynamic>[];
@@ -51,7 +53,8 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
       setState(() {
         files = data.map((e) {
           final row = (e as Map).cast<String, dynamic>();
-          final name = (row['original_name'] ?? row['filename'] ?? 'file').toString();
+          final name = (row['original_name'] ?? row['filename'] ?? 'file')
+              .toString();
           return {
             'id': (row['id'] ?? '').toString(),
             'name': name,
@@ -108,7 +111,9 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
           file.path!,
           filename: file.name,
         );
-        await ref.read(dioClientProvider).postMultipart(
+        await ref
+            .read(dioClientProvider)
+            .postMultipart(
               ApiEndpoints.upload,
               fields: const {},
               files: [multipart],
@@ -277,7 +282,9 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
   @override
   Widget build(BuildContext context) {
     final filteredFiles = files.where((file) {
-      return file['name'].toString().toLowerCase().contains(searchQuery.toLowerCase());
+      return file['name'].toString().toLowerCase().contains(
+        searchQuery.toLowerCase(),
+      );
     }).toList();
 
     return Scaffold(
@@ -337,7 +344,11 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.cloud_off, size: 72, color: Colors.grey.shade400),
+                        Icon(
+                          Icons.cloud_off,
+                          size: 72,
+                          color: Colors.grey.shade400,
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           'Could not load records',
@@ -351,7 +362,10 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
                         Text(
                           _loadError!,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade500,
+                          ),
                         ),
                         const SizedBox(height: 20),
                         OutlinedButton.icon(
@@ -372,7 +386,8 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
                       padding: const EdgeInsets.all(16.0),
                       child: TextField(
                         controller: _searchController,
-                        onChanged: (value) => setState(() => searchQuery = value),
+                        onChanged: (value) =>
+                            setState(() => searchQuery = value),
                         decoration: InputDecoration(
                           hintText: 'Search records...',
                           prefixIcon: const Icon(Icons.search),
@@ -421,7 +436,8 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
                                   ),
                                   child: ListTile(
                                     leading: CircleAvatar(
-                                      backgroundColor: file['color'].withOpacity(0.2),
+                                      backgroundColor: file['color']
+                                          .withOpacity(0.2),
                                       child: Icon(
                                         file['icon'],
                                         color: file['color'],
@@ -429,9 +445,13 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
                                     ),
                                     title: Text(
                                       file['name'],
-                                      style: const TextStyle(fontWeight: FontWeight.w600),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                    subtitle: Text('${file['size']} • ${file['date']}'),
+                                    subtitle: Text(
+                                      '${file['size']} • ${file['date']}',
+                                    ),
                                     trailing: PopupMenuButton(
                                       itemBuilder: (context) => [
                                         PopupMenuItem(
@@ -447,12 +467,23 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen>
                                         PopupMenuItem(
                                           child: const Row(
                                             children: [
-                                              Icon(Icons.delete, size: 20, color: Colors.red),
+                                              Icon(
+                                                Icons.delete,
+                                                size: 20,
+                                                color: Colors.red,
+                                              ),
                                               SizedBox(width: 8),
-                                              Text('Delete', style: TextStyle(color: Colors.red)),
+                                              Text(
+                                                'Delete',
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                ),
+                                              ),
                                             ],
                                           ),
-                                          onTap: () => _confirmDelete(files.indexOf(file)),
+                                          onTap: () => _confirmDelete(
+                                            files.indexOf(file),
+                                          ),
                                         ),
                                       ],
                                     ),

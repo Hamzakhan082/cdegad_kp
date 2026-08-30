@@ -60,10 +60,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(status: AuthStatus.loading);
     try {
       final response = await _authRepository.employeeLogin(
-        EmployeeLoginModel(
-          emailAddress: emailAddress,
-          password: password,
-        ),
+        EmployeeLoginModel(emailAddress: emailAddress, password: password),
       );
 
       if (response.token != null) {
@@ -171,10 +168,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(status: AuthStatus.loading);
     try {
       final response = await _authRepository.dashboardLogin(
-        DashboardLoginModel(
-          emailAddress: emailAddress,
-          password: password,
-        ),
+        DashboardLoginModel(emailAddress: emailAddress, password: password),
       );
 
       if (response.token != null) {
@@ -233,11 +227,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 }
 
-final authProvider =
-    StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   return AuthNotifier(ref.watch(authRepositoryProvider));
 });
 
 final isLoggedInProvider = Provider<bool>((ref) {
-  return ref.watch(authProvider.select((s) => s.status == AuthStatus.authenticated));
+  return ref.watch(
+    authProvider.select((s) => s.status == AuthStatus.authenticated),
+  );
 });

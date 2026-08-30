@@ -34,8 +34,6 @@ class _WomenOrganizationFormScreenState
 
   File? _imageFile;
   File? _documentFile;
-  String? _existingImageUrl;
-  String? _existingDocumentUrl;
   bool _isSubmitting = false;
 
   @override
@@ -47,11 +45,12 @@ class _WomenOrganizationFormScreenState
     _divisionController = TextEditingController(text: item?.division ?? '');
     _tehsilController = TextEditingController(text: item?.tehsil ?? '');
     _provinceController = TextEditingController(text: item?.province ?? '');
-    _membersController =
-        TextEditingController(text: item?.membersCount != null ? '${item!.membersCount}' : '');
-    _descriptionController = TextEditingController(text: item?.description ?? '');
-    _existingImageUrl = item?.imageUrl;
-    _existingDocumentUrl = item?.documentUrl;
+    _membersController = TextEditingController(
+      text: item?.membersCount != null ? '${item!.membersCount}' : '',
+    );
+    _descriptionController = TextEditingController(
+      text: item?.description ?? '',
+    );
   }
 
   @override
@@ -74,12 +73,18 @@ class _WomenOrganizationFormScreenState
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.camera_alt, color: AppColors.primaryGreen),
+              leading: const Icon(
+                Icons.camera_alt,
+                color: AppColors.primaryGreen,
+              ),
               title: const Text('Camera'),
               onTap: () => Navigator.pop(ctx, ImageSource.camera),
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: AppColors.primaryGreen),
+              leading: const Icon(
+                Icons.photo_library,
+                color: AppColors.primaryGreen,
+              ),
               title: const Text('Gallery'),
               onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
@@ -90,11 +95,9 @@ class _WomenOrganizationFormScreenState
     if (source == null) return;
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: source, imageQuality: 80);
+    if (!mounted) return;
     if (picked != null) {
-      setState(() {
-        _imageFile = File(picked.path);
-        _existingImageUrl = null;
-      });
+      setState(() => _imageFile = File(picked.path));
     }
   }
 
@@ -103,30 +106,32 @@ class _WomenOrganizationFormScreenState
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: [
-        'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
-        'jpg', 'jpeg', 'png', 'txt', 'csv',
+        'pdf',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'ppt',
+        'pptx',
+        'jpg',
+        'jpeg',
+        'png',
+        'txt',
+        'csv',
       ],
     );
+    if (!mounted) return;
     if (result != null && result.files.single.path != null) {
-      setState(() {
-        _documentFile = File(result.files.single.path!);
-        _existingDocumentUrl = null;
-      });
+      setState(() => _documentFile = File(result.files.single.path!));
     }
   }
 
   void _removeImage() {
-    setState(() {
-      _imageFile = null;
-      _existingImageUrl = null;
-    });
+    setState(() => _imageFile = null);
   }
 
   void _removeDocument() {
-    setState(() {
-      _documentFile = null;
-      _existingDocumentUrl = null;
-    });
+    setState(() => _documentFile = null);
   }
 
   Future<void> _submit() async {
@@ -159,15 +164,19 @@ class _WomenOrganizationFormScreenState
             .read(womenOrganizationListProvider.notifier)
             .updateItem(widget.editItem!.id!, updated);
       } else {
-        await ref.read(womenOrganizationListProvider.notifier).create(
-              WomenOrganizationModel.fromJson(fields),
-            );
+        await ref
+            .read(womenOrganizationListProvider.notifier)
+            .create(WomenOrganizationModel.fromJson(fields));
       }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(widget.isEditing ? 'Updated successfully' : 'Created successfully'),
+            content: Text(
+              widget.isEditing
+                  ? 'Updated successfully'
+                  : 'Created successfully',
+            ),
             backgroundColor: AppColors.primaryGreen,
           ),
         );
@@ -176,7 +185,10 @@ class _WomenOrganizationFormScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.errorColor),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.errorColor,
+          ),
         );
       }
     } finally {
@@ -188,7 +200,9 @@ class _WomenOrganizationFormScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isEditing ? 'Edit Organization' : 'New Organization'),
+        title: Text(
+          widget.isEditing ? 'Edit Organization' : 'New Organization',
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -216,31 +230,36 @@ class _WomenOrganizationFormScreenState
                   controller: _nameController,
                   label: 'Organization Name',
                   icon: Icons.business,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 _buildField(
                   controller: _districtController,
                   label: 'District',
                   icon: Icons.location_city,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 _buildField(
                   controller: _divisionController,
                   label: 'Division',
                   icon: Icons.map,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 _buildField(
                   controller: _tehsilController,
                   label: 'Tehsil',
                   icon: Icons.place,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 _buildField(
                   controller: _provinceController,
                   label: 'Province',
                   icon: Icons.account_balance,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 _buildField(
                   controller: _membersController,
@@ -249,7 +268,9 @@ class _WomenOrganizationFormScreenState
                   keyboardType: TextInputType.number,
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) return 'Required';
-                    if (int.tryParse(v.trim()) == null) return 'Enter a valid number';
+                    if (int.tryParse(v.trim()) == null) {
+                      return 'Enter a valid number';
+                    }
                     return null;
                   },
                 ),
@@ -258,7 +279,8 @@ class _WomenOrganizationFormScreenState
                   label: 'Description',
                   icon: Icons.description,
                   maxLines: 3,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
@@ -269,7 +291,9 @@ class _WomenOrganizationFormScreenState
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGreen,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: _isSubmitting
                         ? const SizedBox(
@@ -282,7 +306,10 @@ class _WomenOrganizationFormScreenState
                           )
                         : Text(
                             widget.isEditing ? 'Update' : 'Submit',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                   ),
                 ),
@@ -316,8 +343,12 @@ class _WomenOrganizationFormScreenState
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.file(_imageFile!,
-                            width: double.infinity, height: 160, fit: BoxFit.cover),
+                        child: Image.file(
+                          _imageFile!,
+                          width: double.infinity,
+                          height: 160,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       Positioned(
                         top: 8,
@@ -330,7 +361,11 @@ class _WomenOrganizationFormScreenState
                               color: Colors.black.withValues(alpha: 0.5),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.close, color: Colors.white, size: 16),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 16,
+                            ),
                           ),
                         ),
                       ),
@@ -339,10 +374,19 @@ class _WomenOrganizationFormScreenState
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.add_a_photo, size: 36, color: Colors.grey.shade400),
+                      Icon(
+                        Icons.add_a_photo,
+                        size: 36,
+                        color: Colors.grey.shade400,
+                      ),
                       const SizedBox(height: 8),
-                      Text('Tap to add image',
-                          style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
+                      Text(
+                        'Tap to add image',
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 14,
+                        ),
+                      ),
                     ],
                   ),
           ),
@@ -370,7 +414,10 @@ class _WomenOrganizationFormScreenState
             child: _documentFile != null
                 ? Row(
                     children: [
-                      const Icon(Icons.description, color: AppColors.primaryGreen),
+                      const Icon(
+                        Icons.description,
+                        color: AppColors.primaryGreen,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -381,7 +428,11 @@ class _WomenOrganizationFormScreenState
                       ),
                       GestureDetector(
                         onTap: _removeDocument,
-                        child: const Icon(Icons.close, color: Colors.red, size: 20),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.red,
+                          size: 20,
+                        ),
                       ),
                     ],
                   )
@@ -390,8 +441,10 @@ class _WomenOrganizationFormScreenState
                     children: [
                       Icon(Icons.attach_file, color: Colors.grey.shade400),
                       const SizedBox(width: 8),
-                      Text('Tap to attach document',
-                          style: TextStyle(color: Colors.grey.shade500)),
+                      Text(
+                        'Tap to attach document',
+                        style: TextStyle(color: Colors.grey.shade500),
+                      ),
                     ],
                   ),
           ),

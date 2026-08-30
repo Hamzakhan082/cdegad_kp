@@ -9,17 +9,20 @@ class ExtensionMaterialScreen extends ConsumerStatefulWidget {
   const ExtensionMaterialScreen({super.key});
 
   @override
-  ConsumerState<ExtensionMaterialScreen> createState() => _ExtensionMaterialScreenState();
+  ConsumerState<ExtensionMaterialScreen> createState() =>
+      _ExtensionMaterialScreenState();
 }
 
-class _ExtensionMaterialScreenState extends ConsumerState<ExtensionMaterialScreen> with ImagePickerMixin {
+class _ExtensionMaterialScreenState
+    extends ConsumerState<ExtensionMaterialScreen>
+    with ImagePickerMixin {
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false;
   String? _selectedFileName;
   PlatformFile? _selectedFile;
   String? selectedRegion;
 
-final List<String> regions = ['Region I', 'Region II', 'Region III'];
+  final List<String> regions = ['Region I', 'Region II', 'Region III'];
 
   final Map<String, TextEditingController> _controllers = {};
 
@@ -68,7 +71,7 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
           // Text files
           'txt', 'csv',
           // Other common formats
-          'mp4', 'avi', 'mov', 'mp3', 'wav'
+          'mp4', 'avi', 'mov', 'mp3', 'wav',
         ],
       );
 
@@ -78,7 +81,7 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
           _selectedFile = result.files.single;
         });
 
-        if (!context.mounted) return;
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("File selected: $_selectedFileName"),
@@ -88,7 +91,7 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
         );
       }
     } catch (e) {
-      if (!context.mounted) return;
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error picking file: $e"),
@@ -109,23 +112,30 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
     if (_formKey.currentState!.validate()) {
       setState(() => _isSubmitting = true);
       try {
-        await ref.read(awarenessRepositoryProvider).createMultipart(
-          {
-            'employee_name': _controllers["Employee Name"]!.text.trim(),
-            'forest_region': selectedRegion ?? '',
-            'forest_circle_name': _controllers["Name of Forest Circle"]!.text.trim(),
-            'division_name': _controllers["Name of Division"]!.text.trim(),
-            'sub_division_range': _controllers["Name of Sub-Division / Range"]!.text.trim(),
-            'project_name': _controllers["Name of Project"]!.text.trim(),
-            'type_of_event': _controllers["Type of Event"]!.text.trim(),
-            'institution_name': _controllers["Name of Institution / Organization"]!.text.trim(),
-            'venue': _controllers["Venue"]!.text.trim(),
-            'chief_guest': _controllers["Chief Guest"]!.text.trim(),
-            'description': _controllers["Description"]!.text.trim(),
-          },
-          image: selectedImage?.path,
-          document: _selectedFile?.path,
-        );
+        await ref
+            .read(awarenessRepositoryProvider)
+            .createMultipart(
+              {
+                'employee_name': _controllers["Employee Name"]!.text.trim(),
+                'forest_region': selectedRegion ?? '',
+                'forest_circle_name': _controllers["Name of Forest Circle"]!
+                    .text
+                    .trim(),
+                'division_name': _controllers["Name of Division"]!.text.trim(),
+                'sub_division_range':
+                    _controllers["Name of Sub-Division / Range"]!.text.trim(),
+                'project_name': _controllers["Name of Project"]!.text.trim(),
+                'type_of_event': _controllers["Type of Event"]!.text.trim(),
+                'institution_name':
+                    _controllers["Name of Institution / Organization"]!.text
+                        .trim(),
+                'venue': _controllers["Venue"]!.text.trim(),
+                'chief_guest': _controllers["Chief Guest"]!.text.trim(),
+                'description': _controllers["Description"]!.text.trim(),
+              },
+              image: selectedImage?.path,
+              document: _selectedFile?.path,
+            );
         if (!mounted) return;
         setState(() => _isSubmitting = false);
 
@@ -160,7 +170,10 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Awareness Raising Sessions", style: AppTextStyles.appBarTitle),
+        title: const Text(
+          "Awareness Raising Sessions",
+          style: AppTextStyles.appBarTitle,
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -216,7 +229,8 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
                 return FormHelpers.buildTextField(
                   label: field,
                   controller: _controllers[field]!,
-                  validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Required' : null,
                   prefixIcon: _getIconForField(field),
                 );
               }),
@@ -226,7 +240,10 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
                   const Expanded(
                     child: Text(
                       "Activity Description",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -348,7 +365,9 @@ final List<String> regions = ['Region I', 'Region II', 'Region III'];
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Delete Record"),
-        content: const Text("Are you sure you want to delete this record? This action cannot be undone."),
+        content: const Text(
+          "Are you sure you want to delete this record? This action cannot be undone.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

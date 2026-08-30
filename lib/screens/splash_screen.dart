@@ -24,17 +24,12 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1800),
     );
 
-    _fadeAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    );
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
 
-    _scaleAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutBack,
-      ),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.6,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     _controller.forward();
 
@@ -46,10 +41,7 @@ class _SplashScreenState extends State<SplashScreen>
         PageRouteBuilder(
           pageBuilder: (_, __, ___) => const LoginPage(),
           transitionsBuilder: (_, animation, __, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
+            return FadeTransition(opacity: animation, child: child);
           },
           transitionDuration: const Duration(milliseconds: 600),
         ),
@@ -99,9 +91,7 @@ class _SplashScreenState extends State<SplashScreen>
           ),
 
           // 🌑 Dark overlay
-          Container(
-            color: Colors.black.withValues(alpha: 0.35),
-          ),
+          Container(color: Colors.black.withValues(alpha: 0.35)),
 
           // 🎯 Content
           Center(
@@ -154,10 +144,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                     const Text(
                       'KP Forest Department',
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.white70,
-                      ),
+                      style: TextStyle(fontSize: 17, color: Colors.white70),
                     ),
 
                     const SizedBox(height: 6),
@@ -165,10 +152,7 @@ class _SplashScreenState extends State<SplashScreen>
                     const Text(
                       'Protecting Forests, Preserving Future',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white60,
-                      ),
+                      style: TextStyle(fontSize: 13, color: Colors.white60),
                     ),
 
                     const SizedBox(height: 45),
@@ -179,8 +163,7 @@ class _SplashScreenState extends State<SplashScreen>
                       height: 35,
                       child: CircularProgressIndicator(
                         strokeWidth: 3,
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     ),
                   ],

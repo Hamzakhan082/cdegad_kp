@@ -1,9 +1,23 @@
 class WomenOrganizationModel {
   static final Set<String> _knownKeys = {
-    'id', 'organizationName', 'organization_name', 'district', 'division',
-    'tehsil', 'province', 'membersCount', 'members_count', 'description',
-    'imageUrl', 'image_url', 'documentUrl', 'document_url', 'createdAt',
-    'created_at', 'updatedAt', 'updated_at',
+    'id',
+    'organizationName',
+    'organization_name',
+    'district',
+    'division',
+    'tehsil',
+    'province',
+    'membersCount',
+    'members_count',
+    'description',
+    'imageUrl',
+    'image_url',
+    'documentUrl',
+    'document_url',
+    'createdAt',
+    'created_at',
+    'updatedAt',
+    'updated_at',
   };
 
   final String? id;
@@ -52,8 +66,7 @@ class WomenOrganizationModel {
       division: json['division'] ?? '',
       tehsil: json['tehsil'] ?? '',
       province: json['province'] ?? '',
-      membersCount:
-          json['membersCount'] ?? json['members_count'] ?? 0,
+      membersCount: json['membersCount'] ?? json['members_count'] ?? 0,
       description: json['description'] ?? '',
       imageUrl: json['imageUrl'] ?? json['image_url'],
       documentUrl: json['documentUrl'] ?? json['document_url'],

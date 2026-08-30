@@ -13,10 +13,18 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
-  final TextEditingController _nameController = TextEditingController(text: "User Name");
-  final TextEditingController _emailController = TextEditingController(text: "user@forest.gov");
-  final TextEditingController _phoneController = TextEditingController(text: "+92 300 0000000");
-  final TextEditingController _designationController = TextEditingController(text: "Forest Officer");
+  final TextEditingController _nameController = TextEditingController(
+    text: "User Name",
+  );
+  final TextEditingController _emailController = TextEditingController(
+    text: "user@forest.gov",
+  );
+  final TextEditingController _phoneController = TextEditingController(
+    text: "+92 300 0000000",
+  );
+  final TextEditingController _designationController = TextEditingController(
+    text: "Forest Officer",
+  );
   bool _isEditing = false;
 
   @override
@@ -28,10 +36,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadSavedProfile() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _nameController.text = prefs.getString('profile_name') ?? _nameController.text;
-      _emailController.text = prefs.getString('profile_email') ?? _emailController.text;
-      _phoneController.text = prefs.getString('profile_phone') ?? _phoneController.text;
-      _designationController.text = prefs.getString('profile_designation') ?? _designationController.text;
+      _nameController.text =
+          prefs.getString('profile_name') ?? _nameController.text;
+      _emailController.text =
+          prefs.getString('profile_email') ?? _emailController.text;
+      _phoneController.text =
+          prefs.getString('profile_phone') ?? _phoneController.text;
+      _designationController.text =
+          prefs.getString('profile_designation') ?? _designationController.text;
     });
   }
 
@@ -40,7 +52,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await prefs.setString('profile_name', _nameController.text.trim());
     await prefs.setString('profile_email', _emailController.text.trim());
     await prefs.setString('profile_phone', _phoneController.text.trim());
-    await prefs.setString('profile_designation', _designationController.text.trim());
+    await prefs.setString(
+      'profile_designation',
+      _designationController.text.trim(),
+    );
   }
 
   void _showActivityHistory() {
@@ -95,7 +110,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   leading: Icon(Icons.notifications, color: Colors.green),
                   title: Text("Enable Notifications"),
                   subtitle: Text("Get notified about submissions"),
-                  trailing: Icon(Icons.notifications_active, color: Colors.grey),
+                  trailing: Icon(
+                    Icons.notifications_active,
+                    color: Colors.grey,
+                  ),
                 ),
                 ListTile(
                   leading: Icon(Icons.dark_mode, color: Colors.green),
@@ -126,9 +144,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "For assistance with this application, please contact:",
-            ),
+            Text("For assistance with this application, please contact:"),
             SizedBox(height: 12),
             ListTile(
               contentPadding: EdgeInsets.zero,
@@ -206,7 +222,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           color: Colors.blue.shade50,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.camera_alt, size: 30, color: Colors.blue.shade700),
+                        child: Icon(
+                          Icons.camera_alt,
+                          size: 30,
+                          color: Colors.blue.shade700,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       const Text("Camera"),
@@ -226,7 +246,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           color: Colors.green.shade50,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.photo_library, size: 30, color: Colors.green.shade700),
+                        child: Icon(
+                          Icons.photo_library,
+                          size: 30,
+                          color: Colors.green.shade700,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       const Text("Gallery"),
@@ -288,7 +312,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ? FileImage(_profileImage!)
                           : null,
                       child: _profileImage == null
-                          ? const Icon(Icons.person, size: 60, color: Colors.green)
+                          ? const Icon(
+                              Icons.person,
+                              size: 60,
+                              color: Colors.green,
+                            )
                           : null,
                     ),
                     if (_isEditing)
@@ -302,7 +330,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2),
                           ),
-                          child: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            size: 20,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                   ],
@@ -311,7 +343,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
               Text(
                 _nameController.text,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Text(
                 _designationController.text,
@@ -417,7 +452,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: label,
                     border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                   ),
                 )
               : Column(
@@ -425,11 +463,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       label,
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                     Text(
                       controller.text,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -467,7 +511,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const Spacer(),
-            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade400),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey.shade400,
+            ),
           ],
         ),
       ),

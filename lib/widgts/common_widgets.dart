@@ -22,7 +22,7 @@ class ModernCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardColor = color ?? AppColors.primaryGreen;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -51,20 +51,13 @@ class ModernCard extends StatelessWidget {
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          cardColor,
-                          cardColor.withAlpha(204),
-                        ],
+                        colors: [cardColor, cardColor.withAlpha(204)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: 28,
-                    ),
+                    child: Icon(icon, color: Colors.white, size: 28),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -290,21 +283,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               if (showBackButton)
                 leading ??
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(51),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                )
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(51),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back_ios_new,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    )
               else if (leading != null)
                 leading!,
               const SizedBox(width: 16),
@@ -313,16 +306,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      title,
-                      style: AppTextStyles.headerTitle,
-                    ),
+                    Text(title, style: AppTextStyles.headerTitle),
                     if (subtitle != null) ...[
                       const SizedBox(height: 4),
-                      Text(
-                        subtitle!,
-                        style: AppTextStyles.headerSubtitle,
-                      ),
+                      Text(subtitle!, style: AppTextStyles.headerSubtitle),
                     ],
                   ],
                 ),
@@ -340,11 +327,7 @@ class StatusBadge extends StatelessWidget {
   final String text;
   final Color color;
 
-  const StatusBadge({
-    super.key,
-    required this.text,
-    required this.color,
-  });
+  const StatusBadge({super.key, required this.text, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -457,7 +440,9 @@ class LoadingOverlay extends StatelessWidget {
             color: Colors.black.withAlpha(77),
             child: const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppColors.primaryGreen,
+                ),
               ),
             ),
           ),

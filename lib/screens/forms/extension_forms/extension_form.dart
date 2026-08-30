@@ -11,7 +11,8 @@ class ExtensionScreen extends StatefulWidget {
   State<ExtensionScreen> createState() => _ExtensionScreenState();
 }
 
-class _ExtensionScreenState extends State<ExtensionScreen> with TickerProviderStateMixin {
+class _ExtensionScreenState extends State<ExtensionScreen>
+    with TickerProviderStateMixin {
   late AnimationController _headerController;
   late AnimationController _cardController;
   late Animation<double> _headerAnimation;
@@ -48,7 +49,10 @@ class _ExtensionScreenState extends State<ExtensionScreen> with TickerProviderSt
     });
 
     _slideAnimations = List.generate(2, (index) {
-      return Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+      return Tween<Offset>(
+        begin: const Offset(0, 0.3),
+        end: Offset.zero,
+      ).animate(
         CurvedAnimation(
           parent: _cardController,
           curve: Interval(
@@ -178,7 +182,9 @@ class _ExtensionScreenState extends State<ExtensionScreen> with TickerProviderSt
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -224,7 +230,10 @@ class _ExtensionScreenState extends State<ExtensionScreen> with TickerProviderSt
           return RepaintBoundary(
             key: ValueKey(index == 0 ? 'mass_planting' : 'awareness_raising'),
             child: AnimatedBuilder(
-              animation: Listenable.merge([_cardAnimations[index], _slideAnimations[index]]),
+              animation: Listenable.merge([
+                _cardAnimations[index],
+                _slideAnimations[index],
+              ]),
               builder: (context, child) {
                 return FadeTransition(
                   opacity: _cardAnimations[index],
@@ -246,9 +255,13 @@ class _ExtensionScreenState extends State<ExtensionScreen> with TickerProviderSt
 
   Widget _buildModernCard(int index) {
     final isMassPlanting = index == 0;
-    final title = isMassPlanting ? "Mass Planting Event" : "Awareness Raising Sessions";
+    final title = isMassPlanting
+        ? "Mass Planting Event"
+        : "Awareness Raising Sessions";
     final icon = isMassPlanting ? Icons.nature_people : Icons.description;
-    final color = isMassPlanting ? AppColors.primaryGreen : AppColors.secondaryGreen;
+    final color = isMassPlanting
+        ? AppColors.primaryGreen
+        : AppColors.secondaryGreen;
     final description = isMassPlanting
         ? "Organize community planting events"
         : "Create educational materials";
@@ -259,35 +272,51 @@ class _ExtensionScreenState extends State<ExtensionScreen> with TickerProviderSt
           Navigator.push(
             context,
             PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const MassPlantingScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOutCubic)),
-                  child: FadeTransition(opacity: animation, child: child),
-                );
-              },
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  const MassPlantingScreen(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return SlideTransition(
+                      position:
+                          Tween<Offset>(
+                            begin: const Offset(1.0, 0.0),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeInOutCubic,
+                            ),
+                          ),
+                      child: FadeTransition(opacity: animation, child: child),
+                    );
+                  },
             ),
           );
         } else {
           Navigator.push(
             context,
             PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => ExtensionMaterialOptionsScreen(
-                title: "Awareness Raising Sessions",
-                color: color,
-              ),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOutCubic)),
-                  child: FadeTransition(opacity: animation, child: child),
-                );
-              },
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  ExtensionMaterialOptionsScreen(
+                    title: "Awareness Raising Sessions",
+                    color: color,
+                  ),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return SlideTransition(
+                      position:
+                          Tween<Offset>(
+                            begin: const Offset(1.0, 0.0),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeInOutCubic,
+                            ),
+                          ),
+                      child: FadeTransition(opacity: animation, child: child),
+                    );
+                  },
             ),
           );
         }
@@ -353,11 +382,7 @@ class _ExtensionScreenState extends State<ExtensionScreen> with TickerProviderSt
                       color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: 28,
-                    ),
+                    child: Icon(icon, color: Colors.white, size: 28),
                   ),
                   const Spacer(),
                   // Title
@@ -430,10 +455,7 @@ class ExtensionMaterialOptionsScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              color.withValues(alpha: 0.1),
-              Colors.white,
-            ],
+            colors: [color.withValues(alpha: 0.1), Colors.white],
           ),
         ),
         child: SafeArea(
@@ -517,11 +539,7 @@ class ExtensionMaterialOptionsScreen extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-                size: 20,
-              ),
+              child: const Icon(Icons.edit, color: Colors.white, size: 20),
             ),
           ),
         ],
@@ -603,7 +621,9 @@ class ExtensionMaterialOptionsScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Delete Record"),
-        content: const Text("Are you sure you want to delete this record? This action cannot be undone."),
+        content: const Text(
+          "Are you sure you want to delete this record? This action cannot be undone.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -643,7 +663,9 @@ class ExtensionMaterialOptionsScreen extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ExtensionMaterialScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const ExtensionMaterialScreen(),
+                ),
               );
             },
           ),
@@ -711,11 +733,7 @@ class ExtensionMaterialOptionsScreen extends StatelessWidget {
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 32,
-                ),
+                child: Icon(icon, color: color, size: 32),
               ),
               const SizedBox(height: 16),
               Text(
@@ -729,10 +747,7 @@ class ExtensionMaterialOptionsScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                 textAlign: TextAlign.center,
               ),
             ],

@@ -41,7 +41,8 @@ class _JfmcListScreenState extends ConsumerState<JfmcListScreen> {
       builder: (ctx) => AlertDialog(
         title: const Text('Delete JFMC Record'),
         content: Text(
-            'Are you sure you want to delete "${jfmc.committeeName}"?'),
+          'Are you sure you want to delete "${jfmc.committeeName}"?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -59,8 +60,10 @@ class _JfmcListScreenState extends ConsumerState<JfmcListScreen> {
                 );
               }
             },
-            child: const Text('Delete',
-                style: TextStyle(color: AppColors.errorColor)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: AppColors.errorColor),
+            ),
           ),
         ],
       ),
@@ -110,18 +113,25 @@ class _JfmcListScreenState extends ConsumerState<JfmcListScreen> {
           Expanded(
             child: jfmcAsync.when(
               loading: () => const Center(
-                  child: CircularProgressIndicator(
-                      color: AppColors.primaryGreen)),
+                child: CircularProgressIndicator(color: AppColors.primaryGreen),
+              ),
               error: (e, _) => Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.error_outline,
-                        size: 48, color: AppColors.errorColor),
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: AppColors.errorColor,
+                    ),
                     const SizedBox(height: 16),
-                    const Text('Failed to load JFMC records',
-                        style: TextStyle(
-                            color: AppColors.textPrimary, fontSize: 16)),
+                    const Text(
+                      'Failed to load JFMC records',
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     ElevatedButton.icon(
                       onPressed: () =>
@@ -139,9 +149,11 @@ class _JfmcListScreenState extends ConsumerState<JfmcListScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.groups,
-                            size: 80,
-                            color: AppColors.secondaryGreen.withAlpha(100)),
+                        Icon(
+                          Icons.groups,
+                          size: 80,
+                          color: AppColors.secondaryGreen.withAlpha(100),
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           list.isEmpty
@@ -188,8 +200,11 @@ class _JfmcListScreenState extends ConsumerState<JfmcListScreen> {
                                 color: AppColors.errorColor,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: const Icon(Icons.delete,
-                                  color: Colors.white, size: 28),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                                size: 28,
+                              ),
                             ),
                             confirmDismiss: (_) async {
                               _showDeleteDialog(jfmc);
@@ -199,12 +214,16 @@ class _JfmcListScreenState extends ConsumerState<JfmcListScreen> {
                               margin: const EdgeInsets.only(bottom: 12),
                               child: ListTile(
                                 contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
                                 leading: CircleAvatar(
-                                  backgroundColor:
-                                      AppColors.secondaryGreen.withAlpha(40),
-                                  child: const Icon(Icons.groups,
-                                      color: AppColors.primaryGreen),
+                                  backgroundColor: AppColors.secondaryGreen
+                                      .withAlpha(40),
+                                  child: const Icon(
+                                    Icons.groups,
+                                    color: AppColors.primaryGreen,
+                                  ),
                                 ),
                                 title: Text(
                                   jfmc.committeeName.isNotEmpty
@@ -221,7 +240,11 @@ class _JfmcListScreenState extends ConsumerState<JfmcListScreen> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          [jfmc.district, jfmc.division, jfmc.tehsil]
+                                          [
+                                                jfmc.district,
+                                                jfmc.division,
+                                                jfmc.tehsil,
+                                              ]
                                               .where((s) => s.isNotEmpty)
                                               .join(', '),
                                           style: const TextStyle(
@@ -233,10 +256,15 @@ class _JfmcListScreenState extends ConsumerState<JfmcListScreen> {
                                       if (jfmc.membersCount != null)
                                         Container(
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 2),
+                                            horizontal: 8,
+                                            vertical: 2,
+                                          ),
                                           decoration: BoxDecoration(
-                                            color: AppColors.primaryGreen.withAlpha(20),
-                                            borderRadius: BorderRadius.circular(10),
+                                            color: AppColors.primaryGreen
+                                                .withAlpha(20),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
                                           ),
                                           child: Text(
                                             '${jfmc.membersCount} members',
@@ -250,8 +278,10 @@ class _JfmcListScreenState extends ConsumerState<JfmcListScreen> {
                                     ],
                                   ),
                                 ),
-                                trailing: const Icon(Icons.chevron_right,
-                                    color: AppColors.textSecondary),
+                                trailing: const Icon(
+                                  Icons.chevron_right,
+                                  color: AppColors.textSecondary,
+                                ),
                                 onTap: () async {
                                   await Navigator.push(
                                     context,

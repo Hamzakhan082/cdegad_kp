@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:cdegad_kp/core/api/dio_client.dart';
 import 'package:cdegad_kp/core/api/api_endpoints.dart';
+import 'package:cdegad_kp/core/api/dashboard_api_adapter.dart';
 import 'package:cdegad_kp/features/women_organization/models/women_organization_model.dart';
 
 abstract class WomenOrganizationRepository {
@@ -16,7 +17,10 @@ abstract class WomenOrganizationRepository {
     String? image,
     String? document,
   });
-  Future<WomenOrganizationModel> update(String id, WomenOrganizationModel model);
+  Future<WomenOrganizationModel> update(
+    String id,
+    WomenOrganizationModel model,
+  );
   Future<void> delete(String id);
 }
 
@@ -28,10 +32,14 @@ class WomenOrganizationRepositoryImpl implements WomenOrganizationRepository {
   @override
   Future<List<WomenOrganizationModel>> getAll() async {
     try {
-      final response =
-          await _dioClient.get(ApiEndpoints.womenOrganization);
-      final data = response.data['data'] as List;
-      return data.map((e) => WomenOrganizationModel.fromJson(e)).toList();
+      final response = await _dioClient.get(ApiEndpoints.womenOrganization);
+      return DashboardApiAdapter.list(response.data)
+          .map(
+            (e) => WomenOrganizationModel.fromJson(
+              DashboardApiAdapter.womenRow(e),
+            ),
+          )
+          .toList();
     } catch (e) {
       throw Exception('Failed to fetch organizations');
     }
@@ -40,9 +48,12 @@ class WomenOrganizationRepositoryImpl implements WomenOrganizationRepository {
   @override
   Future<WomenOrganizationModel> getById(String id) async {
     try {
-      final response =
-          await _dioClient.get(ApiEndpoints.womenOrganizationById(id));
-      return WomenOrganizationModel.fromJson(response.data['data']);
+      final response = await _dioClient.get(
+        ApiEndpoints.womenOrganizationById(id),
+      );
+      return WomenOrganizationModel.fromJson(
+        DashboardApiAdapter.womenRow(DashboardApiAdapter.record(response.data)),
+      );
     } catch (e) {
       throw Exception('Failed to fetch organization');
     }
@@ -51,11 +62,16 @@ class WomenOrganizationRepositoryImpl implements WomenOrganizationRepository {
   @override
   Future<WomenOrganizationModel> create(WomenOrganizationModel model) async {
     try {
-      final response = await _dioClient.post(
+      final fields = DashboardApiAdapter.womenRequest(model.toJson());
+      final response = await _dioClient.postFormData(
         ApiEndpoints.womenOrganization,
-        data: model.toJson(),
+        fields: fields,
       );
-      return WomenOrganizationModel.fromJson(response.data['data']);
+      return WomenOrganizationModel.fromJson(
+        DashboardApiAdapter.womenRow(
+          DashboardApiAdapter.record(response.data, fallback: fields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to create organization');
     }
@@ -70,19 +86,28 @@ class WomenOrganizationRepositoryImpl implements WomenOrganizationRepository {
     try {
       final fileFields = <String, MultipartFile>{};
       if (image != null) {
-        fileFields['upload_image'] = await MultipartFile.fromFile(image,
-            filename: image.split(Platform.pathSeparator).last);
+        fileFields['upload_image'] = await MultipartFile.fromFile(
+          image,
+          filename: image.split(Platform.pathSeparator).last,
+        );
       }
       if (document != null) {
-        fileFields['upload_file'] = await MultipartFile.fromFile(document,
-            filename: document.split(Platform.pathSeparator).last);
+        fileFields['upload_documents'] = await MultipartFile.fromFile(
+          document,
+          filename: document.split(Platform.pathSeparator).last,
+        );
       }
+      final legacyFields = DashboardApiAdapter.womenRequest(fields);
       final response = await _dioClient.postFormData(
         ApiEndpoints.womenOrganization,
-        fields: fields,
+        fields: legacyFields,
         fileFields: fileFields,
       );
-      return WomenOrganizationModel.fromJson(response.data['data']);
+      return WomenOrganizationModel.fromJson(
+        DashboardApiAdapter.womenRow(
+          DashboardApiAdapter.record(response.data, fallback: legacyFields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to create organization: $e');
     }
@@ -94,11 +119,16 @@ class WomenOrganizationRepositoryImpl implements WomenOrganizationRepository {
     WomenOrganizationModel model,
   ) async {
     try {
+      final fields = DashboardApiAdapter.womenRequest(model.toJson());
       final response = await _dioClient.put(
         ApiEndpoints.womenOrganizationById(id),
-        data: model.toJson(),
+        data: fields,
       );
-      return WomenOrganizationModel.fromJson(response.data['data']);
+      return WomenOrganizationModel.fromJson(
+        DashboardApiAdapter.womenRow(
+          DashboardApiAdapter.record(response.data, fallback: fields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to update organization');
     }
@@ -116,6 +146,6 @@ class WomenOrganizationRepositoryImpl implements WomenOrganizationRepository {
 
 final womenOrganizationRepositoryProvider =
     Provider<WomenOrganizationRepository>((ref) {
-  final dioClient = ref.read(dioClientProvider);
-  return WomenOrganizationRepositoryImpl(dioClient);
-});
+      final dioClient = ref.read(dioClientProvider);
+      return WomenOrganizationRepositoryImpl(dioClient);
+    });

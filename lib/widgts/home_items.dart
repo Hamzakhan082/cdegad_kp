@@ -32,8 +32,8 @@ class FormHelpers {
         maxLines: maxLines,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: prefixIcon != null 
-              ? Icon(prefixIcon, color: AppColors.secondaryGreen) 
+          prefixIcon: prefixIcon != null
+              ? Icon(prefixIcon, color: AppColors.secondaryGreen)
               : null,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -45,11 +45,17 @@ class FormHelpers {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
+            borderSide: const BorderSide(
+              color: AppColors.primaryGreen,
+              width: 2,
+            ),
           ),
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
         ),
       ),
     );
@@ -90,15 +96,21 @@ class FormHelpers {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
+            borderSide: const BorderSide(
+              color: AppColors.primaryGreen,
+              width: 2,
+            ),
           ),
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
         ),
         items: options.map((String option) {
           return DropdownMenuItem<String>(
-            value: option, 
+            value: option,
             child: Text(option, style: const TextStyle(fontSize: 15)),
           );
         }).toList(),
@@ -152,7 +164,10 @@ class FormHelpers {
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               )
-            : Text(text, style: AppTextStyles.buttonText.copyWith(color: Colors.white)),
+            : Text(
+                text,
+                style: AppTextStyles.buttonText.copyWith(color: Colors.white),
+              ),
       ),
     );
   }
@@ -169,17 +184,12 @@ class FormHelpers {
         backgroundColor: AppColors.primaryGreen,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
 
-  static Widget buildSectionHeader({
-    required String title,
-    Widget? trailing,
-  }) {
+  static Widget buildSectionHeader({required String title, Widget? trailing}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
@@ -197,7 +207,6 @@ class FormHelpers {
     );
   }
 }
-
 
 mixin ImagePickerMixin<T extends StatefulWidget> on State<T> {
   File? selectedImage;
@@ -238,15 +247,20 @@ mixin ImagePickerMixin<T extends StatefulWidget> on State<T> {
                     color: AppColors.primaryGreen.withAlpha(26),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.camera_alt, color: AppColors.primaryGreen),
+                  child: const Icon(
+                    Icons.camera_alt,
+                    color: AppColors.primaryGreen,
+                  ),
                 ),
                 title: const Text("Take Photo"),
                 onTap: () async {
-                  final img = await _picker.pickImage(source: ImageSource.camera);
+                  final img = await _picker.pickImage(
+                    source: ImageSource.camera,
+                  );
                   if (img != null) {
                     setState(() => selectedImage = File(img.path));
                   }
-                  if (!context.mounted) return;
+                  if (!mounted) return;
                   Navigator.pop(context);
                 },
               ),
@@ -257,15 +271,20 @@ mixin ImagePickerMixin<T extends StatefulWidget> on State<T> {
                     color: AppColors.secondaryGreen.withAlpha(26),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.photo, color: AppColors.secondaryGreen),
+                  child: const Icon(
+                    Icons.photo,
+                    color: AppColors.secondaryGreen,
+                  ),
                 ),
                 title: const Text("Choose From Gallery"),
                 onTap: () async {
-                  final img = await _picker.pickImage(source: ImageSource.gallery);
+                  final img = await _picker.pickImage(
+                    source: ImageSource.gallery,
+                  );
                   if (img != null) {
                     setState(() => selectedImage = File(img.path));
                   }
-                  if (!context.mounted) return;
+                  if (!mounted) return;
                   Navigator.pop(context);
                 },
               ),
@@ -341,7 +360,11 @@ mixin ImagePickerMixin<T extends StatefulWidget> on State<T> {
                                   color: Colors.black.withAlpha(128),
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.close, color: Colors.white, size: 18),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
                               ),
                             ),
                           ),
@@ -406,7 +429,10 @@ mixin ImagePickerMixin<T extends StatefulWidget> on State<T> {
                 onTap: onPressed,
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(12),

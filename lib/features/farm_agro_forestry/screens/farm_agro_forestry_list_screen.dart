@@ -53,8 +53,10 @@ class _FarmAgroForestryListScreenState
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete',
-                style: TextStyle(color: AppColors.errorColor)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: AppColors.errorColor),
+            ),
           ),
         ],
       ),
@@ -65,15 +67,15 @@ class _FarmAgroForestryListScreenState
             .read(farmAgroForestryNotifierProvider.notifier)
             .delete(model.id.toString());
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Farm deleted')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Farm deleted')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.toString())),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(e.toString())));
         }
       }
     }
@@ -163,8 +165,10 @@ class _FarmAgroForestryListScreenState
                               alignment: Alignment.centerRight,
                               padding: const EdgeInsets.only(right: 20),
                               color: AppColors.errorColor,
-                              child:
-                                  const Icon(Icons.delete, color: Colors.white),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
                             ),
                             confirmDismiss: (_) async {
                               _confirmDelete(item);
@@ -176,8 +180,10 @@ class _FarmAgroForestryListScreenState
                                 contentPadding: const EdgeInsets.all(14),
                                 leading: CircleAvatar(
                                   backgroundColor: AppColors.farmForestry,
-                                  child: const Icon(Icons.agriculture,
-                                      color: Colors.white),
+                                  child: const Icon(
+                                    Icons.agriculture,
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 title: Text(
                                   item.farmName,
@@ -208,8 +214,7 @@ class _FarmAgroForestryListScreenState
                   ),
                 );
               },
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

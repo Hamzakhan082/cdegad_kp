@@ -2,9 +2,22 @@ import 'dart:convert';
 
 class VdcModel {
   static final Set<String> _knownKeys = {
-    'id', 'villageName', 'village_name', 'district', 'division', 'tehsil',
-    'province', 'description', 'imageUrl', 'image_url', 'documentUrl',
-    'document_url', 'createdAt', 'created_at', 'updatedAt', 'updated_at',
+    'id',
+    'villageName',
+    'village_name',
+    'district',
+    'division',
+    'tehsil',
+    'province',
+    'description',
+    'imageUrl',
+    'image_url',
+    'documentUrl',
+    'document_url',
+    'createdAt',
+    'created_at',
+    'updatedAt',
+    'updated_at',
   };
 
   final dynamic id;
@@ -45,8 +58,10 @@ class VdcModel {
 
     return VdcModel(
       id: json['id'],
-      villageName: json['villageName'] as String? ??
-          json['village_name'] as String? ?? '',
+      villageName:
+          json['villageName'] as String? ??
+          json['village_name'] as String? ??
+          '',
       district: json['district'] as String? ?? '',
       division: json['division'] as String? ?? '',
       tehsil: json['tehsil'] as String? ?? '',

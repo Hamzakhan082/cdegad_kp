@@ -26,14 +26,14 @@ class _CDPageState extends State<CDPage> with TickerProviderStateMixin {
       "icon": Icons.location_city,
       "color": AppColors.primaryGreen,
       "gradient": [AppColors.primaryGreen, Color(0xFF2E7D32)],
-      "description": "Village Development Committee management"
+      "description": "Village Development Committee management",
     },
     {
       "title": "JFMC",
       "icon": Icons.groups,
       "color": AppColors.secondaryGreen,
       "gradient": [AppColors.secondaryGreen, Color(0xFF388E3C)],
-      "description": "Joint Forest Management Committee data"
+      "description": "Joint Forest Management Committee data",
     },
   ];
 
@@ -55,7 +55,7 @@ class _CDPageState extends State<CDPage> with TickerProviderStateMixin {
 
     _cardAnimations = List.generate(
       options.length,
-          (index) => Tween<double>(begin: 0.0, end: 1.0).animate(
+      (index) => Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
           parent: _cardController,
           curve: Interval(
@@ -168,11 +168,11 @@ class _CDPageState extends State<CDPage> with TickerProviderStateMixin {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                        "Manage community initiatives",
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 14,
-                        ),
+                              "Manage community initiatives",
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.9),
+                                fontSize: 14,
+                              ),
                             ),
                           ],
                         ),
@@ -185,7 +185,9 @@ class _CDPageState extends State<CDPage> with TickerProviderStateMixin {
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -197,9 +199,9 @@ class _CDPageState extends State<CDPage> with TickerProviderStateMixin {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                          "Select an option to manage and track community development initiatives",
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.9),
+                            "Select an option to manage and track community development initiatives",
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.9),
                               fontSize: 14,
                             ),
                           ),
@@ -262,16 +264,26 @@ class _CDPageState extends State<CDPage> with TickerProviderStateMixin {
           context,
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
-                DataOptionPage(title: item["title"], gradient: item["gradient"]),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOutCubic)),
-                child: FadeTransition(opacity: animation, child: child),
-              );
-            },
+                DataOptionPage(
+                  title: item["title"],
+                  gradient: item["gradient"],
+                ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(1.0, 0.0),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeInOutCubic,
+                          ),
+                        ),
+                    child: FadeTransition(opacity: animation, child: child),
+                  );
+                },
           ),
         );
       },
@@ -336,11 +348,7 @@ class _CDPageState extends State<CDPage> with TickerProviderStateMixin {
                       color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Icon(
-                      item["icon"],
-                      color: Colors.white,
-                      size: 28,
-                    ),
+                    child: Icon(item["icon"], color: Colors.white, size: 28),
                   ),
                   const Spacer(),
                   // Title
@@ -357,9 +365,9 @@ class _CDPageState extends State<CDPage> with TickerProviderStateMixin {
                   const SizedBox(height: 8),
                   // Description
                   Text(
-                      item["description"] ?? "",
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
+                    item["description"] ?? "",
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 11,
                     ),
                     maxLines: 2,
@@ -373,11 +381,11 @@ class _CDPageState extends State<CDPage> with TickerProviderStateMixin {
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_forward_ios,
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_forward_ios,
                           color: Colors.white,
                           size: 12,
                         ),
@@ -399,7 +407,11 @@ class DataOptionPage extends StatelessWidget {
   final String title;
   final List<Color> gradient;
 
-  const DataOptionPage({super.key, required this.title, required this.gradient});
+  const DataOptionPage({
+    super.key,
+    required this.title,
+    required this.gradient,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -409,10 +421,7 @@ class DataOptionPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              gradient.first.withValues(alpha: 0.1),
-              Colors.white,
-            ],
+            colors: [gradient.first.withValues(alpha: 0.1), Colors.white],
           ),
         ),
         child: SafeArea(
@@ -455,11 +464,11 @@ class DataOptionPage extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_ios_new,
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.arrow_back_ios_new,
                 color: Colors.white,
                 size: 20,
               ),
@@ -507,9 +516,15 @@ class DataOptionPage extends StatelessWidget {
             color: gradient.first,
             onTap: () {
               if (title == "VDC") {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const VDCForm()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const VDCForm()),
+                );
               } else if (title == "JFMC") {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const JFMCForm()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const JFMCForm()),
+                );
               }
             },
           ),
@@ -524,10 +539,8 @@ class DataOptionPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => RecordsViewPage(
-                    formType: title,
-                    gradient: gradient,
-                  ),
+                  builder: (_) =>
+                      RecordsViewPage(formType: title, gradient: gradient),
                 ),
               );
             },
@@ -576,11 +589,7 @@ class DataOptionPage extends StatelessWidget {
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 32,
-                ),
+                child: Icon(icon, color: color, size: 32),
               ),
               const SizedBox(height: 16),
               Text(
@@ -594,10 +603,7 @@ class DataOptionPage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                 textAlign: TextAlign.center,
               ),
             ],

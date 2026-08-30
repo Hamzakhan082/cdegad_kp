@@ -8,16 +8,15 @@ class EmployeeLoginModel {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'email': emailAddress,
-      'password': password,
-    };
+    return {'EmailAddress': emailAddress, 'Password': password};
   }
 
   factory EmployeeLoginModel.fromJson(Map<String, dynamic> json) {
     return EmployeeLoginModel(
-      emailAddress: json['email']?.toString() ?? json['EmailAddress']?.toString() ?? '',
-      password: json['password']?.toString() ?? json['Password']?.toString() ?? '',
+      emailAddress:
+          json['email']?.toString() ?? json['EmailAddress']?.toString() ?? '',
+      password:
+          json['password']?.toString() ?? json['Password']?.toString() ?? '',
     );
   }
 }

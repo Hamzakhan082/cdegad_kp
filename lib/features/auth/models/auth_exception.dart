@@ -3,11 +3,7 @@ class AuthException implements Exception {
   final bool isOffline;
   final int? statusCode;
 
-  const AuthException(
-    this.message, {
-    this.isOffline = false,
-    this.statusCode,
-  });
+  const AuthException(this.message, {this.isOffline = false, this.statusCode});
 
   @override
   String toString() => message;

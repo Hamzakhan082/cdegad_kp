@@ -101,26 +101,20 @@ class _FarmAgroForestryFormScreenState
           FarmAgroForestryModel.fromJson(fields),
         );
       } else {
-        await notifier.create(
-          FarmAgroForestryModel.fromJson(fields),
-        );
+        await notifier.create(FarmAgroForestryModel.fromJson(fields));
       }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              _isEditing ? 'Farm updated' : 'Farm created',
-            ),
-          ),
+          SnackBar(content: Text(_isEditing ? 'Farm updated' : 'Farm created')),
         );
         Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);

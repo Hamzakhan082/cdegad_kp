@@ -39,16 +39,19 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
   void initState() {
     super.initState();
     final jfmc = widget.existingJfmc;
-    _committeeNameController =
-        TextEditingController(text: jfmc?.committeeName ?? '');
+    _committeeNameController = TextEditingController(
+      text: jfmc?.committeeName ?? '',
+    );
     _districtController = TextEditingController(text: jfmc?.district ?? '');
     _divisionController = TextEditingController(text: jfmc?.division ?? '');
     _tehsilController = TextEditingController(text: jfmc?.tehsil ?? '');
     _provinceController = TextEditingController(text: jfmc?.province ?? '');
-    _descriptionController =
-        TextEditingController(text: jfmc?.description ?? '');
-    _membersCountController =
-        TextEditingController(text: jfmc?.membersCount?.toString() ?? '');
+    _descriptionController = TextEditingController(
+      text: jfmc?.description ?? '',
+    );
+    _membersCountController = TextEditingController(
+      text: jfmc?.membersCount?.toString() ?? '',
+    );
   }
 
   @override
@@ -114,7 +117,9 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
           'description': _descriptionController.text.trim(),
           if (membersCount != null) 'membersCount': membersCount,
         };
-        await ref.read(jfmcListProvider.notifier).createMultipart(
+        await ref
+            .read(jfmcListProvider.notifier)
+            .createMultipart(
               fields,
               image: _selectedImage?.path,
               document: _selectedDocument?.path,
@@ -135,9 +140,9 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -148,8 +153,7 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            widget.isEditing ? 'Edit JFMC Record' : 'New JFMC Record'),
+        title: Text(widget.isEditing ? 'Edit JFMC Record' : 'New JFMC Record'),
         backgroundColor: AppColors.primaryGreen,
         foregroundColor: Colors.white,
       ),
@@ -174,8 +178,9 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
                   controller: _districtController,
                   label: 'District',
                   icon: Icons.map,
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'District is required' : null,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'District is required'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 _buildField(
@@ -191,8 +196,9 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
                   controller: _tehsilController,
                   label: 'Tehsil',
                   icon: Icons.location_on,
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'Tehsil is required' : null,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'Tehsil is required'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 _buildField(
@@ -221,7 +227,9 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
                   keyboardType: TextInputType.number,
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) return null;
-                    if (int.tryParse(v.trim()) == null) return 'Enter a valid number';
+                    if (int.tryParse(v.trim()) == null) {
+                      return 'Enter a valid number';
+                    }
                     return null;
                   },
                 ),
@@ -240,7 +248,9 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
                               : AppColors.textSecondary,
                         ),
                         label: Text(
-                          _selectedImage != null ? 'Image Selected' : 'Pick Image',
+                          _selectedImage != null
+                              ? 'Image Selected'
+                              : 'Pick Image',
                           style: TextStyle(
                             color: _selectedImage != null
                                 ? AppColors.primaryGreen
@@ -283,8 +293,8 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGreen,
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor:
-                          AppColors.secondaryGreen.withAlpha(100),
+                      disabledBackgroundColor: AppColors.secondaryGreen
+                          .withAlpha(100),
                     ),
                     child: _isSubmitting
                         ? const SizedBox(
@@ -296,7 +306,9 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
                             ),
                           )
                         : Text(
-                            widget.isEditing ? 'Update Record' : 'Create Record',
+                            widget.isEditing
+                                ? 'Update Record'
+                                : 'Create Record',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -332,18 +344,15 @@ class _JfmcFormScreenState extends ConsumerState<JfmcFormScreen> {
         fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              BorderSide(color: AppColors.dividerColor.withAlpha(128)),
+          borderSide: BorderSide(color: AppColors.dividerColor.withAlpha(128)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              BorderSide(color: AppColors.dividerColor.withAlpha(128)),
+          borderSide: BorderSide(color: AppColors.dividerColor.withAlpha(128)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: AppColors.primaryGreen, width: 2),
+          borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

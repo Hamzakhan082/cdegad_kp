@@ -38,7 +38,8 @@ class _MassPlantationListScreenState
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => ref.read(massPlantationListProvider.notifier).refresh(),
+            onPressed: () =>
+                ref.read(massPlantationListProvider.notifier).refresh(),
           ),
         ],
       ),
@@ -48,7 +49,8 @@ class _MassPlantationListScreenState
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
               child: TextField(
-                onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
+                onChanged: (v) =>
+                    setState(() => _searchQuery = v.toLowerCase()),
                 decoration: InputDecoration(
                   hintText: 'Search plantations...',
                   prefixIcon: const Icon(Icons.search),
@@ -71,12 +73,21 @@ class _MassPlantationListScreenState
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.error_outline, size: 48, color: AppColors.errorColor),
+                    Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: AppColors.errorColor,
+                    ),
                     const SizedBox(height: 12),
-                    Text('Failed to load records', style: TextStyle(color: AppColors.textSecondary)),
+                    Text(
+                      'Failed to load records',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
                     const SizedBox(height: 12),
                     ElevatedButton(
-                      onPressed: () => ref.read(massPlantationListProvider.notifier).refresh(),
+                      onPressed: () => ref
+                          .read(massPlantationListProvider.notifier)
+                          .refresh(),
                       child: const Text('Retry'),
                     ),
                   ],
@@ -85,22 +96,41 @@ class _MassPlantationListScreenState
               data: (list) {
                 final filtered = _searchQuery.isEmpty
                     ? list
-                    : list.where((m) =>
-                        m.plantationName.toLowerCase().contains(_searchQuery) ||
-                        m.district.toLowerCase().contains(_searchQuery) ||
-                        m.division.toLowerCase().contains(_searchQuery) ||
-                        m.species.toLowerCase().contains(_searchQuery)).toList();
+                    : list
+                          .where(
+                            (m) =>
+                                m.plantationName.toLowerCase().contains(
+                                  _searchQuery,
+                                ) ||
+                                m.district.toLowerCase().contains(
+                                  _searchQuery,
+                                ) ||
+                                m.division.toLowerCase().contains(
+                                  _searchQuery,
+                                ) ||
+                                m.species.toLowerCase().contains(_searchQuery),
+                          )
+                          .toList();
 
                 if (filtered.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.forest, size: 64, color: AppColors.primaryGreen.withAlpha(77)),
+                        Icon(
+                          Icons.forest,
+                          size: 64,
+                          color: AppColors.primaryGreen.withAlpha(77),
+                        ),
                         const SizedBox(height: 16),
                         Text(
-                          _searchQuery.isEmpty ? 'No records yet' : 'No results found',
-                          style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                          _searchQuery.isEmpty
+                              ? 'No records yet'
+                              : 'No results found',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ],
                     ),
@@ -110,15 +140,14 @@ class _MassPlantationListScreenState
                 return RepaintBoundary(
                   child: RefreshIndicator(
                     color: AppColors.primaryGreen,
-                    onRefresh: () => ref.read(massPlantationListProvider.notifier).refresh(),
+                    onRefresh: () =>
+                        ref.read(massPlantationListProvider.notifier).refresh(),
                     child: ListView.builder(
                       padding: const EdgeInsets.all(16),
                       itemCount: filtered.length,
                       itemBuilder: (context, index) {
                         final model = filtered[index];
-                        return RepaintBoundary(
-                          child: _buildCard(model),
-                        );
+                        return RepaintBoundary(child: _buildCard(model));
                       },
                     ),
                   ),
@@ -159,12 +188,19 @@ class _MassPlantationListScreenState
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('Delete Record'),
-            content: const Text('Are you sure you want to delete this plantation record?'),
+            content: const Text(
+              'Are you sure you want to delete this plantation record?',
+            ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancel'),
+              ),
               TextButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                style: TextButton.styleFrom(foregroundColor: AppColors.errorColor),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.errorColor,
+                ),
                 child: const Text('Delete'),
               ),
             ],
@@ -172,10 +208,12 @@ class _MassPlantationListScreenState
         );
       },
       onDismissed: (_) {
-        ref.read(massPlantationListProvider.notifier).delete(model.id.toString());
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Record deleted')),
-        );
+        ref
+            .read(massPlantationListProvider.notifier)
+            .delete(model.id.toString());
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Record deleted')));
       },
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),
@@ -203,12 +241,18 @@ class _MassPlantationListScreenState
                         color: AppColors.primaryGreen.withAlpha(26),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.forest, color: AppColors.primaryGreen, size: 22),
+                      child: const Icon(
+                        Icons.forest,
+                        color: AppColors.primaryGreen,
+                        size: 22,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        model.plantationName.isEmpty ? 'Unnamed Plantation' : model.plantationName,
+                        model.plantationName.isEmpty
+                            ? 'Unnamed Plantation'
+                            : model.plantationName,
                         style: AppTextStyles.cardTitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -218,19 +262,32 @@ class _MassPlantationListScreenState
                 ),
                 const SizedBox(height: 12),
                 _infoRow(Icons.location_on, model.district, model.division),
-                if (model.species.isNotEmpty) _infoRow(Icons.eco, 'Species', model.species),
+                if (model.species.isNotEmpty)
+                  _infoRow(Icons.eco, 'Species', model.species),
                 if (model.totalPlants.isNotEmpty)
-                  _infoRow(Icons.format_list_numbered, 'Plants', model.totalPlants),
-                if (model.area.isNotEmpty) _infoRow(Icons.square_foot, 'Area', model.area),
+                  _infoRow(
+                    Icons.format_list_numbered,
+                    'Plants',
+                    model.totalPlants,
+                  ),
+                if (model.area.isNotEmpty)
+                  _infoRow(Icons.square_foot, 'Area', model.area),
                 if (model.createdAt != null) ...[
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.access_time, size: 14, color: AppColors.textSecondary),
+                      Icon(
+                        Icons.access_time,
+                        size: 14,
+                        color: AppColors.textSecondary,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         model.createdAt!,
-                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -250,9 +307,17 @@ class _MassPlantationListScreenState
         children: [
           Icon(icon, size: 16, color: AppColors.secondaryGreen),
           const SizedBox(width: 8),
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+          Text(
+            '$label: ',
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+          ),
           Expanded(
-            child: Text(value, style: const TextStyle(fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 13),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

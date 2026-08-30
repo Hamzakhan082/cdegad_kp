@@ -29,12 +29,14 @@ class _OtherActivityListScreenState
     if (_searchQuery.isEmpty) return list;
     final q = _searchQuery.toLowerCase();
     return list
-        .where((e) =>
-            e.activityName.toLowerCase().contains(q) ||
-            e.activityType.toLowerCase().contains(q) ||
-            e.district.toLowerCase().contains(q) ||
-            e.division.toLowerCase().contains(q) ||
-            e.tehsil.toLowerCase().contains(q))
+        .where(
+          (e) =>
+              e.activityName.toLowerCase().contains(q) ||
+              e.activityType.toLowerCase().contains(q) ||
+              e.district.toLowerCase().contains(q) ||
+              e.division.toLowerCase().contains(q) ||
+              e.tehsil.toLowerCase().contains(q),
+        )
         .toList();
   }
 
@@ -66,7 +68,10 @@ class _OtherActivityListScreenState
                 onChanged: (v) => setState(() => _searchQuery = v),
                 decoration: InputDecoration(
                   hintText: 'Search activities...',
-                  prefixIcon: const Icon(Icons.search, color: AppColors.secondaryGreen),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: AppColors.secondaryGreen,
+                  ),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.clear),
@@ -82,7 +87,10 @@ class _OtherActivityListScreenState
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 0,
+                    horizontal: 16,
+                  ),
                 ),
               ),
             ),
@@ -96,12 +104,21 @@ class _OtherActivityListScreenState
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.error_outline, color: AppColors.errorColor, size: 48),
+                    const Icon(
+                      Icons.error_outline,
+                      color: AppColors.errorColor,
+                      size: 48,
+                    ),
                     const SizedBox(height: 12),
-                    Text('Failed to load data', style: TextStyle(color: Colors.grey.shade600)),
+                    Text(
+                      'Failed to load data',
+                      style: TextStyle(color: Colors.grey.shade600),
+                    ),
                     const SizedBox(height: 12),
                     ElevatedButton.icon(
-                      onPressed: () => ref.read(otherActivityListProvider.notifier).refresh(),
+                      onPressed: () => ref
+                          .read(otherActivityListProvider.notifier)
+                          .refresh(),
                       icon: const Icon(Icons.refresh),
                       label: const Text('Retry'),
                     ),
@@ -115,13 +132,20 @@ class _OtherActivityListScreenState
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.event_busy, size: 64, color: Colors.grey.shade300),
+                        Icon(
+                          Icons.event_busy,
+                          size: 64,
+                          color: Colors.grey.shade300,
+                        ),
                         const SizedBox(height: 12),
                         Text(
                           _searchQuery.isEmpty
                               ? 'No activities found'
                               : 'No results for "$_searchQuery"',
-                          style: TextStyle(color: Colors.grey.shade500, fontSize: 16),
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 16,
+                          ),
                         ),
                       ],
                     ),
@@ -130,9 +154,13 @@ class _OtherActivityListScreenState
                 return RepaintBoundary(
                   child: RefreshIndicator(
                     color: AppColors.primaryGreen,
-                    onRefresh: () => ref.read(otherActivityListProvider.notifier).refresh(),
+                    onRefresh: () =>
+                        ref.read(otherActivityListProvider.notifier).refresh(),
                     child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       itemCount: filtered.length,
                       itemBuilder: (context, index) {
                         final item = filtered[index];
@@ -148,7 +176,10 @@ class _OtherActivityListScreenState
                                 color: AppColors.errorColor,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: const Icon(Icons.delete, color: Colors.white),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
                             ),
                             confirmDismiss: (_) async {
                               return await showDialog<bool>(
@@ -160,7 +191,8 @@ class _OtherActivityListScreenState
                                   ),
                                   actions: [
                                     TextButton(
-                                      onPressed: () => Navigator.pop(ctx, false),
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, false),
                                       child: const Text('Cancel'),
                                     ),
                                     ElevatedButton(
@@ -168,8 +200,10 @@ class _OtherActivityListScreenState
                                         backgroundColor: AppColors.errorColor,
                                       ),
                                       onPressed: () => Navigator.pop(ctx, true),
-                                      child: const Text('Delete',
-                                          style: TextStyle(color: Colors.white)),
+                                      child: const Text(
+                                        'Delete',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -181,16 +215,18 @@ class _OtherActivityListScreenState
                                   await ref
                                       .read(otherActivityListProvider.notifier)
                                       .remove(item.id!);
-                                  if (mounted) {
+                                  if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('${item.activityName} deleted'),
+                                        content: Text(
+                                          '${item.activityName} deleted',
+                                        ),
                                         backgroundColor: AppColors.errorColor,
                                       ),
                                     );
                                   }
                                 } catch (e) {
-                                  if (mounted) {
+                                  if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text('Delete failed: $e'),
@@ -252,7 +288,10 @@ class _ActivityCard extends StatelessWidget {
                     color: AppColors.otherActivity.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.extension, color: AppColors.otherActivity),
+                  child: const Icon(
+                    Icons.extension,
+                    color: AppColors.otherActivity,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -297,7 +336,10 @@ class _ActivityCard extends StatelessWidget {
       children: [
         Icon(icon, size: 14, color: AppColors.secondaryGreen),
         const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+        ),
       ],
     );
   }

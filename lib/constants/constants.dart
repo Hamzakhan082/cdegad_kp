@@ -11,10 +11,10 @@ class AppColors {
   static const Color textPrimary = Color(0xFF212121);
   static const Color textSecondary = Color(0xFF757575);
   static const Color dividerColor = Color(0xFFBDBDBD);
-  
+
   static const Color gradientStart = Color(0xFF2E7D32);
   static const Color gradientEnd = Color(0xFF1B5E20);
-  
+
   static const Color womenOrganization = Color(0xFFE91E63);
   static const Color womenNursery = Color(0xFF9C27B0);
   static const Color massPlanting = Color(0xFF009688);
@@ -90,9 +90,7 @@ class AppTheme {
         color: AppColors.surfaceColor,
         elevation: 2,
         shadowColor: AppColors.cardShadow,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -120,7 +118,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surfaceColor,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.secondaryGreen),

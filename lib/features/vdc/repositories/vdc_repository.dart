@@ -1,5 +1,6 @@
 import 'package:cdegad_kp/core/api/api_endpoints.dart';
 import 'package:cdegad_kp/core/api/dio_client.dart';
+import 'package:cdegad_kp/core/api/dashboard_api_adapter.dart';
 import 'package:cdegad_kp/features/vdc/models/vdc_model.dart';
 import 'package:dio/dio.dart';
 
@@ -7,8 +8,11 @@ abstract class VdcRepository {
   Future<List<VdcModel>> getAllVdc();
   Future<VdcModel> getVdcById(String id);
   Future<VdcModel> createVdc(VdcModel vdc);
-  Future<VdcModel> createVdcMultipart(Map<String, dynamic> fields,
-      {String? image, String? document});
+  Future<VdcModel> createVdcMultipart(
+    Map<String, dynamic> fields, {
+    String? image,
+    String? document,
+  });
   Future<VdcModel> updateVdc(String id, VdcModel vdc);
   Future<void> deleteVdc(String id);
 }
@@ -22,11 +26,9 @@ class VdcRepositoryImpl implements VdcRepository {
   Future<List<VdcModel>> getAllVdc() async {
     try {
       final response = await _dioClient.get(ApiEndpoints.vdc);
-      final data = response.data['data'];
-      if (data is List) {
-        return data.map((e) => VdcModel.fromJson(e)).toList();
-      }
-      return [];
+      return DashboardApiAdapter.list(
+        response.data,
+      ).map((e) => VdcModel.fromJson(DashboardApiAdapter.vdcRow(e))).toList();
     } catch (e) {
       throw Exception('Failed to fetch VDC records: $e');
     }
@@ -36,7 +38,9 @@ class VdcRepositoryImpl implements VdcRepository {
   Future<VdcModel> getVdcById(String id) async {
     try {
       final response = await _dioClient.get(ApiEndpoints.vdcById(id));
-      return VdcModel.fromJson(response.data['data']);
+      return VdcModel.fromJson(
+        DashboardApiAdapter.vdcRow(DashboardApiAdapter.record(response.data)),
+      );
     } catch (e) {
       throw Exception('Failed to fetch VDC record: $e');
     }
@@ -45,35 +49,49 @@ class VdcRepositoryImpl implements VdcRepository {
   @override
   Future<VdcModel> createVdc(VdcModel vdc) async {
     try {
-      final response = await _dioClient.post(
-        ApiEndpoints.vdc,
-        data: vdc.toJson(),
+      final fields = DashboardApiAdapter.vdcRequest(vdc.toJson());
+      final response = await _dioClient.post(ApiEndpoints.vdc, data: fields);
+      return VdcModel.fromJson(
+        DashboardApiAdapter.vdcRow(
+          DashboardApiAdapter.record(response.data, fallback: fields),
+        ),
       );
-      return VdcModel.fromJson(response.data['data']);
     } catch (e) {
       throw Exception('Failed to create VDC record: $e');
     }
   }
 
   @override
-  Future<VdcModel> createVdcMultipart(Map<String, dynamic> fields,
-      {String? image, String? document}) async {
+  Future<VdcModel> createVdcMultipart(
+    Map<String, dynamic> fields, {
+    String? image,
+    String? document,
+  }) async {
     try {
       final fileFields = <String, MultipartFile>{};
       if (image != null && image.isNotEmpty) {
-        fileFields['upload_image'] =
-            await MultipartFile.fromFile(image, filename: 'image');
+        fileFields['upload_image'] = await MultipartFile.fromFile(
+          image,
+          filename: 'image',
+        );
       }
       if (document != null && document.isNotEmpty) {
-        fileFields['upload_file'] =
-            await MultipartFile.fromFile(document, filename: 'document');
+        fileFields['upload_document'] = await MultipartFile.fromFile(
+          document,
+          filename: 'document',
+        );
       }
+      final legacyFields = DashboardApiAdapter.vdcRequest(fields);
       final response = await _dioClient.postFormData(
         ApiEndpoints.vdc,
-        fields: fields,
+        fields: legacyFields,
         fileFields: fileFields,
       );
-      return VdcModel.fromJson(response.data['data']);
+      return VdcModel.fromJson(
+        DashboardApiAdapter.vdcRow(
+          DashboardApiAdapter.record(response.data, fallback: legacyFields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to create VDC record: $e');
     }
@@ -82,11 +100,16 @@ class VdcRepositoryImpl implements VdcRepository {
   @override
   Future<VdcModel> updateVdc(String id, VdcModel vdc) async {
     try {
+      final fields = DashboardApiAdapter.vdcRequest(vdc.toJson());
       final response = await _dioClient.put(
         ApiEndpoints.vdcById(id),
-        data: vdc.toJson(),
+        data: fields,
       );
-      return VdcModel.fromJson(response.data['data']);
+      return VdcModel.fromJson(
+        DashboardApiAdapter.vdcRow(
+          DashboardApiAdapter.record(response.data, fallback: fields),
+        ),
+      );
     } catch (e) {
       throw Exception('Failed to update VDC record: $e');
     }

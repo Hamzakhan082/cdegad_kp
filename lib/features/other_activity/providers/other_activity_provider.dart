@@ -5,8 +5,8 @@ import 'package:cdegad_kp/features/other_activity/repositories/other_activity_re
 
 final otherActivityListProvider =
     AsyncNotifierProvider<OtherActivityListNotifier, List<OtherActivityModel>>(
-  OtherActivityListNotifier.new,
-);
+      OtherActivityListNotifier.new,
+    );
 
 class OtherActivityListNotifier
     extends AsyncNotifier<List<OtherActivityModel>> {
@@ -26,11 +26,15 @@ class OtherActivityListNotifier
     final repo = ref.read(otherActivityRepositoryProvider);
     await repo.delete(id);
     final current = state.value ?? [];
-    state = AsyncValue.data(current.where((e) => e.id.toString() != id).toList());
+    state = AsyncValue.data(
+      current.where((e) => e.id.toString() != id).toList(),
+    );
   }
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => ref.read(otherActivityRepositoryProvider).getAll());
+    state = await AsyncValue.guard(
+      () => ref.read(otherActivityRepositoryProvider).getAll(),
+    );
   }
 }

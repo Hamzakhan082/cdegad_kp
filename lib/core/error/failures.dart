@@ -34,8 +34,10 @@ class FailureMapper {
 
   static Failure fromException(Exception exception) {
     return switch (exception) {
-      ServerException e =>
-        ServerFailure(message: e.message, statusCode: e.statusCode),
+      ServerException e => ServerFailure(
+        message: e.message,
+        statusCode: e.statusCode,
+      ),
       CacheException e => CacheFailure(message: e.message),
       AuthException e => AuthFailure(message: e.message),
       NetworkException e => NetworkFailure(message: e.message),

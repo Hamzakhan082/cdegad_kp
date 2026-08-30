@@ -4,11 +4,13 @@ import 'package:cdegad_kp/features/awareness/models/awareness_model.dart';
 import 'package:cdegad_kp/features/awareness/repositories/awareness_repository.dart';
 
 final awarenessListProvider =
-    StateNotifierProvider<AwarenessListNotifier, AsyncValue<List<AwarenessModel>>>(
-  (ref) => AwarenessListNotifier(ref),
-);
+    StateNotifierProvider<
+      AwarenessListNotifier,
+      AsyncValue<List<AwarenessModel>>
+    >((ref) => AwarenessListNotifier(ref));
 
-class AwarenessListNotifier extends StateNotifier<AsyncValue<List<AwarenessModel>>> {
+class AwarenessListNotifier
+    extends StateNotifier<AsyncValue<List<AwarenessModel>>> {
   final Ref _ref;
 
   AwarenessListNotifier(this._ref) : super(const AsyncValue.loading()) {
@@ -46,7 +48,11 @@ class AwarenessListNotifier extends StateNotifier<AsyncValue<List<AwarenessModel
     String? document,
   }) async {
     try {
-      final created = await _repo.createMultipart(fields, image: image, document: document);
+      final created = await _repo.createMultipart(
+        fields,
+        image: image,
+        document: document,
+      );
       state = AsyncValue.data([created, ...state.value ?? []]);
       return created;
     } catch (e, st) {
@@ -73,7 +79,9 @@ class AwarenessListNotifier extends StateNotifier<AsyncValue<List<AwarenessModel
     try {
       await _repo.delete(id);
       final current = state.value ?? [];
-      state = AsyncValue.data(current.where((item) => item.id.toString() != id).toList());
+      state = AsyncValue.data(
+        current.where((item) => item.id.toString() != id).toList(),
+      );
     } catch (e, st) {
       state = AsyncValue.error(e, st);
       rethrow;

@@ -27,7 +27,8 @@ class _YouthWomenNurseryListScreenState
   }
 
   List<YouthWomenNurseryModel> _filteredList(
-      List<YouthWomenNurseryModel> list) {
+    List<YouthWomenNurseryModel> list,
+  ) {
     if (_searchQuery.isEmpty) return list;
     final q = _searchQuery.toLowerCase();
     return list
@@ -54,7 +55,10 @@ class _YouthWomenNurseryListScreenState
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete', style: TextStyle(color: AppColors.errorColor)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: AppColors.errorColor),
+            ),
           ),
         ],
       ),
@@ -65,15 +69,15 @@ class _YouthWomenNurseryListScreenState
             .read(youthWomenNurseryNotifierProvider.notifier)
             .delete(model.id.toString());
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Nursery deleted')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Nursery deleted')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.toString())),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(e.toString())));
         }
       }
     }
@@ -147,8 +151,9 @@ class _YouthWomenNurseryListScreenState
                 }
                 return RepaintBoundary(
                   child: RefreshIndicator(
-                    onRefresh: () =>
-                        ref.read(youthWomenNurseryNotifierProvider.notifier).refresh(),
+                    onRefresh: () => ref
+                        .read(youthWomenNurseryNotifierProvider.notifier)
+                        .refresh(),
                     child: ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       itemCount: filtered.length,
@@ -162,7 +167,10 @@ class _YouthWomenNurseryListScreenState
                               alignment: Alignment.centerRight,
                               padding: const EdgeInsets.only(right: 20),
                               color: AppColors.errorColor,
-                              child: const Icon(Icons.delete, color: Colors.white),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
                             ),
                             confirmDismiss: (_) async {
                               _confirmDelete(item);
@@ -174,7 +182,10 @@ class _YouthWomenNurseryListScreenState
                                 contentPadding: const EdgeInsets.all(14),
                                 leading: CircleAvatar(
                                   backgroundColor: AppColors.womenNursery,
-                                  child: const Icon(Icons.park, color: Colors.white),
+                                  child: const Icon(
+                                    Icons.park,
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 title: Text(
                                   item.nurseryName,
@@ -210,8 +221,10 @@ class _YouthWomenNurseryListScreenState
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(e.toString(),
-                        style: const TextStyle(color: AppColors.errorColor)),
+                    Text(
+                      e.toString(),
+                      style: const TextStyle(color: AppColors.errorColor),
+                    ),
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () => ref

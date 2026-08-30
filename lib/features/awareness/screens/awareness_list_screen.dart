@@ -47,7 +47,8 @@ class _AwarenessListScreenState extends ConsumerState<AwarenessListScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
               child: TextField(
-                onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
+                onChanged: (v) =>
+                    setState(() => _searchQuery = v.toLowerCase()),
                 decoration: InputDecoration(
                   hintText: 'Search sessions...',
                   prefixIcon: const Icon(Icons.search),
@@ -70,12 +71,20 @@ class _AwarenessListScreenState extends ConsumerState<AwarenessListScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.error_outline, size: 48, color: AppColors.errorColor),
+                    Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: AppColors.errorColor,
+                    ),
                     const SizedBox(height: 12),
-                    Text('Failed to load records', style: TextStyle(color: AppColors.textSecondary)),
+                    Text(
+                      'Failed to load records',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
                     const SizedBox(height: 12),
                     ElevatedButton(
-                      onPressed: () => ref.read(awarenessListProvider.notifier).refresh(),
+                      onPressed: () =>
+                          ref.read(awarenessListProvider.notifier).refresh(),
                       child: const Text('Retry'),
                     ),
                   ],
@@ -84,22 +93,37 @@ class _AwarenessListScreenState extends ConsumerState<AwarenessListScreen> {
               data: (list) {
                 final filtered = _searchQuery.isEmpty
                     ? list
-                    : list.where((m) =>
-                        m.title.toLowerCase().contains(_searchQuery) ||
-                        m.topic.toLowerCase().contains(_searchQuery) ||
-                        m.district.toLowerCase().contains(_searchQuery) ||
-                        m.division.toLowerCase().contains(_searchQuery)).toList();
+                    : list
+                          .where(
+                            (m) =>
+                                m.title.toLowerCase().contains(_searchQuery) ||
+                                m.topic.toLowerCase().contains(_searchQuery) ||
+                                m.district.toLowerCase().contains(
+                                  _searchQuery,
+                                ) ||
+                                m.division.toLowerCase().contains(_searchQuery),
+                          )
+                          .toList();
 
                 if (filtered.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.campaign, size: 64, color: AppColors.primaryGreen.withAlpha(77)),
+                        Icon(
+                          Icons.campaign,
+                          size: 64,
+                          color: AppColors.primaryGreen.withAlpha(77),
+                        ),
                         const SizedBox(height: 16),
                         Text(
-                          _searchQuery.isEmpty ? 'No records yet' : 'No results found',
-                          style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                          _searchQuery.isEmpty
+                              ? 'No records yet'
+                              : 'No results found',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ],
                     ),
@@ -109,15 +133,14 @@ class _AwarenessListScreenState extends ConsumerState<AwarenessListScreen> {
                 return RepaintBoundary(
                   child: RefreshIndicator(
                     color: AppColors.primaryGreen,
-                    onRefresh: () => ref.read(awarenessListProvider.notifier).refresh(),
+                    onRefresh: () =>
+                        ref.read(awarenessListProvider.notifier).refresh(),
                     child: ListView.builder(
                       padding: const EdgeInsets.all(16),
                       itemCount: filtered.length,
                       itemBuilder: (context, index) {
                         final model = filtered[index];
-                        return RepaintBoundary(
-                          child: _buildCard(model),
-                        );
+                        return RepaintBoundary(child: _buildCard(model));
                       },
                     ),
                   ),
@@ -158,12 +181,19 @@ class _AwarenessListScreenState extends ConsumerState<AwarenessListScreen> {
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('Delete Record'),
-            content: const Text('Are you sure you want to delete this awareness record?'),
+            content: const Text(
+              'Are you sure you want to delete this awareness record?',
+            ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancel'),
+              ),
               TextButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                style: TextButton.styleFrom(foregroundColor: AppColors.errorColor),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.errorColor,
+                ),
                 child: const Text('Delete'),
               ),
             ],
@@ -172,9 +202,9 @@ class _AwarenessListScreenState extends ConsumerState<AwarenessListScreen> {
       },
       onDismissed: (_) {
         ref.read(awarenessListProvider.notifier).delete(model.id.toString());
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Record deleted')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Record deleted')));
       },
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),
@@ -202,7 +232,11 @@ class _AwarenessListScreenState extends ConsumerState<AwarenessListScreen> {
                         color: AppColors.accentGreen.withAlpha(26),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.campaign, color: AppColors.secondaryGreen, size: 22),
+                      child: const Icon(
+                        Icons.campaign,
+                        color: AppColors.secondaryGreen,
+                        size: 22,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -216,19 +250,31 @@ class _AwarenessListScreenState extends ConsumerState<AwarenessListScreen> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                if (model.topic.isNotEmpty) _infoRow(Icons.topic, 'Topic', model.topic),
+                if (model.topic.isNotEmpty)
+                  _infoRow(Icons.topic, 'Topic', model.topic),
                 _infoRow(Icons.location_on, model.district, model.division),
                 if (model.participantsCount.isNotEmpty)
-                  _infoRow(Icons.people, 'Participants', model.participantsCount),
+                  _infoRow(
+                    Icons.people,
+                    'Participants',
+                    model.participantsCount,
+                  ),
                 if (model.sessionDate != null) ...[
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.calendar_today, size: 14, color: AppColors.textSecondary),
+                      Icon(
+                        Icons.calendar_today,
+                        size: 14,
+                        color: AppColors.textSecondary,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         model.sessionDate!,
-                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -248,9 +294,17 @@ class _AwarenessListScreenState extends ConsumerState<AwarenessListScreen> {
         children: [
           Icon(icon, size: 16, color: AppColors.secondaryGreen),
           const SizedBox(width: 8),
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+          Text(
+            '$label: ',
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+          ),
           Expanded(
-            child: Text(value, style: const TextStyle(fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 13),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

@@ -46,7 +46,6 @@ class FileUploadUtil {
     String filePath, {
     String? fieldName,
   }) async {
-    final file = File(filePath);
     final fileName = fieldName ?? p.basename(filePath);
     return MultipartFile.fromFile(filePath, filename: fileName);
   }

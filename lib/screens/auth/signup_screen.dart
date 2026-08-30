@@ -19,12 +19,14 @@ class SignupPage extends ConsumerStatefulWidget {
   ConsumerState<SignupPage> createState() => _SignupPageState();
 }
 
-class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStateMixin {
+class _SignupPageState extends ConsumerState<SignupPage>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -42,12 +44,19 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
   void initState() {
     super.initState();
 
-    _fadeController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(_fadeController);
 
-    _buttonController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
+    _buttonController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
     _buttonScaleAnimation = Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: _buttonController, curve: Curves.elasticOut));
+      CurvedAnimation(parent: _buttonController, curve: Curves.elasticOut),
+    );
 
     _fadeController.forward();
     Future.delayed(const Duration(milliseconds: 800), () {
@@ -82,10 +91,14 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
 
   Color _getPasswordStrengthColor() {
     switch (_passwordStrength) {
-      case 'Weak': return Colors.red;
-      case 'Medium': return Colors.orange;
-      case 'Strong': return Colors.green;
-      default: return Colors.transparent;
+      case 'Weak':
+        return Colors.red;
+      case 'Medium':
+        return Colors.orange;
+      case 'Strong':
+        return Colors.green;
+      default:
+        return Colors.transparent;
     }
   }
 
@@ -93,7 +106,10 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
     if (!_formKey.currentState!.validate()) return;
     if (!_agreeToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please agree to Terms & Conditions"), backgroundColor: Colors.orange),
+        const SnackBar(
+          content: Text("Please agree to Terms & Conditions"),
+          backgroundColor: Colors.orange,
+        ),
       );
       return;
     }
@@ -104,7 +120,9 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
 
     Object? result;
     try {
-      result = await ref.read(authRepositoryProvider).employeeSignup(
+      result = await ref
+          .read(authRepositoryProvider)
+          .employeeSignup(
             EmployeeSignupModel(
               fullName: _fullNameController.text.trim(),
               emailAddress: _emailController.text.trim(),
@@ -141,9 +159,14 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
       if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Account Created Successfully"), backgroundColor: Colors.green),
+        const SnackBar(
+          content: Text("Account Created Successfully"),
+          backgroundColor: Colors.green,
+        ),
       );
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => const HomeScreen()));
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (ctx) => const HomeScreen()),
+      );
       return;
     }
 
@@ -206,9 +229,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
               ),
             ),
           ),
-          Container(
-            color: Colors.black.withValues(alpha: 0.5),
-          ),
+          Container(color: Colors.black.withValues(alpha: 0.5)),
           SafeArea(
             child: SingleChildScrollView(
               child: Column(
@@ -225,7 +246,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                             color: Colors.white.withValues(alpha: 0.3),
                             blurRadius: 25,
                             spreadRadius: 5,
-                          )
+                          ),
                         ],
                       ),
                       child: CircleAvatar(
@@ -284,16 +305,25 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                         children: [
                           const Text(
                             "Create Account",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 5),
-                          const Text("Sign up to get started", style: TextStyle(color: Colors.grey)),
+                          const Text(
+                            "Sign up to get started",
+                            style: TextStyle(color: Colors.grey),
+                          ),
                           const SizedBox(height: 20),
                           TextFormField(
                             controller: _fullNameController,
                             decoration: InputDecoration(
                               hintText: "Full Name",
-                              prefixIcon: const Icon(Icons.person, color: Colors.green),
+                              prefixIcon: const Icon(
+                                Icons.person,
+                                color: Colors.green,
+                              ),
                               filled: true,
                               fillColor: Colors.grey.shade100,
                               border: OutlineInputBorder(
@@ -301,14 +331,18 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                                 borderSide: BorderSide.none,
                               ),
                             ),
-                            validator: (v) => v!.isEmpty ? "Full name required" : null,
+                            validator: (v) =>
+                                v!.isEmpty ? "Full name required" : null,
                           ),
                           const SizedBox(height: 15),
                           TextFormField(
                             controller: _emailController,
                             decoration: InputDecoration(
                               hintText: "Email Address",
-                              prefixIcon: const Icon(Icons.email, color: Colors.green),
+                              prefixIcon: const Icon(
+                                Icons.email,
+                                color: Colors.green,
+                              ),
                               filled: true,
                               fillColor: Colors.grey.shade100,
                               border: OutlineInputBorder(
@@ -316,7 +350,8 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                                 borderSide: BorderSide.none,
                               ),
                             ),
-                            validator: (v) => v!.isEmpty ? "Email required" : null,
+                            validator: (v) =>
+                                v!.isEmpty ? "Email required" : null,
                           ),
                           const SizedBox(height: 15),
                           TextFormField(
@@ -325,10 +360,19 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                             onChanged: _updatePasswordStrength,
                             decoration: InputDecoration(
                               hintText: "Password",
-                              prefixIcon: const Icon(Icons.lock, color: Colors.green),
+                              prefixIcon: const Icon(
+                                Icons.lock,
+                                color: Colors.green,
+                              ),
                               suffixIcon: IconButton(
-                                icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
-                                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.grey.shade100,
@@ -337,7 +381,8 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                                 borderSide: BorderSide.none,
                               ),
                             ),
-                            validator: (v) => v!.length < 6 ? "Min 6 chars" : null,
+                            validator: (v) =>
+                                v!.length < 6 ? "Min 6 chars" : null,
                           ),
                           if (_passwordStrength.isNotEmpty)
                             Align(
@@ -346,7 +391,10 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                                 padding: const EdgeInsets.only(top: 4),
                                 child: Text(
                                   'Password Strength: $_passwordStrength',
-                                  style: TextStyle(color: _getPasswordStrengthColor(), fontSize: 12),
+                                  style: TextStyle(
+                                    color: _getPasswordStrengthColor(),
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ),
                             ),
@@ -356,10 +404,20 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                             obscureText: _obscureConfirmPassword,
                             decoration: InputDecoration(
                               hintText: "Confirm Password",
-                              prefixIcon: const Icon(Icons.lock, color: Colors.green),
+                              prefixIcon: const Icon(
+                                Icons.lock,
+                                color: Colors.green,
+                              ),
                               suffixIcon: IconButton(
-                                icon: Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
-                                onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                                icon: Icon(
+                                  _obscureConfirmPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () => setState(
+                                  () => _obscureConfirmPassword =
+                                      !_obscureConfirmPassword,
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.grey.shade100,
@@ -368,14 +426,17 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                                 borderSide: BorderSide.none,
                               ),
                             ),
-                            validator: (v) => v != _passwordController.text ? "Passwords do not match" : null,
+                            validator: (v) => v != _passwordController.text
+                                ? "Passwords do not match"
+                                : null,
                           ),
                           const SizedBox(height: 15),
                           Row(
                             children: [
                               Checkbox(
                                 value: _agreeToTerms,
-                                onChanged: (v) => setState(() => _agreeToTerms = v!),
+                                onChanged: (v) =>
+                                    setState(() => _agreeToTerms = v!),
                               ),
                               Expanded(
                                 child: GestureDetector(
@@ -387,7 +448,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                                         TextSpan(
                                           text: "Terms & Conditions",
                                           style: TextStyle(color: Colors.green),
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -404,16 +465,25 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFF0D5D2B), Color(0xFF1B8C4A)],
+                                  colors: [
+                                    Color(0xFF0D5D2B),
+                                    Color(0xFF1B8C4A),
+                                  ],
                                 ),
                               ),
                               child: Center(
                                 child: _isLoading
-                                    ? const CircularProgressIndicator(color: Colors.white)
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
                                     : const Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Icon(Icons.person_add, color: Colors.white),
+                                          Icon(
+                                            Icons.person_add,
+                                            color: Colors.white,
+                                          ),
                                           SizedBox(width: 8),
                                           Text(
                                             "Sign Up",
@@ -442,9 +512,21 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _social(Icons.g_mobiledata, "Google", () => _socialLogin("Google")),
-                              _social(Icons.facebook, "Facebook", () => _socialLogin("Facebook")),
-                              _social(Icons.apple, "Apple", () => _socialLogin("Apple")),
+                              _social(
+                                Icons.g_mobiledata,
+                                "Google",
+                                () => _socialLogin("Google"),
+                              ),
+                              _social(
+                                Icons.facebook,
+                                "Facebook",
+                                () => _socialLogin("Facebook"),
+                              ),
+                              _social(
+                                Icons.apple,
+                                "Apple",
+                                () => _socialLogin("Apple"),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 20),
@@ -453,7 +535,9 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                                  MaterialPageRoute(
+                                    builder: (_) => const LoginPage(),
+                                  ),
                                 );
                               },
                               child: const Text.rich(
@@ -463,12 +547,12 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                                     TextSpan(
                                       text: "Login",
                                       style: TextStyle(color: Colors.green),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),

@@ -11,8 +11,8 @@ final vdcRepositoryProvider = Provider<VdcRepository>((ref) {
 
 final vdcListProvider =
     StateNotifierProvider<VdcListNotifier, AsyncValue<List<VdcModel>>>((ref) {
-  return VdcListNotifier(ref.read(vdcRepositoryProvider));
-});
+      return VdcListNotifier(ref.read(vdcRepositoryProvider));
+    });
 
 class VdcListNotifier extends StateNotifier<AsyncValue<List<VdcModel>>> {
   final VdcRepository _repository;
@@ -44,11 +44,17 @@ class VdcListNotifier extends StateNotifier<AsyncValue<List<VdcModel>>> {
     }
   }
 
-  Future<VdcModel?> createMultipart(Map<String, dynamic> fields,
-      {String? image, String? document}) async {
+  Future<VdcModel?> createMultipart(
+    Map<String, dynamic> fields, {
+    String? image,
+    String? document,
+  }) async {
     try {
-      final created = await _repository.createVdcMultipart(fields,
-          image: image, document: document);
+      final created = await _repository.createVdcMultipart(
+        fields,
+        image: image,
+        document: document,
+      );
       state = AsyncValue.data([created, ...state.value ?? []]);
       return created;
     } catch (e, st) {
@@ -75,7 +81,9 @@ class VdcListNotifier extends StateNotifier<AsyncValue<List<VdcModel>>> {
     try {
       await _repository.deleteVdc(id);
       final current = state.value ?? [];
-      state = AsyncValue.data(current.where((e) => e.id.toString() != id).toList());
+      state = AsyncValue.data(
+        current.where((e) => e.id.toString() != id).toList(),
+      );
       return true;
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -95,8 +103,11 @@ class VdcCrud {
 
   Future<VdcModel> getById(String id) => _repository.getVdcById(id);
   Future<VdcModel> create(VdcModel vdc) => _repository.createVdc(vdc);
-  Future<VdcModel> createMultipart(Map<String, dynamic> fields,
-          {String? image, String? document}) =>
+  Future<VdcModel> createMultipart(
+    Map<String, dynamic> fields, {
+    String? image,
+    String? document,
+  }) =>
       _repository.createVdcMultipart(fields, image: image, document: document);
   Future<VdcModel> update(String id, VdcModel vdc) =>
       _repository.updateVdc(id, vdc);

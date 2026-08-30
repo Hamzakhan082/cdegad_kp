@@ -38,12 +38,16 @@ class _VdcFormScreenState extends ConsumerState<VdcFormScreen> {
   void initState() {
     super.initState();
     final vdc = widget.existingVdc;
-    _villageNameController = TextEditingController(text: vdc?.villageName ?? '');
+    _villageNameController = TextEditingController(
+      text: vdc?.villageName ?? '',
+    );
     _districtController = TextEditingController(text: vdc?.district ?? '');
     _divisionController = TextEditingController(text: vdc?.division ?? '');
     _tehsilController = TextEditingController(text: vdc?.tehsil ?? '');
     _provinceController = TextEditingController(text: vdc?.province ?? '');
-    _descriptionController = TextEditingController(text: vdc?.description ?? '');
+    _descriptionController = TextEditingController(
+      text: vdc?.description ?? '',
+    );
   }
 
   @override
@@ -104,7 +108,9 @@ class _VdcFormScreenState extends ConsumerState<VdcFormScreen> {
           'province': _provinceController.text.trim(),
           'description': _descriptionController.text.trim(),
         };
-        await ref.read(vdcListProvider.notifier).createMultipart(
+        await ref
+            .read(vdcListProvider.notifier)
+            .createMultipart(
               fields,
               image: _selectedImage?.path,
               document: _selectedDocument?.path,
@@ -115,7 +121,9 @@ class _VdcFormScreenState extends ConsumerState<VdcFormScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              widget.isEditing ? 'VDC updated successfully' : 'VDC created successfully',
+              widget.isEditing
+                  ? 'VDC updated successfully'
+                  : 'VDC created successfully',
             ),
           ),
         );
@@ -123,9 +131,9 @@ class _VdcFormScreenState extends ConsumerState<VdcFormScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -152,40 +160,45 @@ class _VdcFormScreenState extends ConsumerState<VdcFormScreen> {
                   controller: _villageNameController,
                   label: 'Village Name',
                   icon: Icons.house,
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'Village name is required' : null,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'Village name is required'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 _buildField(
                   controller: _districtController,
                   label: 'District',
                   icon: Icons.map,
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'District is required' : null,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'District is required'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 _buildField(
                   controller: _divisionController,
                   label: 'Division',
                   icon: Icons.category,
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'Division is required' : null,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'Division is required'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 _buildField(
                   controller: _tehsilController,
                   label: 'Tehsil',
                   icon: Icons.location_on,
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'Tehsil is required' : null,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'Tehsil is required'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 _buildField(
                   controller: _provinceController,
                   label: 'Province',
                   icon: Icons.public,
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'Province is required' : null,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'Province is required'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 _buildField(
@@ -193,8 +206,9 @@ class _VdcFormScreenState extends ConsumerState<VdcFormScreen> {
                   label: 'Description',
                   icon: Icons.description,
                   maxLines: 3,
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'Description is required' : null,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'Description is required'
+                      : null,
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -203,13 +217,17 @@ class _VdcFormScreenState extends ConsumerState<VdcFormScreen> {
                       child: OutlinedButton.icon(
                         onPressed: _isSubmitting ? null : _pickImage,
                         icon: Icon(
-                          _selectedImage != null ? Icons.check_circle : Icons.image,
+                          _selectedImage != null
+                              ? Icons.check_circle
+                              : Icons.image,
                           color: _selectedImage != null
                               ? AppColors.primaryGreen
                               : AppColors.textSecondary,
                         ),
                         label: Text(
-                          _selectedImage != null ? 'Image Selected' : 'Pick Image',
+                          _selectedImage != null
+                              ? 'Image Selected'
+                              : 'Pick Image',
                           style: TextStyle(
                             color: _selectedImage != null
                                 ? AppColors.primaryGreen
@@ -223,13 +241,17 @@ class _VdcFormScreenState extends ConsumerState<VdcFormScreen> {
                       child: OutlinedButton.icon(
                         onPressed: _isSubmitting ? null : _pickDocument,
                         icon: Icon(
-                          _selectedDocument != null ? Icons.check_circle : Icons.attach_file,
+                          _selectedDocument != null
+                              ? Icons.check_circle
+                              : Icons.attach_file,
                           color: _selectedDocument != null
                               ? AppColors.primaryGreen
                               : AppColors.textSecondary,
                         ),
                         label: Text(
-                          _selectedDocument != null ? 'Doc Selected' : 'Pick Document',
+                          _selectedDocument != null
+                              ? 'Doc Selected'
+                              : 'Pick Document',
                           style: TextStyle(
                             color: _selectedDocument != null
                                 ? AppColors.primaryGreen
@@ -248,7 +270,8 @@ class _VdcFormScreenState extends ConsumerState<VdcFormScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGreen,
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor: AppColors.secondaryGreen.withAlpha(100),
+                      disabledBackgroundColor: AppColors.secondaryGreen
+                          .withAlpha(100),
                     ),
                     child: _isSubmitting
                         ? const SizedBox(
@@ -260,7 +283,9 @@ class _VdcFormScreenState extends ConsumerState<VdcFormScreen> {
                             ),
                           )
                         : Text(
-                            widget.isEditing ? 'Update Record' : 'Create Record',
+                            widget.isEditing
+                                ? 'Update Record'
+                                : 'Create Record',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

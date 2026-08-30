@@ -5,7 +5,8 @@ class PerformanceOverlayToggle extends StatefulWidget {
   const PerformanceOverlayToggle({super.key});
 
   @override
-  State<PerformanceOverlayToggle> createState() => _PerformanceOverlayToggleState();
+  State<PerformanceOverlayToggle> createState() =>
+      _PerformanceOverlayToggleState();
 }
 
 class _PerformanceOverlayToggleState extends State<PerformanceOverlayToggle> {

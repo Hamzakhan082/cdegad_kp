@@ -37,7 +37,8 @@ class ApiEndpoints {
   // ── Farm Agro Forestry ───────────────────────────────
   static const String farmAgro = '/api/farm-agro';
   static const String farmAgroForestry = '/api/farm-agro-forestry';
-  static String farmAgroForestryById(String id) => '/api/farm-agro-forestry/$id';
+  static String farmAgroForestryById(String id) =>
+      '/api/farm-agro-forestry/$id';
 
   // ── Women Organization ───────────────────────────────
   static const String womenOrganization = '/api/women-organization';

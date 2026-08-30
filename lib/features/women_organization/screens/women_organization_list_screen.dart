@@ -29,12 +29,14 @@ class _WomenOrganizationListScreenState
     if (_searchQuery.isEmpty) return list;
     final q = _searchQuery.toLowerCase();
     return list
-        .where((e) =>
-            e.organizationName.toLowerCase().contains(q) ||
-            e.district.toLowerCase().contains(q) ||
-            e.division.toLowerCase().contains(q) ||
-            e.tehsil.toLowerCase().contains(q) ||
-            e.province.toLowerCase().contains(q))
+        .where(
+          (e) =>
+              e.organizationName.toLowerCase().contains(q) ||
+              e.district.toLowerCase().contains(q) ||
+              e.division.toLowerCase().contains(q) ||
+              e.tehsil.toLowerCase().contains(q) ||
+              e.province.toLowerCase().contains(q),
+        )
         .toList();
   }
 
@@ -66,7 +68,10 @@ class _WomenOrganizationListScreenState
                 onChanged: (v) => setState(() => _searchQuery = v),
                 decoration: InputDecoration(
                   hintText: 'Search organizations...',
-                  prefixIcon: const Icon(Icons.search, color: AppColors.secondaryGreen),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: AppColors.secondaryGreen,
+                  ),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.clear),
@@ -82,7 +87,10 @@ class _WomenOrganizationListScreenState
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 0,
+                    horizontal: 16,
+                  ),
                 ),
               ),
             ),
@@ -96,12 +104,21 @@ class _WomenOrganizationListScreenState
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.error_outline, color: AppColors.errorColor, size: 48),
+                    const Icon(
+                      Icons.error_outline,
+                      color: AppColors.errorColor,
+                      size: 48,
+                    ),
                     const SizedBox(height: 12),
-                    Text('Failed to load data', style: TextStyle(color: Colors.grey.shade600)),
+                    Text(
+                      'Failed to load data',
+                      style: TextStyle(color: Colors.grey.shade600),
+                    ),
                     const SizedBox(height: 12),
                     ElevatedButton.icon(
-                      onPressed: () => ref.read(womenOrganizationListProvider.notifier).refresh(),
+                      onPressed: () => ref
+                          .read(womenOrganizationListProvider.notifier)
+                          .refresh(),
                       icon: const Icon(Icons.refresh),
                       label: const Text('Retry'),
                     ),
@@ -115,13 +132,20 @@ class _WomenOrganizationListScreenState
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.group_off, size: 64, color: Colors.grey.shade300),
+                        Icon(
+                          Icons.group_off,
+                          size: 64,
+                          color: Colors.grey.shade300,
+                        ),
                         const SizedBox(height: 12),
                         Text(
                           _searchQuery.isEmpty
                               ? 'No organizations found'
                               : 'No results for "$_searchQuery"',
-                          style: TextStyle(color: Colors.grey.shade500, fontSize: 16),
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 16,
+                          ),
                         ),
                       ],
                     ),
@@ -130,9 +154,14 @@ class _WomenOrganizationListScreenState
                 return RepaintBoundary(
                   child: RefreshIndicator(
                     color: AppColors.primaryGreen,
-                    onRefresh: () => ref.read(womenOrganizationListProvider.notifier).refresh(),
+                    onRefresh: () => ref
+                        .read(womenOrganizationListProvider.notifier)
+                        .refresh(),
                     child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       itemCount: filtered.length,
                       itemBuilder: (context, index) {
                         final item = filtered[index];
@@ -148,7 +177,10 @@ class _WomenOrganizationListScreenState
                                 color: AppColors.errorColor,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: const Icon(Icons.delete, color: Colors.white),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
                             ),
                             confirmDismiss: (_) async {
                               return await showDialog<bool>(
@@ -160,7 +192,8 @@ class _WomenOrganizationListScreenState
                                   ),
                                   actions: [
                                     TextButton(
-                                      onPressed: () => Navigator.pop(ctx, false),
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, false),
                                       child: const Text('Cancel'),
                                     ),
                                     ElevatedButton(
@@ -168,8 +201,10 @@ class _WomenOrganizationListScreenState
                                         backgroundColor: AppColors.errorColor,
                                       ),
                                       onPressed: () => Navigator.pop(ctx, true),
-                                      child: const Text('Delete',
-                                          style: TextStyle(color: Colors.white)),
+                                      child: const Text(
+                                        'Delete',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -178,12 +213,16 @@ class _WomenOrganizationListScreenState
                             onDismissed: (_) async {
                               if (item.id != null) {
                                 await ref
-                                    .read(womenOrganizationListProvider.notifier)
+                                    .read(
+                                      womenOrganizationListProvider.notifier,
+                                    )
                                     .remove(item.id!);
-                                if (mounted) {
+                                if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('${item.organizationName} deleted'),
+                                      content: Text(
+                                        '${item.organizationName} deleted',
+                                      ),
                                       backgroundColor: AppColors.errorColor,
                                     ),
                                   );
@@ -195,7 +234,9 @@ class _WomenOrganizationListScreenState
                               onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => WomenOrganizationFormScreen(editItem: item),
+                                  builder: (_) => WomenOrganizationFormScreen(
+                                    editItem: item,
+                                  ),
                                 ),
                               ),
                             ),
@@ -255,7 +296,10 @@ class _OrganizationCard extends StatelessWidget {
                       color: AppColors.womenOrganization.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(Icons.groups, color: AppColors.womenOrganization),
+                    child: const Icon(
+                      Icons.groups,
+                      color: AppColors.womenOrganization,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -307,7 +351,10 @@ class _OrganizationCard extends StatelessWidget {
       children: [
         Icon(icon, size: 14, color: AppColors.secondaryGreen),
         const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+        ),
       ],
     );
   }

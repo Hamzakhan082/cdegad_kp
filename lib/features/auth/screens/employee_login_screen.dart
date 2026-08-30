@@ -10,7 +10,8 @@ class EmployeeLoginScreen extends ConsumerStatefulWidget {
   const EmployeeLoginScreen({super.key});
 
   @override
-  ConsumerState<EmployeeLoginScreen> createState() => _EmployeeLoginScreenState();
+  ConsumerState<EmployeeLoginScreen> createState() =>
+      _EmployeeLoginScreenState();
 }
 
 class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
@@ -73,7 +74,9 @@ class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
   void _handleLogin() {
     if (!_formKey.currentState!.validate()) return;
 
-    ref.read(authProvider.notifier).employeeLogin(
+    ref
+        .read(authProvider.notifier)
+        .employeeLogin(
           emailAddress: _emailController.text.trim(),
           password: _passwordController.text,
           rememberMe: _rememberMe,
@@ -205,7 +208,10 @@ class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
                         children: [
                           const Text(
                             'Welcome Back',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 5),
                           const Text(
@@ -218,7 +224,10 @@ class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               hintText: 'Email Address',
-                              prefixIcon: const Icon(Icons.email, color: AppColors.primaryGreen),
+                              prefixIcon: const Icon(
+                                Icons.email,
+                                color: AppColors.primaryGreen,
+                              ),
                               filled: true,
                               fillColor: Colors.grey.shade100,
                               border: OutlineInputBorder(
@@ -238,15 +247,19 @@ class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
                             obscureText: _obscurePassword,
                             decoration: InputDecoration(
                               hintText: 'Password',
-                              prefixIcon: const Icon(Icons.lock, color: AppColors.primaryGreen),
+                              prefixIcon: const Icon(
+                                Icons.lock,
+                                color: AppColors.primaryGreen,
+                              ),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscurePassword
                                       ? Icons.visibility_off
                                       : Icons.visibility,
                                 ),
-                                onPressed: () =>
-                                    setState(() => _obscurePassword = !_obscurePassword),
+                                onPressed: () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.grey.shade100,
@@ -255,7 +268,8 @@ class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
                                 borderSide: BorderSide.none,
                               ),
                             ),
-                            validator: (v) => v!.length < 6 ? 'Min 6 chars' : null,
+                            validator: (v) =>
+                                v!.length < 6 ? 'Min 6 chars' : null,
                           ),
                           const SizedBox(height: 10),
                           Row(
@@ -265,7 +279,8 @@ class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
                                 children: [
                                   Checkbox(
                                     value: _rememberMe,
-                                    onChanged: (v) => setState(() => _rememberMe = v!),
+                                    onChanged: (v) =>
+                                        setState(() => _rememberMe = v!),
                                   ),
                                   const Text('Remember me'),
                                 ],
@@ -290,16 +305,25 @@ class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 gradient: const LinearGradient(
-                                  colors: [AppColors.gradientStart, AppColors.gradientEnd],
+                                  colors: [
+                                    AppColors.gradientStart,
+                                    AppColors.gradientEnd,
+                                  ],
                                 ),
                               ),
                               child: Center(
                                 child: isLoading
-                                    ? const CircularProgressIndicator(color: Colors.white)
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
                                     : const Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Icon(Icons.login, color: Colors.white),
+                                          Icon(
+                                            Icons.login,
+                                            color: Colors.white,
+                                          ),
                                           SizedBox(width: 8),
                                           Text(
                                             'Login',
@@ -319,7 +343,8 @@ class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
                               onTap: () => Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => const EmployeeSignupScreen()),
+                                  builder: (_) => const EmployeeSignupScreen(),
+                                ),
                               ),
                               child: const Text.rich(
                                 TextSpan(
@@ -327,7 +352,9 @@ class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
                                   children: [
                                     TextSpan(
                                       text: 'Sign Up',
-                                      style: TextStyle(color: AppColors.primaryGreen),
+                                      style: TextStyle(
+                                        color: AppColors.primaryGreen,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -343,7 +370,10 @@ class _EmployeeLoginScreenState extends ConsumerState<EmployeeLoginScreen>
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppColors.gradientStart, AppColors.gradientEnd],
+                        colors: [
+                          AppColors.gradientStart,
+                          AppColors.gradientEnd,
+                        ],
                       ),
                     ),
                     child: const Row(

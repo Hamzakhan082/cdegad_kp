@@ -109,18 +109,16 @@ class _YouthWomenNurseryFormScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              _isEditing ? 'Nursery updated' : 'Nursery created',
-            ),
+            content: Text(_isEditing ? 'Nursery updated' : 'Nursery created'),
           ),
         );
         Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);

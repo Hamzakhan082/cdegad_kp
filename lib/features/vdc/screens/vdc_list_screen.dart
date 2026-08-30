@@ -40,8 +40,7 @@ class _VdcListScreenState extends ConsumerState<VdcListScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Delete VDC Record'),
-        content: Text(
-            'Are you sure you want to delete "${vdc.villageName}"?'),
+        content: Text('Are you sure you want to delete "${vdc.villageName}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -50,16 +49,19 @@ class _VdcListScreenState extends ConsumerState<VdcListScreen> {
           TextButton(
             onPressed: () async {
               Navigator.pop(ctx);
-              final success =
-                  await ref.read(vdcListProvider.notifier).delete(vdc.id.toString());
+              final success = await ref
+                  .read(vdcListProvider.notifier)
+                  .delete(vdc.id.toString());
               if (mounted && success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('VDC record deleted')),
                 );
               }
             },
-            child: const Text('Delete',
-                style: TextStyle(color: AppColors.errorColor)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: AppColors.errorColor),
+            ),
           ),
         ],
       ),
@@ -108,16 +110,26 @@ class _VdcListScreenState extends ConsumerState<VdcListScreen> {
           ),
           Expanded(
             child: vdcAsync.when(
-              loading: () =>
-                  const Center(child: CircularProgressIndicator(color: AppColors.primaryGreen)),
+              loading: () => const Center(
+                child: CircularProgressIndicator(color: AppColors.primaryGreen),
+              ),
               error: (e, _) => Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.error_outline, size: 48, color: AppColors.errorColor),
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: AppColors.errorColor,
+                    ),
                     const SizedBox(height: 16),
-                    const Text('Failed to load VDC records',
-                        style: TextStyle(color: AppColors.textPrimary, fontSize: 16)),
+                    const Text(
+                      'Failed to load VDC records',
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     ElevatedButton.icon(
                       onPressed: () =>
@@ -135,8 +147,11 @@ class _VdcListScreenState extends ConsumerState<VdcListScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.forest, size: 80,
-                            color: AppColors.secondaryGreen.withAlpha(100)),
+                        Icon(
+                          Icons.forest,
+                          size: 80,
+                          color: AppColors.secondaryGreen.withAlpha(100),
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           list.isEmpty
@@ -183,8 +198,11 @@ class _VdcListScreenState extends ConsumerState<VdcListScreen> {
                                 color: AppColors.errorColor,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: const Icon(Icons.delete,
-                                  color: Colors.white, size: 28),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                                size: 28,
+                              ),
                             ),
                             confirmDismiss: (_) async {
                               _showDeleteDialog(vdc);
@@ -194,12 +212,16 @@ class _VdcListScreenState extends ConsumerState<VdcListScreen> {
                               margin: const EdgeInsets.only(bottom: 12),
                               child: ListTile(
                                 contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
                                 leading: CircleAvatar(
-                                  backgroundColor:
-                                      AppColors.secondaryGreen.withAlpha(40),
-                                  child: const Icon(Icons.forest,
-                                      color: AppColors.primaryGreen),
+                                  backgroundColor: AppColors.secondaryGreen
+                                      .withAlpha(40),
+                                  child: const Icon(
+                                    Icons.forest,
+                                    color: AppColors.primaryGreen,
+                                  ),
                                 ),
                                 title: Text(
                                   vdc.villageName.isNotEmpty
@@ -213,22 +235,27 @@ class _VdcListScreenState extends ConsumerState<VdcListScreen> {
                                 subtitle: Padding(
                                   padding: const EdgeInsets.only(top: 4),
                                   child: Text(
-                                    [vdc.district, vdc.division, vdc.tehsil]
-                                        .where((s) => s.isNotEmpty)
-                                        .join(', '),
+                                    [
+                                      vdc.district,
+                                      vdc.division,
+                                      vdc.tehsil,
+                                    ].where((s) => s.isNotEmpty).join(', '),
                                     style: const TextStyle(
                                       color: AppColors.textSecondary,
                                       fontSize: 13,
                                     ),
                                   ),
                                 ),
-                                trailing: const Icon(Icons.chevron_right,
-                                    color: AppColors.textSecondary),
+                                trailing: const Icon(
+                                  Icons.chevron_right,
+                                  color: AppColors.textSecondary,
+                                ),
                                 onTap: () async {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => VdcFormScreen(existingVdc: vdc),
+                                      builder: (_) =>
+                                          VdcFormScreen(existingVdc: vdc),
                                     ),
                                   );
                                 },

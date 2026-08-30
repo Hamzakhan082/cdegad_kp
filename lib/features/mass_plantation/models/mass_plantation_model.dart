@@ -2,10 +2,26 @@ import 'dart:convert';
 
 class MassPlantationModel {
   static final Set<String> _knownKeys = {
-    'id', 'plantationName', 'plantation_name', 'district', 'division',
-    'tehsil', 'province', 'totalPlants', 'total_plants', 'species',
-    'area', 'description', 'imageUrl', 'image_url', 'documentUrl',
-    'document_url', 'createdAt', 'created_at', 'updatedAt', 'updated_at',
+    'id',
+    'plantationName',
+    'plantation_name',
+    'district',
+    'division',
+    'tehsil',
+    'province',
+    'totalPlants',
+    'total_plants',
+    'species',
+    'area',
+    'description',
+    'imageUrl',
+    'image_url',
+    'documentUrl',
+    'document_url',
+    'createdAt',
+    'created_at',
+    'updatedAt',
+    'updated_at',
   };
 
   final dynamic id;
@@ -52,14 +68,18 @@ class MassPlantationModel {
 
     return MassPlantationModel(
       id: json['id'],
-      plantationName: json['plantationName'] as String? ??
-          json['plantation_name'] as String? ?? '',
+      plantationName:
+          json['plantationName'] as String? ??
+          json['plantation_name'] as String? ??
+          '',
       district: json['district'] as String? ?? '',
       division: json['division'] as String? ?? '',
       tehsil: json['tehsil'] as String? ?? '',
       province: json['province'] as String? ?? '',
-      totalPlants: json['totalPlants'] as String? ??
-          json['total_plants'] as String? ?? '',
+      totalPlants:
+          json['totalPlants'] as String? ??
+          json['total_plants'] as String? ??
+          '',
       species: json['species'] as String? ?? '',
       area: json['area'] as String? ?? '',
       description: json['description'] as String? ?? '',

@@ -50,12 +50,18 @@ class _OtherActivityFormScreenState
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.camera_alt, color: AppColors.primaryGreen),
+              leading: const Icon(
+                Icons.camera_alt,
+                color: AppColors.primaryGreen,
+              ),
               title: const Text('Camera'),
               onTap: () => Navigator.pop(ctx, ImageSource.camera),
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: AppColors.primaryGreen),
+              leading: const Icon(
+                Icons.photo_library,
+                color: AppColors.primaryGreen,
+              ),
               title: const Text('Gallery'),
               onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
@@ -76,8 +82,18 @@ class _OtherActivityFormScreenState
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: [
-        'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
-        'jpg', 'jpeg', 'png', 'txt', 'csv',
+        'pdf',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'ppt',
+        'pptx',
+        'jpg',
+        'jpeg',
+        'png',
+        'txt',
+        'csv',
       ],
     );
     if (result != null && result.files.single.path != null) {
@@ -100,9 +116,9 @@ class _OtherActivityFormScreenState
         'description': _descriptionController.text.trim(),
       };
 
-      await ref.read(otherActivityListProvider.notifier).create(
-            OtherActivityModel.fromJson(fields),
-          );
+      await ref
+          .read(otherActivityListProvider.notifier)
+          .create(OtherActivityModel.fromJson(fields));
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +132,10 @@ class _OtherActivityFormScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.errorColor),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.errorColor,
+          ),
         );
       }
     } finally {
@@ -156,38 +175,44 @@ class _OtherActivityFormScreenState
                   controller: _nameController,
                   label: 'Activity Name',
                   icon: Icons.label,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 _buildField(
                   controller: _typeController,
                   label: 'Activity Type',
                   icon: Icons.category,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 _buildField(
                   controller: _districtController,
                   label: 'District',
                   icon: Icons.location_city,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 _buildField(
                   controller: _divisionController,
                   label: 'Division',
                   icon: Icons.map,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 _buildField(
                   controller: _tehsilController,
                   label: 'Tehsil',
                   icon: Icons.place,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 _buildField(
                   controller: _descriptionController,
                   label: 'Description',
                   icon: Icons.description,
                   maxLines: 3,
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
@@ -198,7 +223,9 @@ class _OtherActivityFormScreenState
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGreen,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: _isSubmitting
                         ? const SizedBox(
@@ -211,7 +238,10 @@ class _OtherActivityFormScreenState
                           )
                         : const Text(
                             'Submit',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                   ),
                 ),
@@ -245,8 +275,12 @@ class _OtherActivityFormScreenState
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.file(_imageFile!,
-                            width: double.infinity, height: 160, fit: BoxFit.cover),
+                        child: Image.file(
+                          _imageFile!,
+                          width: double.infinity,
+                          height: 160,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       Positioned(
                         top: 8,
@@ -259,7 +293,11 @@ class _OtherActivityFormScreenState
                               color: Colors.black.withValues(alpha: 0.5),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.close, color: Colors.white, size: 16),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 16,
+                            ),
                           ),
                         ),
                       ),
@@ -268,10 +306,19 @@ class _OtherActivityFormScreenState
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.add_a_photo, size: 36, color: Colors.grey.shade400),
+                      Icon(
+                        Icons.add_a_photo,
+                        size: 36,
+                        color: Colors.grey.shade400,
+                      ),
                       const SizedBox(height: 8),
-                      Text('Tap to add image',
-                          style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
+                      Text(
+                        'Tap to add image',
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 14,
+                        ),
+                      ),
                     ],
                   ),
           ),
@@ -299,7 +346,10 @@ class _OtherActivityFormScreenState
             child: _documentFile != null
                 ? Row(
                     children: [
-                      const Icon(Icons.description, color: AppColors.primaryGreen),
+                      const Icon(
+                        Icons.description,
+                        color: AppColors.primaryGreen,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -310,7 +360,11 @@ class _OtherActivityFormScreenState
                       ),
                       GestureDetector(
                         onTap: () => setState(() => _documentFile = null),
-                        child: const Icon(Icons.close, color: Colors.red, size: 20),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.red,
+                          size: 20,
+                        ),
                       ),
                     ],
                   )
@@ -319,8 +373,10 @@ class _OtherActivityFormScreenState
                     children: [
                       Icon(Icons.attach_file, color: Colors.grey.shade400),
                       const SizedBox(width: 8),
-                      Text('Tap to attach document',
-                          style: TextStyle(color: Colors.grey.shade500)),
+                      Text(
+                        'Tap to attach document',
+                        style: TextStyle(color: Colors.grey.shade500),
+                      ),
                     ],
                   ),
           ),

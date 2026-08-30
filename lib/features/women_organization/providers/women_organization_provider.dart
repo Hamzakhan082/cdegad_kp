@@ -4,9 +4,10 @@ import 'package:cdegad_kp/features/women_organization/models/women_organization_
 import 'package:cdegad_kp/features/women_organization/repositories/women_organization_repository.dart';
 
 final womenOrganizationListProvider =
-    AsyncNotifierProvider<WomenOrganizationListNotifier, List<WomenOrganizationModel>>(
-  WomenOrganizationListNotifier.new,
-);
+    AsyncNotifierProvider<
+      WomenOrganizationListNotifier,
+      List<WomenOrganizationModel>
+    >(WomenOrganizationListNotifier.new);
 
 class WomenOrganizationListNotifier
     extends AsyncNotifier<List<WomenOrganizationModel>> {
@@ -23,7 +24,9 @@ class WomenOrganizationListNotifier
   }
 
   Future<WomenOrganizationModel> updateItem(
-      String id, WomenOrganizationModel model) async {
+    String id,
+    WomenOrganizationModel model,
+  ) async {
     final repo = ref.read(womenOrganizationRepositoryProvider);
     final result = await repo.update(id, model);
     final current = state.value ?? [];
@@ -37,16 +40,20 @@ class WomenOrganizationListNotifier
     final repo = ref.read(womenOrganizationRepositoryProvider);
     await repo.delete(id);
     final current = state.value ?? [];
-    state = AsyncValue.data(current.where((e) => e.id.toString() != id).toList());
+    state = AsyncValue.data(
+      current.where((e) => e.id.toString() != id).toList(),
+    );
   }
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => ref.read(womenOrganizationRepositoryProvider).getAll());
+    state = await AsyncValue.guard(
+      () => ref.read(womenOrganizationRepositoryProvider).getAll(),
+    );
   }
 }
 
 final womenOrganizationByIdProvider =
     FutureProvider.family<WomenOrganizationModel, String>((ref, id) async {
-  return ref.read(womenOrganizationRepositoryProvider).getById(id);
-});
+      return ref.read(womenOrganizationRepositoryProvider).getById(id);
+    });

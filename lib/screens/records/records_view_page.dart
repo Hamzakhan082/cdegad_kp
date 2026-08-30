@@ -36,7 +36,8 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
   List<Color> get gradient => widget.gradient;
 
   /// Form types that pull from a live backend endpoint.
-  bool get _usesBackend => const [
+  bool get _usesBackend =>
+      const [
         'VDC',
         'JFMC',
         'Mass Planting Event',
@@ -72,15 +73,25 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
             .map((e) => e.toJson())
             .toList();
       case 'Awareness Raising Sessions':
-        return (await ref.read(awarenessRepositoryProvider).getAll()).map((e) => e.toJson()).toList();
+        return (await ref.read(awarenessRepositoryProvider).getAll())
+            .map((e) => e.toJson())
+            .toList();
       case 'Women Organization':
-        return (await ref.read(womenOrganizationRepositoryProvider).getAll()).map((e) => e.toJson()).toList();
+        return (await ref.read(womenOrganizationRepositoryProvider).getAll())
+            .map((e) => e.toJson())
+            .toList();
       case 'Women Nursery':
-        return (await ref.read(youthWomenNurseryRepositoryProvider).getAll()).map((e) => e.toJson()).toList();
+        return (await ref.read(youthWomenNurseryRepositoryProvider).getAll())
+            .map((e) => e.toJson())
+            .toList();
       case 'Farm / Agro Forestry':
-        return (await ref.read(farmAgroForestryRepositoryProvider).getAll()).map((e) => e.toJson()).toList();
+        return (await ref.read(farmAgroForestryRepositoryProvider).getAll())
+            .map((e) => e.toJson())
+            .toList();
       case 'Other Activity':
-        return (await ref.read(otherActivityRepositoryProvider).getAll()).map((e) => e.toJson()).toList();
+        return (await ref.read(otherActivityRepositoryProvider).getAll())
+            .map((e) => e.toJson())
+            .toList();
       default:
         return [];
     }
@@ -126,7 +137,10 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
     }
   }
 
-  Map<String, dynamic> _normalizeRecord(Map<String, dynamic> row, String formType) {
+  Map<String, dynamic> _normalizeRecord(
+    Map<String, dynamic> row,
+    String formType,
+  ) {
     String pick(List<String> keys) {
       for (final k in keys) {
         final v = row[k];
@@ -150,14 +164,16 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
         'project_name',
         'employee_name',
       ]),
-      'date': _toIsoDate(pick([
-                'date_established',
-                'date_of_registration',
-                'date_of_event',
-                'date_establishment',
-                'date_of_agreement',
-                'created_at',
-              ])),
+      'date': _toIsoDate(
+        pick([
+          'date_established',
+          'date_of_registration',
+          'date_of_event',
+          'date_establishment',
+          'date_of_agreement',
+          'created_at',
+        ]),
+      ),
       'employee': pick(['employee_name']),
       'status': 'Active',
       'formType': formType,
@@ -186,7 +202,10 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
     if (_dateFilter == 'today') {
       records = records.where((r) {
         final d = DateTime.tryParse(r['date'] ?? '');
-        return d != null && d.year == now.year && d.month == now.month && d.day == now.day;
+        return d != null &&
+            d.year == now.year &&
+            d.month == now.month &&
+            d.day == now.day;
       }).toList();
     } else if (_dateFilter == 'week') {
       final weekStart = now.subtract(Duration(days: now.weekday - 1));
@@ -202,11 +221,15 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
     }
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
-      records = records.where((r) =>
-          (r['name'] ?? '').toString().toLowerCase().contains(q) ||
-          (r['id'] ?? '').toString().toLowerCase().contains(q) ||
-          (r['employee'] ?? '').toString().toLowerCase().contains(q) ||
-          (r['status'] ?? '').toString().toLowerCase().contains(q)).toList();
+      records = records
+          .where(
+            (r) =>
+                (r['name'] ?? '').toString().toLowerCase().contains(q) ||
+                (r['id'] ?? '').toString().toLowerCase().contains(q) ||
+                (r['employee'] ?? '').toString().toLowerCase().contains(q) ||
+                (r['status'] ?? '').toString().toLowerCase().contains(q),
+          )
+          .toList();
     }
     records.sort((a, b) {
       final da = DateTime.tryParse(a['date'] ?? '') ?? DateTime(0);
@@ -245,7 +268,11 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
               setState(() => _sortAscending = !_sortAscending);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(_sortAscending ? "Sorted: Oldest first" : "Sorted: Newest first"),
+                  content: Text(
+                    _sortAscending
+                        ? "Sorted: Oldest first"
+                        : "Sorted: Newest first",
+                  ),
                   backgroundColor: gradient.first,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -257,9 +284,7 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
       body: Column(
         children: [
           _buildFilterSection(context),
-          Expanded(
-            child: _buildRecordsList(context),
-          ),
+          Expanded(child: _buildRecordsList(context)),
         ],
       ),
     );
@@ -295,10 +320,19 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
                       value: _dateFilter,
                       hint: const Text("Filter by Date"),
                       items: const [
-                        DropdownMenuItem(value: 'all', child: Text("All Records")),
+                        DropdownMenuItem(
+                          value: 'all',
+                          child: Text("All Records"),
+                        ),
                         DropdownMenuItem(value: 'today', child: Text("Today")),
-                        DropdownMenuItem(value: 'week', child: Text("This Week")),
-                        DropdownMenuItem(value: 'month', child: Text("This Month")),
+                        DropdownMenuItem(
+                          value: 'week',
+                          child: Text("This Week"),
+                        ),
+                        DropdownMenuItem(
+                          value: 'month',
+                          child: Text("This Month"),
+                        ),
                       ],
                       onChanged: (value) {
                         if (value != null) setState(() => _dateFilter = value);
@@ -314,10 +348,7 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
                   color: gradient.first.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  Icons.filter_list,
-                  color: gradient.first,
-                ),
+                child: Icon(Icons.filter_list, color: gradient.first),
               ),
             ],
           ),
@@ -378,7 +409,11 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
               const SizedBox(height: 16),
               Text(
                 "Could not load records",
-                style: TextStyle(fontSize: 18, color: Colors.grey.shade700, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey.shade700,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -405,26 +440,16 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.folder_open,
-              size: 80,
-              color: Colors.grey.shade400,
-            ),
+            Icon(Icons.folder_open, size: 80, color: Colors.grey.shade400),
             const SizedBox(height: 16),
             Text(
               "No records found",
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 8),
             Text(
               "Try changing the search or filter",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade500,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
             ),
           ],
         ),
@@ -541,11 +566,17 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
                 Row(
                   children: [
                     Flexible(
-                      child: _buildInfoChip(Icons.calendar_today, record['date'] ?? ''),
+                      child: _buildInfoChip(
+                        Icons.calendar_today,
+                        record['date'] ?? '',
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Flexible(
-                      child: _buildInfoChip(Icons.person, record['employee'] ?? ''),
+                      child: _buildInfoChip(
+                        Icons.person,
+                        record['employee'] ?? '',
+                      ),
                     ),
                     const SizedBox(width: 8),
                     IconButton(
@@ -579,10 +610,7 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
           ),
         ),
       ],
@@ -642,9 +670,7 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
                         ),
                         Text(
                           "ID: ${record['id']}",
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                          ),
+                          style: TextStyle(color: Colors.grey.shade600),
                         ),
                       ],
                     ),
@@ -656,7 +682,9 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
                 child: ListView(
                   controller: scrollController,
                   children: record['data'] != null
-                      ? _buildDynamicDetailRows(record['data'] as Map<String, dynamic>)
+                      ? _buildDynamicDetailRows(
+                          record['data'] as Map<String, dynamic>,
+                        )
                       : [
                           _buildDetailRow("Status", record['status'] ?? ''),
                           _buildDetailRow("Date", record['date'] ?? ''),
@@ -724,7 +752,9 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
 
   String _prettyKey(String key) {
     final words = key.split('_');
-    final title = words.map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}').join(' ');
+    final title = words
+        .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+        .join(' ');
     return title;
   }
 
@@ -747,9 +777,7 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
         ],
@@ -831,7 +859,10 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, Map<String, dynamic> record) {
+  void _showDeleteConfirmation(
+    BuildContext context,
+    Map<String, dynamic> record,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -850,10 +881,7 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
               Navigator.pop(context);
               _deleteRecord(record);
             },
-            child: const Text(
-              "Delete",
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text("Delete", style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -880,7 +908,9 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
           content: const Text("Record deleted successfully"),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       return;
@@ -919,7 +949,9 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
           content: const Text("Record deleted successfully"),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       _loadRecords();
@@ -930,7 +962,9 @@ class _RecordsViewPageState extends ConsumerState<RecordsViewPage> {
           content: Text("Delete failed: $e"),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     }
